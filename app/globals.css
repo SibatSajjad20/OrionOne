@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  --color-orion-dark: #09191a;
+  --color-orion-darker: #061213;
+  --color-orion-teal: #153b3c;
+  --color-orion-teal-accent: #276e70;
+  --color-orion-teal-bright: #45a3a5;
+  --color-orion-primary: #FAFAFA;
+  --color-orion-muted: #A1A1AA;
+
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-playfair: var(--font-playfair), "Playfair Display", Georgia, serif;
+}
+
+:root {
+  --bg-teal-dark: #09191a;
+  --bg-teal-deep: #0e2728;
+  --bg-teal-bright-accent: #276e70;
+  --accent-teal: #153b3c;
+  --accent-teal-bright: #45a3a5;
+  --text-primary: #FAFAFA;
+  --text-muted: #A1A1AA;
+}
+
+html {
+  scroll-behavior: auto; /* Handled by Lenis */
+  background-color: #09191a;
+  background: radial-gradient(circle at 50% 0%, #1a4e50 0%, #0d2728 55%, #051314 100%);
+  background-attachment: fixed;
+  color: #FAFAFA;
+  font-family: var(--font-sans);
+}
+
+body {
+  background-color: transparent;
+  color: #FAFAFA;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom scrollbar for Lenis smooth scroll */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #061213;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #153b3c 0%, #45a3a5 100%);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #45a3a5;
+}
+
+/* Quiet luxury typography & glow utility classes */
+.font-serif-heading {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+.font-sans-body {
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+}
+
+.text-gold-gradient,
+.text-teal-gradient {
+  background: linear-gradient(135deg, #74d2d4 0%, #45a3a5 40%, #153b3c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gold-glow,
+.border-teal-glow {
+  border: 1px solid rgba(69, 163, 165, 0.45);
+  box-shadow: 0 0 30px rgba(69, 163, 165, 0.25);
+}
+
+.glass-card {
+  background: rgba(14, 39, 40, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(69, 163, 165, 0.2);
+}
+
+.glass-card-gold,
+.glass-card-teal {
+  background: radial-gradient(circle at top left, rgba(39, 110, 112, 0.4), rgba(21, 59, 60, 0.6));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(69, 163, 165, 0.4);
+  box-shadow: 0 20px 50px rgba(5, 19, 20, 0.7);
+}
+
+.bg-teal-gradient {
+  background: linear-gradient(180deg, #09191a 0%, #0e2728 50%, #061213 100%);
+}
+
+.bg-teal-radial {
+  background: radial-gradient(ellipse at center, #17484a 0%, #0d2728 60%, #051314 100%);
+}
