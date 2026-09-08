@@ -1,108 +1,115 @@
 @import "tailwindcss";
 
 @theme {
-  --color-orion-dark: #09191a;
-  --color-orion-darker: #061213;
-  --color-orion-teal: #153b3c;
-  --color-orion-teal-accent: #276e70;
-  --color-orion-teal-bright: #45a3a5;
-  --color-orion-primary: #FAFAFA;
-  --color-orion-muted: #A1A1AA;
+  --color-moss: #153D3D;
+  --color-moss-dark: #0d2828;
+  --color-moss-deep: #081a1a;
+  --color-sand: #EDE5DA;
+  --color-sand-muted: #c9bfb1;
+  --color-mint: #62AA9E;
+  --color-mint-light: #7ec1b6;
+  --color-stone: #808080;
+  --color-martian: #B2CE93;
 
   --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
-  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: var(--font-montserrat), "Montserrat", system-ui, sans-serif;
   --font-playfair: var(--font-playfair), "Playfair Display", Georgia, serif;
 }
 
 :root {
-  --bg-teal-dark: #09191a;
-  --bg-teal-deep: #0e2728;
-  --bg-teal-bright-accent: #276e70;
-  --accent-teal: #153b3c;
-  --accent-teal-bright: #45a3a5;
-  --text-primary: #FAFAFA;
-  --text-muted: #A1A1AA;
+  --bg-moss: #153D3D;
+  --bg-moss-dark: #0d2828;
+  --text-sand: #EDE5DA;
+  --accent-mint: #62AA9E;
+  --text-stone: #808080;
+  --accent-martian: #B2CE93;
 }
 
 html {
   scroll-behavior: auto; /* Handled by Lenis */
-  background-color: #09191a;
-  background: radial-gradient(circle at 50% 0%, #1a4e50 0%, #0d2728 55%, #051314 100%);
+  background-color: #153D3D;
+  background: radial-gradient(circle at 50% 0%, #1c4e4e 0%, #153D3D 45%, #0a1e1e 100%);
   background-attachment: fixed;
-  color: #FAFAFA;
+  color: #EDE5DA;
   font-family: var(--font-sans);
 }
 
 body {
   background-color: transparent;
-  color: #FAFAFA;
+  color: #EDE5DA;
   margin: 0;
   padding: 0;
+  font-family: var(--font-sans);
 }
 
-/* Custom scrollbar for Lenis smooth scroll */
+/* Custom scrollbar matching Moss Green & Mint Green palette */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #061213;
+  background: #081a1a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #153b3c 0%, #45a3a5 100%);
+  background: linear-gradient(180deg, #153D3D 0%, #62AA9E 100%);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #45a3a5;
+  background: #7ec1b6;
 }
 
-/* Quiet luxury typography & glow utility classes */
+/* Luxury typography & subtle glow utility classes */
 .font-serif-heading {
   font-family: var(--font-serif);
   font-weight: 300;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .font-sans-body {
   font-family: var(--font-sans);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
-.text-gold-gradient,
-.text-teal-gradient {
-  background: linear-gradient(135deg, #74d2d4 0%, #45a3a5 40%, #153b3c 100%);
+.font-editorial-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+}
+
+.text-sand-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #EDE5DA 50%, #C9BFB1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.border-gold-glow,
-.border-teal-glow {
-  border: 1px solid rgba(69, 163, 165, 0.45);
-  box-shadow: 0 0 30px rgba(69, 163, 165, 0.25);
+.text-mint-gradient {
+  background: linear-gradient(135deg, #9fe0d6 0%, #62AA9E 60%, #153D3D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.glass-card {
-  background: rgba(14, 39, 40, 0.75);
+.border-mint-glow {
+  border: 1px solid rgba(98, 170, 158, 0.4);
+  box-shadow: 0 0 24px rgba(98, 170, 158, 0.2);
+}
+
+.border-sand-subtle {
+  border: 1px solid rgba(237, 229, 218, 0.15);
+}
+
+.glass-moss {
+  background: rgba(21, 61, 61, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(69, 163, 165, 0.2);
+  border: 1px solid rgba(237, 229, 218, 0.12);
 }
 
-.glass-card-gold,
-.glass-card-teal {
-  background: radial-gradient(circle at top left, rgba(39, 110, 112, 0.4), rgba(21, 59, 60, 0.6));
+.glass-moss-card {
+  background: radial-gradient(circle at top left, rgba(39, 110, 112, 0.45), rgba(13, 40, 40, 0.75));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(69, 163, 165, 0.4);
-  box-shadow: 0 20px 50px rgba(5, 19, 20, 0.7);
-}
-
-.bg-teal-gradient {
-  background: linear-gradient(180deg, #09191a 0%, #0e2728 50%, #061213 100%);
-}
-
-.bg-teal-radial {
-  background: radial-gradient(ellipse at center, #17484a 0%, #0d2728 60%, #051314 100%);
+  border: 1px solid rgba(98, 170, 158, 0.25);
+  box-shadow: 0 20px 50px rgba(5, 18, 18, 0.7);
 }

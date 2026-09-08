@@ -7,144 +7,202 @@ import { MessageCircle, Menu, X, ArrowUpRight } from "lucide-react";
 
 interface HeaderProps {
   className?: string;
+  onOpenInquiry?: () => void;
 }
 
-const Header = forwardRef<HTMLElement, HeaderProps>(({ className = "" }, ref) => {
-  const [menuOpen, setMenuOpen] = useState(false);
+const Header = forwardRef<HTMLElement, HeaderProps>(
+  ({ className = "", onOpenInquiry }, ref) => {
+    const [menuOpen, setMenuOpen] = useState(false);
 
-  return (
-    <>
-      <header
-        ref={ref}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-[#061112]/85 backdrop-blur-xl border-b border-white/10 shadow-2xl ${className}`}
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-22 flex items-center justify-between">
-          {/* Logo & Brand Mark featuring new-logo.png */}
-          <Link href="/" className="flex items-center group py-1">
-            <div className="relative h-14 w-60 sm:h-16 sm:w-68 transition-transform duration-300 group-hover:scale-105">
-              <Image
-                src="/new-logo.png"
-                alt="Orion One Logo"
-                fill
-                sizes="(max-width: 640px) 240px, 272px"
-                className="object-contain object-left scale-[1.25] origin-left brightness-125 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
-                priority
-              />
+    const handleInquireClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (onOpenInquiry) {
+        onOpenInquiry();
+      }
+    };
+
+    return (
+      <>
+        <header
+          ref={ref}
+          className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 bg-[#153D3D]/80 backdrop-blur-xl border-b border-[#EDE5DA]/10 shadow-2xl ${className}`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-16 sm:h-22 flex items-center justify-between">
+            {/* Primary Wordmark & Sun-over-water Horizon Mark */}
+            <Link href="/" className="flex items-center group py-1">
+              <div className="relative h-10 sm:h-14 w-44 sm:w-64 transition-transform duration-300 group-hover:scale-[1.02]">
+                <Image
+                  src="/new-logo.png"
+                  alt="Orion One Logo"
+                  fill
+                  sizes="(max-width: 640px) 176px, 256px"
+                  className="object-contain object-left filter brightness-110"
+                  priority
+                />
+              </div>
+            </Link>
+
+            {/* Desktop Navigation Chapters - Unhurried Editorial Style */}
+            <nav className="hidden lg:flex items-center space-x-7 text-[11px] tracking-[0.25em] text-[#EDE5DA]/80 uppercase font-sans-body font-medium">
+              <a href="#architecture" className="hover:text-[#62AA9E] transition-colors py-1">
+                Architecture
+              </a>
+              <a href="#waterfront" className="hover:text-[#62AA9E] transition-colors py-1">
+                Waterfront
+              </a>
+              <a href="#destination" className="hover:text-[#62AA9E] transition-colors py-1">
+                Destination
+              </a>
+              <a href="#masterplan" className="hover:text-[#62AA9E] transition-colors py-1">
+                Masterplan
+              </a>
+              <a href="#investment" className="hover:text-[#62AA9E] transition-colors py-1">
+                Investment
+              </a>
+            </nav>
+
+            {/* Actions: Direct WhatsApp & Private Tour Desk */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <a
+                href="https://wa.me/923009079164?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Direct WhatsApp Concierge"
+                className="inline-flex sm:hidden p-2 text-[#62AA9E] hover:text-[#7ec1b6] transition-colors"
+              >
+                <MessageCircle className="w-5 h-5" />
+              </a>
+
+              <a
+                href="https://wa.me/923009079164?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider text-[#EDE5DA] bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/15 px-4 py-2 rounded-full transition-all duration-300 shadow-md"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-[#62AA9E]" />
+                <span>WhatsApp</span>
+              </a>
+
+              <button
+                onClick={handleInquireClick}
+                className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] px-5 py-2 rounded-full transition-all duration-300 shadow-md cursor-pointer"
+              >
+                <span>Book a Tour</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="lg:hidden text-[#EDE5DA] p-2 hover:text-[#62AA9E] transition-colors cursor-pointer"
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
-          </Link>
-
-          {/* Desktop Nav Links - Restrained Dark Luxury Palette */}
-          <nav className="hidden md:flex items-center space-x-8 text-xs tracking-[0.2em] text-white/80 uppercase font-sans-body font-medium">
-            <a href="#promise" className="hover:text-[#45a3a5] transition-colors py-1">
-              The Directive
-            </a>
-            <a href="#perspectives" className="hover:text-[#45a3a5] transition-colors py-1">
-              Perspectives
-            </a>
-            <a href="#arch-portal" className="hover:text-[#45a3a5] transition-colors py-1">
-              Portal
-            </a>
-            <a href="#horizontal-scroll" className="hover:text-[#45a3a5] transition-colors py-1">
-              Stories
-            </a>
-            <a href="#masterplan" className="hover:text-[#45a3a5] transition-colors py-1">
-              Timelapse
-            </a>
-          </nav>
-
-          {/* Actions & Menu Button */}
-          <div className="flex items-center gap-3">
-            <a
-              href="https://wa.me/923000000000?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 text-xs font-semibold tracking-wider text-white bg-[#0e2728]/90 hover:bg-[#153b3c] border border-white/15 px-4 py-2 rounded-full transition-all duration-300 shadow-md"
-            >
-              <MessageCircle className="w-3.5 h-3.5 text-[#45a3a5]" />
-              <span>WhatsApp</span>
-            </a>
-
-            <a
-              href="#register"
-              className="hidden lg:inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.15em] bg-[#153b3c] hover:bg-[#276e70] text-white border border-[#45a3a5]/40 px-5 py-2 rounded-full transition-all duration-300 shadow-md"
-            >
-              <span>Inquire</span>
-              <ArrowUpRight className="w-4 h-4 text-[#45a3a5]" />
-            </a>
-
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden text-white p-2 hover:text-[#45a3a5] transition-colors"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Mobile Drawer Overlay */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-[#061112]/98 backdrop-blur-2xl flex flex-col justify-center px-8 sm:px-12 md:hidden">
-          <div className="relative w-64 h-20 mb-8">
-            <Image
-              src="/new-logo.png"
-              alt="Orion One Logo"
-              fill
-              sizes="256px"
-              className="object-contain object-left"
-            />
+        {/* Mobile Drawer Overlay */}
+        {menuOpen && (
+          <div className="fixed inset-0 z-50 bg-[#153D3D]/98 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-10 lg:hidden overflow-y-auto">
+            {/* Top Bar inside drawer */}
+            <div className="flex items-center justify-between pb-6 border-b border-[#EDE5DA]/10">
+              <div className="relative h-10 w-44">
+                <Image
+                  src="/new-logo.png"
+                  alt="Orion One Logo"
+                  fill
+                  sizes="176px"
+                  className="object-contain object-left"
+                />
+              </div>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="p-2 text-[#EDE5DA] hover:text-[#62AA9E] transition-colors cursor-pointer rounded-full"
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Nav Links */}
+            <nav className="flex flex-col space-y-4 my-auto py-6 text-base sm:text-lg font-serif tracking-widest text-[#EDE5DA]">
+              <a
+                href="#architecture"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+              >
+                <span>01. Architecture</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Twin Towers</span>
+              </a>
+              <a
+                href="#waterfront"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+              >
+                <span>02. Life by the Water</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Promenade</span>
+              </a>
+              <a
+                href="#destination"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+              >
+                <span>03. Destination & Pillars</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">4 Pillars</span>
+              </a>
+              <a
+                href="#masterplan"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+              >
+                <span>04. District Masterplan</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Interactive</span>
+              </a>
+              <a
+                href="#investment"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+              >
+                <span>05. Lifestyle & Investment</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Sector F</span>
+              </a>
+            </nav>
+
+            {/* Actions in drawer */}
+            <div className="space-y-3 pt-4 border-t border-[#EDE5DA]/10">
+              <button
+                onClick={(e) => {
+                  setMenuOpen(false);
+                  handleInquireClick(e);
+                }}
+                className="w-full py-3 rounded-full bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] font-sans-body font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Book a Private Tour</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </button>
+
+              <a
+                href="https://wa.me/923009079164?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+                className="w-full py-2.5 rounded-full bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/15 text-[#EDE5DA] font-sans-body font-medium text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4 text-[#62AA9E]" />
+                <span>WhatsApp Concierge</span>
+              </a>
+
+              <p className="text-[10px] text-center text-[#808080] font-sans-body uppercase tracking-wider pt-2">
+                Show Suite Open Daily · 10AM – 7PM
+              </p>
+            </div>
           </div>
-
-          <nav className="flex flex-col space-y-6 text-xl font-serif-heading tracking-widest text-white">
-            <a
-              href="#promise"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-[#45a3a5] transition-colors border-b border-white/10 pb-3"
-            >
-              01. The Directive
-            </a>
-            <a
-              href="#perspectives"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-[#45a3a5] transition-colors border-b border-white/10 pb-3"
-            >
-              02. Atmospheric Perspectives
-            </a>
-            <a
-              href="#arch-portal"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-[#45a3a5] transition-colors border-b border-white/10 pb-3"
-            >
-              03. Architectural Portal
-            </a>
-            <a
-              href="#horizontal-scroll"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-[#45a3a5] transition-colors border-b border-white/10 pb-3"
-            >
-              04. Living Stories
-            </a>
-            <a
-              href="#masterplan"
-              onClick={() => setMenuOpen(false)}
-              className="hover:text-[#45a3a5] transition-colors border-b border-white/10 pb-3"
-            >
-              05. Volumetric Timelapse
-            </a>
-            <a
-              href="#register"
-              onClick={() => setMenuOpen(false)}
-              className="text-[#45a3a5] pt-4 font-sans-body uppercase text-sm tracking-widest font-bold"
-            >
-              Register Interest →
-            </a>
-          </nav>
-        </div>
-      )}
-    </>
-  );
-});
+        )}
+      </>
+    );
+  }
+);
 
 Header.displayName = "Header";
 

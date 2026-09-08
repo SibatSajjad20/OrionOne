@@ -1,7 +1,14 @@
-import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#153D3D",
+};
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -10,8 +17,8 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
@@ -20,21 +27,21 @@ const jakarta = Plus_Jakarta_Sans({
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Orion One | Lakefront Living & Commercial Destination, DHA Phase III Islamabad",
+  title: "Orion One | Where the Lake Meets Living — DHA Phase III Islamabad",
   description:
-    "Orion One is a landmark lakefront development in DHA Phase III, Islamabad — premium residences, commercial spaces, and lakeside lifestyle by SP Builders. Register your interest today.",
+    "Orion One is a landmark lakefront destination in DHA Phase III, Islamabad — luxury residences, commercial terraces, and lakeside lifestyle by SP Builders.",
   keywords: [
     "Orion One",
+    "Where the Lake Meets Living",
     "DHA Phase III Islamabad",
     "SP Builders",
-    "Lakefront Living Islamabad",
+    "Prestige Lakefront Living",
     "Commercial Terraces Islamabad",
-    "Prestige Lakefront",
   ],
 };
 
@@ -46,9 +53,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${jakarta.variable} ${playfair.variable} dark`}
+      className={`${cormorant.variable} ${montserrat.variable} ${playfair.variable} dark`}
     >
-      <body className="min-h-screen bg-[#09191a] text-[#FAFAFA] antialiased selection:bg-[#C5A880] selection:text-[#09191a]">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if('scrollRestoration' in history){history.scrollRestoration='manual';}window.scrollTo(0,0);}catch(e){}",
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D]">
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

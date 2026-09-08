@@ -7,21 +7,47 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
 }
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // Enforce manual scroll restoration and reset window scroll to top
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+
+    const handleBeforeUnload = () => {
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 1,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5,
+      autoRaf: false,
     });
 
-    (window as any).lenis = lenis;
+    (window as unknown as { lenis?: unknown }).lenis = lenis;
+
+    // Immediately anchor scroll position at top
+    lenis.scrollTo(0, { immediate: true });
 
     lenis.on("scroll", ScrollTrigger.update);
+
+    // Sync Lenis directly with GSAP Ticker for unified, jitter-free 60fps/120fps lock
+    const updateTicker = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(updateTicker);
+    gsap.ticker.lagSmoothing(0);
 
     // Sync Lenis scroll limit whenever GSAP ScrollTrigger refreshes pin layout
     const handleRefresh = () => {
@@ -30,19 +56,9 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     ScrollTrigger.addEventListener("refresh", handleRefresh);
 
-    let animationFrameId: number;
-
-    function raf(time: number) {
-      lenis.raf(time);
-      animationFrameId = requestAnimationFrame(raf);
-    }
-
-    animationFrameId = requestAnimationFrame(raf);
-
     return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      gsap.ticker.remove(updateTicker);
       ScrollTrigger.removeEventListener("refresh", handleRefresh);
       lenis.destroy();
     };

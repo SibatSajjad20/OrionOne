@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Large design binaries and video source files
+/images/
+/images2/
+*.psd
+*.cdr
+*.mp4
+*.pdf
+CLAUDE.md
+/public/video-frames-balcony-backup/
+/public/video-frames-old/
