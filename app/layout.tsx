@@ -54,9 +54,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${cormorant.variable} ${montserrat.variable} ${playfair.variable} dark`}
+      suppressHydrationWarning
     >
-      <head>
+      <head suppressHydrationWarning>
         <script
+          id="scroll-restoration"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html:
               "try{if('scrollRestoration' in history){history.scrollRestoration='manual';}window.scrollTo(0,0);}catch(e){}",

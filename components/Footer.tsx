@@ -48,23 +48,20 @@ export default function Footer() {
               The Journey
             </span>
             <div className="flex flex-col space-y-2.5 text-xs text-[#EDE5DA]/80 font-light">
-              <a href="#hero" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                01. Opening Horizon
-              </a>
               <a href="#architecture" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                02. Architectural Vision
+                01. Architectural Vision
               </a>
               <a href="#waterfront" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                03. Life by the Water
+                02. Life by the Water
               </a>
               <a href="#destination" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                04. The Destination & Pillars
+                03. The Destination & Pillars
               </a>
               <a href="#masterplan" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                05. District Masterplan
+                04. District Masterplan
               </a>
               <a href="#investment" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                06. Investment Proposition
+                05. Investment Proposition
               </a>
             </div>
           </div>

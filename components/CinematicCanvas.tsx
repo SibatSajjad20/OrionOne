@@ -5,7 +5,6 @@ import NextImage from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import {
-  ChevronDown,
   Waves,
   Sparkles,
   Trees,
@@ -27,6 +26,8 @@ if (typeof window !== "undefined") {
 const TOTAL_FRAMES = 393;
 const PRIORITY_FRAMES_COUNT = 35;
 const BG_CHUNK_SIZE = 50;
+const COLUMN_FRAMES_COUNT = 80;
+const COLUMN_BG_CHUNK_SIZE = 20;
 
 interface Hotspot {
   id: string;
@@ -99,6 +100,47 @@ const BRAND_PILLARS = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// MODULAR 3-COLUMN INVESTMENT CONFIGURATION
+// Ready for future column-specific video frames / folders:
+// Simply update startFrame / endFrame or point to separate column asset arrays.
+// ---------------------------------------------------------------------------
+interface InvestmentColumnConfig {
+  id: string;
+  number: string;
+  title: string;
+  subtitle: string;
+  detail: string;
+  folder: string;
+}
+
+const INVESTMENT_COLUMNS: InvestmentColumnConfig[] = [
+  {
+    id: "col-1",
+    number: "01",
+    title: "Commercial Arcade",
+    subtitle: "High-End Galleria",
+    detail: "Double-height luxury fashion retail arcade and bespoke designer boutiques.",
+    folder: "column-1-frames",
+  },
+  {
+    id: "col-2",
+    number: "02",
+    title: "Curated Residences",
+    subtitle: "Panoramic Lake Living",
+    detail: "Expansive open-plan living with floor-to-ceiling glass and private sunset balconies.",
+    folder: "column-2-frames",
+  },
+  {
+    id: "col-3",
+    number: "03",
+    title: "Signature Amenities",
+    subtitle: "Promenade & Fine Dining",
+    detail: "Lakeside open-air fine dining terraces, wellness club, and scenic waterfront promenade.",
+    folder: "column-3-frames",
+  },
+];
+
 interface CinematicCanvasProps {
   onOpenInquiry?: () => void;
 }
@@ -107,16 +149,38 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // 7 Story Chapter Overlay Refs
-  const ch1Ref = useRef<HTMLDivElement>(null); // 01. Hero / Horizon
-  const ch2Ref = useRef<HTMLDivElement>(null); // 02. Architecture
-  const ch3Ref = useRef<HTMLDivElement>(null); // 03. Waterfront
-  const ch4Ref = useRef<HTMLDivElement>(null); // 04. Destination & Pillars
-  const ch5Ref = useRef<HTMLDivElement>(null); // 05. District Masterplan
-  const ch6Ref = useRef<HTMLDivElement>(null); // 06. Investment Proposition
-  const ch7Ref = useRef<HTMLDivElement>(null); // 07. Closing Horizon & CTA
+  // Story Chapter Overlay Refs
+  const ch2Ref = useRef<HTMLDivElement>(null); // 01. Architecture / A New Horizon
+  const ch3Ref = useRef<HTMLDivElement>(null); // 02. Waterfront
+  const ch4Ref = useRef<HTMLDivElement>(null); // 03. Destination & Pillars
+  const ch5Ref = useRef<HTMLDivElement>(null); // 04. District Masterplan
+  const ch6Ref = useRef<HTMLDivElement>(null); // 05. Investment Proposition
+  const ch7Ref = useRef<HTMLDivElement>(null); // 06. Closing Horizon & CTA
+
+  // 3 Investment Column Canvas, Content, Bar & Scrim Refs
+  const col1CanvasRef = useRef<HTMLCanvasElement>(null);
+  const col2CanvasRef = useRef<HTMLCanvasElement>(null);
+  const col3CanvasRef = useRef<HTMLCanvasElement>(null);
+  const col1CardRef = useRef<HTMLDivElement>(null);
+  const col2CardRef = useRef<HTMLDivElement>(null);
+  const col3CardRef = useRef<HTMLDivElement>(null);
+  const col1BarRef = useRef<HTMLDivElement>(null);
+  const col2BarRef = useRef<HTMLDivElement>(null);
+  const col3BarRef = useRef<HTMLDivElement>(null);
+  const col1ScrimRef = useRef<HTMLDivElement>(null);
+  const col2ScrimRef = useRef<HTMLDivElement>(null);
+  const col3ScrimRef = useRef<HTMLDivElement>(null);
+  const col1CtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const col2CtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const col3CtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const col1LastFrameRef = useRef<number>(-1);
+  const col2LastFrameRef = useRef<number>(-1);
+  const col3LastFrameRef = useRef<number>(-1);
 
   const framesRef = useRef<HTMLImageElement[]>([]);
+  const col1FramesRef = useRef<HTMLImageElement[]>([]);
+  const col2FramesRef = useRef<HTMLImageElement[]>([]);
+  const col3FramesRef = useRef<HTMLImageElement[]>([]);
 
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -160,19 +224,85 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     );
   }, []);
 
+  // Column-specific canvas renderer with aspect-ratio cover
+  const renderFrameToColumnCanvas = useCallback(
+    (
+      canvas: HTMLCanvasElement | null,
+      ctxHolder: { current: CanvasRenderingContext2D | null },
+      img: HTMLImageElement | null
+    ) => {
+      if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
+      if (canvas.width === 0 || canvas.height === 0) {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = (rect.width || 360) * dpr;
+        canvas.height = (rect.height || 420) * dpr;
+      }
+      if (!ctxHolder.current) {
+        ctxHolder.current = canvas.getContext("2d", { alpha: false });
+      }
+      const ctx = ctxHolder.current;
+      if (!ctx) return;
+
+      const hRatio = canvas.width / img.width;
+      const vRatio = canvas.height / img.height;
+      const ratio = Math.max(hRatio, vRatio);
+
+      const centerShift_x = (canvas.width - img.width * ratio) / 2;
+      const centerShift_y = (canvas.height - img.height * ratio) / 2;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "medium";
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        img.width,
+        img.height,
+        centerShift_x,
+        centerShift_y,
+        img.width * ratio,
+        img.height * ratio
+      );
+    },
+    []
+  );
+
   // High-DPI Canvas Resizing
   const updateCanvasSize = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-    lastFrameIndexRef.current = -1; // Invalidate frame cache to force fresh redraw
+    if (canvas) {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      lastFrameIndexRef.current = -1; // Invalidate frame cache to force fresh redraw
 
-    if (framesRef.current.length > 0 && framesRef.current[0]) {
-      renderToCanvas(framesRef.current[0]);
+      if (framesRef.current.length > 0 && framesRef.current[0]) {
+        renderToCanvas(framesRef.current[0]);
+      }
     }
-  }, [renderToCanvas]);
+
+    // Resize 3 investment column canvases (full width 1/3 and full height)
+    const colWidth = window.innerWidth / 3;
+    const colHeight = window.innerHeight;
+    const colCanvases = [
+      { canvas: col1CanvasRef.current, ctx: col1CtxRef, lastRef: col1LastFrameRef, framesRef: col1FramesRef },
+      { canvas: col2CanvasRef.current, ctx: col2CtxRef, lastRef: col2LastFrameRef, framesRef: col2FramesRef },
+      { canvas: col3CanvasRef.current, ctx: col3CtxRef, lastRef: col3LastFrameRef, framesRef: col3FramesRef },
+    ];
+    colCanvases.forEach(({ canvas: c, ctx, lastRef, framesRef: colFRef }) => {
+      if (!c) return;
+      const rect = c.getBoundingClientRect();
+      const w = rect.width > 0 ? rect.width : colWidth;
+      const h = rect.height > 0 ? rect.height : colHeight;
+      c.width = w * dpr;
+      c.height = h * dpr;
+      lastRef.current = -1;
+      if (colFRef.current[0]) {
+        renderFrameToColumnCanvas(c, ctx, colFRef.current[0]);
+      }
+    });
+  }, [renderToCanvas, renderFrameToColumnCanvas]);
 
   // 2. PROGRESSIVE FRAME LOADING LOGIC
   // Phase 1 (Priority): Load first 30 frames immediately for instant interactive Hero state
@@ -180,6 +310,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   useEffect(() => {
     let isCancelled = false;
     const loadedFrames: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+    const col1Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
+    const col2Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
+    const col3Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
 
     const loadImage = (src: string): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
@@ -219,7 +352,32 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         priorityPromises.push(promise);
       }
 
-      await Promise.all(priorityPromises);
+      // Priority load frame 1 for each of the 3 columns
+      const colInitialPromises = [
+        loadImage("/column-1-frames/frame_0001.jpg").then((img) => {
+          if (isCancelled) return;
+          col1Frames[0] = img;
+          col1FramesRef.current = col1Frames;
+          col1LastFrameRef.current = 0;
+          renderFrameToColumnCanvas(col1CanvasRef.current, col1CtxRef, img);
+        }),
+        loadImage("/column-2-frames/frame_0001.jpg").then((img) => {
+          if (isCancelled) return;
+          col2Frames[0] = img;
+          col2FramesRef.current = col2Frames;
+          col2LastFrameRef.current = 0;
+          renderFrameToColumnCanvas(col2CanvasRef.current, col2CtxRef, img);
+        }),
+        loadImage("/column-3-frames/frame_0001.jpg").then((img) => {
+          if (isCancelled) return;
+          col3Frames[0] = img;
+          col3FramesRef.current = col3Frames;
+          col3LastFrameRef.current = 0;
+          renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, img);
+        }),
+      ];
+
+      await Promise.all([...priorityPromises, ...colInitialPromises]);
 
       if (isCancelled) return;
 
@@ -229,7 +387,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         renderToCanvas(loadedFrames[0]);
       }
 
-      // Smooth luxury transition: dissolve preloader & gracefully reveal Hero
+      // Smooth luxury transition: dissolve preloader & gracefully reveal starting section
       if (preloaderRef.current) {
         gsap.to(preloaderRef.current, {
           opacity: 0,
@@ -243,9 +401,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         setIsPreloaderDone(true);
       }
 
-      if (ch1Ref.current) {
+      if (ch2Ref.current) {
         gsap.fromTo(
-          ch1Ref.current,
+          ch2Ref.current,
           { opacity: 0, y: 28 },
           {
             opacity: 1,
@@ -260,8 +418,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         );
       }
 
-      // Start Background Load for remaining frames in chunks of 50
+      // Start Background Load for remaining frames in chunks
       loadBackgroundFrames(loadedFrames);
+      loadBackgroundColumnFrames(col1Frames, col2Frames, col3Frames);
     };
 
     const loadBackgroundFrames = async (framesArray: HTMLImageElement[]) => {
@@ -292,12 +451,58 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       }
     };
 
+    const loadBackgroundColumnFrames = async (
+      c1: HTMLImageElement[],
+      c2: HTMLImageElement[],
+      c3: HTMLImageElement[]
+    ) => {
+      let currentFrame = 2;
+
+      while (currentFrame <= COLUMN_FRAMES_COUNT && !isCancelled) {
+        const chunkEnd = Math.min(currentFrame + COLUMN_BG_CHUNK_SIZE - 1, COLUMN_FRAMES_COUNT);
+        const chunkPromises: Promise<void>[] = [];
+
+        for (let i = currentFrame; i <= chunkEnd; i++) {
+          const idx = i - 1;
+          const frameNum = String(i).padStart(4, "0");
+
+          chunkPromises.push(
+            loadImage(`/column-1-frames/frame_${frameNum}.jpg`).then((img) => {
+              if (isCancelled) return;
+              c1[idx] = img;
+            })
+          );
+          chunkPromises.push(
+            loadImage(`/column-2-frames/frame_${frameNum}.jpg`).then((img) => {
+              if (isCancelled) return;
+              c2[idx] = img;
+            })
+          );
+          chunkPromises.push(
+            loadImage(`/column-3-frames/frame_${frameNum}.jpg`).then((img) => {
+              if (isCancelled) return;
+              c3[idx] = img;
+            })
+          );
+        }
+
+        await Promise.all(chunkPromises);
+        if (isCancelled) break;
+
+        col1FramesRef.current = c1;
+        col2FramesRef.current = c2;
+        col3FramesRef.current = c3;
+
+        currentFrame = chunkEnd + 1;
+      }
+    };
+
     loadPriorityFrames();
 
     return () => {
       isCancelled = true;
     };
-  }, [renderToCanvas]);
+  }, [renderToCanvas, renderFrameToColumnCanvas]);
 
   // Handle Resize
   useEffect(() => {
@@ -329,10 +534,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       ScrollTrigger.create({
         trigger: container,
         start: "top top",
-        end: "+=750%", // Ample scroll room for unhurried 7 chapters
+        end: "+=1100%", // Extended pin scroll track for comfortable, unhurried column video scrubbing
         pin: true,
         pinSpacing: true,
-        scrub: 0.5,
+        scrub: 0.6,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
@@ -365,20 +570,20 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             }
           }
 
-          // 2. Chapter 01: Hero / Opening Horizon (0% -> 15%)
-          // Fully visible at opening shot (0% -> 10%), then fades out smoothly between 10% and 15%
-          const op1 = progress <= 0.10 ? 1 : Math.max(0, 1 - (progress - 0.10) / (0.15 - 0.10));
-          if (ch1Ref.current) {
+          // 1. Starting Scene (Scene 2): A New Horizon of Luxury (0% -> 17%)
+          // Fully visible on landing (0% -> 12%), then smoothly fades out into Waterfront
+          const op2 = progress <= 0.12 ? 1 : Math.max(0, 1 - (progress - 0.12) / (0.17 - 0.12));
+          if (ch2Ref.current) {
             if (progress > 0) {
-              gsap.killTweensOf(ch1Ref.current);
+              gsap.killTweensOf(ch2Ref.current);
               hasAnimatedEntrance.current = true;
-              gsap.set(ch1Ref.current, {
-                opacity: op1,
-                y: (1 - op1) * -18,
-                pointerEvents: op1 > 0.5 ? "auto" : "none",
+              gsap.set(ch2Ref.current, {
+                opacity: op2,
+                y: (1 - op2) * -18,
+                pointerEvents: op2 > 0.5 ? "auto" : "none",
               });
             } else if (hasAnimatedEntrance.current) {
-              gsap.set(ch1Ref.current, {
+              gsap.set(ch2Ref.current, {
                 opacity: 1,
                 y: 0,
                 pointerEvents: "auto",
@@ -386,18 +591,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             }
           }
 
-          // 3. Chapter 02: Architecture (16% -> 32%)
-          const op2 = calcOpacity(progress, 0.16, 0.19, 0.28, 0.32);
-          if (ch2Ref.current) {
-            gsap.set(ch2Ref.current, {
-              opacity: op2,
-              y: (1 - op2) * 20,
-              pointerEvents: op2 > 0.5 ? "auto" : "none",
-            });
-          }
-
-          // 4. Chapter 03: Waterfront (33% -> 49%)
-          const op3 = calcOpacity(progress, 0.33, 0.36, 0.45, 0.49);
+          // 2. Waterfront (Scene 3: 17% -> 34%)
+          const op3 = calcOpacity(progress, 0.17, 0.20, 0.30, 0.34);
           if (ch3Ref.current) {
             gsap.set(ch3Ref.current, {
               opacity: op3,
@@ -406,8 +601,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             });
           }
 
-          // 5. Chapter 04: Destination & Pillars (50% -> 59%)
-          const op4 = calcOpacity(progress, 0.50, 0.52, 0.56, 0.59);
+          // 3. Destination & Pillars (Scene 4: 34% -> 47%)
+          const op4 = calcOpacity(progress, 0.34, 0.36, 0.44, 0.47);
           if (ch4Ref.current) {
             gsap.set(ch4Ref.current, {
               opacity: op4,
@@ -416,8 +611,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             });
           }
 
-          // 6. Chapter 05: District Masterplan & Hotspots (59% -> 75%)
-          const op5 = calcOpacity(progress, 0.59, 0.62, 0.71, 0.75);
+          // 4. District Masterplan & Hotspots (Scene 5: 47% -> 64%)
+          const op5 = calcOpacity(progress, 0.47, 0.50, 0.60, 0.63);
           if (ch5Ref.current) {
             gsap.set(ch5Ref.current, {
               opacity: op5,
@@ -425,18 +620,106 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             });
           }
 
-          // 7. Chapter 06: Lifestyle Meets Investment (75% -> 82%)
-          const op6 = calcOpacity(progress, 0.75, 0.77, 0.80, 0.82);
+          // 5. Lifestyle Meets Investment (Scene 6: 63% -> 92%)
+          // Generously extended duration so all 3 column video clips scrub smoothly and unhurriedly
+          const op6 = calcOpacity(progress, 0.63, 0.66, 0.89, 0.92);
           if (ch6Ref.current) {
             gsap.set(ch6Ref.current, {
               opacity: op6,
-              y: (1 - op6) * 18,
+              y: (1 - op6) * 16,
               pointerEvents: op6 > 0.5 ? "auto" : "none",
             });
           }
 
-          // 8. Chapter 07: Closing Horizon & CTA (83% -> 100%)
-          const op7 = calcOpacity(progress, 0.83, 0.86, 0.99, 1.0);
+          // Sequential 3-column scroll movement and frame scrubbing
+          // Phase 1 (0.00 -> 0.33): Column 1 moves and scrubs its frames
+          // Phase 2 (0.33 -> 0.66): Column 2 moves and scrubs its frames
+          // Phase 3 (0.66 -> 1.00): Column 3 moves and scrubs its frames
+          const investProg = Math.max(0, Math.min(1, (progress - 0.66) / (0.88 - 0.66)));
+          const p1 = Math.max(0, Math.min(1, investProg / 0.33));
+          const p2 = Math.max(0, Math.min(1, (investProg - 0.33) / 0.33));
+          const p3 = Math.max(0, Math.min(1, (investProg - 0.66) / 0.34));
+
+          const getColFrame = (colFrames: HTMLImageElement[], idx: number) => {
+            if (colFrames[idx]) return colFrames[idx];
+            for (let k = idx - 1; k >= 0; k--) {
+              if (colFrames[k]) return colFrames[k];
+            }
+            for (let k = idx + 1; k < colFrames.length; k++) {
+              if (colFrames[k]) return colFrames[k];
+            }
+            return colFrames[0] || null;
+          };
+
+          const col1FrameIdx = Math.min(
+            COLUMN_FRAMES_COUNT - 1,
+            Math.floor(p1 * (COLUMN_FRAMES_COUNT - 1))
+          );
+          const col2FrameIdx = Math.min(
+            COLUMN_FRAMES_COUNT - 1,
+            Math.floor(p2 * (COLUMN_FRAMES_COUNT - 1))
+          );
+          const col3FrameIdx = Math.min(
+            COLUMN_FRAMES_COUNT - 1,
+            Math.floor(p3 * (COLUMN_FRAMES_COUNT - 1))
+          );
+
+          if (col1FrameIdx !== col1LastFrameRef.current) {
+            col1LastFrameRef.current = col1FrameIdx;
+            const img = getColFrame(col1FramesRef.current, col1FrameIdx);
+            if (img) renderFrameToColumnCanvas(col1CanvasRef.current, col1CtxRef, img);
+          }
+          if (col2FrameIdx !== col2LastFrameRef.current) {
+            col2LastFrameRef.current = col2FrameIdx;
+            const img = getColFrame(col2FramesRef.current, col2FrameIdx);
+            if (img) renderFrameToColumnCanvas(col2CanvasRef.current, col2CtxRef, img);
+          }
+          if (col3FrameIdx !== col3LastFrameRef.current) {
+            col3LastFrameRef.current = col3FrameIdx;
+            const img = getColFrame(col3FramesRef.current, col3FrameIdx);
+            if (img) renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, img);
+          }
+
+          // Individual column progress bars
+          if (col1BarRef.current) col1BarRef.current.style.width = `${p1 * 100}%`;
+          if (col2BarRef.current) col2BarRef.current.style.width = `${p2 * 100}%`;
+          if (col3BarRef.current) col3BarRef.current.style.width = `${p3 * 100}%`;
+
+          // Column focus scrims & content vertical scroll motion
+          const isCol1Active = investProg > 0 && investProg <= 0.33;
+          const isCol2Active = investProg > 0.33 && investProg <= 0.66;
+          const isCol3Active = investProg > 0.66 && investProg <= 1.0;
+
+          // Focus scrims: active column is illuminated (opacity 0), inactive are subtly shaded
+          if (col1ScrimRef.current) {
+            col1ScrimRef.current.style.opacity = isCol1Active ? "0" : p1 >= 1 ? "0.2" : "0.55";
+          }
+          if (col2ScrimRef.current) {
+            col2ScrimRef.current.style.opacity = isCol2Active ? "0" : p2 >= 1 ? "0.2" : "0.55";
+          }
+          if (col3ScrimRef.current) {
+            col3ScrimRef.current.style.opacity = isCol3Active ? "0" : p3 >= 1 ? "0.2" : "0.55";
+          }
+
+          // Text content lifts smoothly as each column moves
+          if (col1CardRef.current) {
+            gsap.set(col1CardRef.current, {
+              y: (1 - p1) * 20,
+            });
+          }
+          if (col2CardRef.current) {
+            gsap.set(col2CardRef.current, {
+              y: (1 - p2) * 20,
+            });
+          }
+          if (col3CardRef.current) {
+            gsap.set(col3CardRef.current, {
+              y: (1 - p3) * 20,
+            });
+          }
+
+          // 6. Closing Horizon & CTA (Scene 7: 90% -> 100%)
+          const op7 = calcOpacity(progress, 0.90, 0.93, 0.99, 1.0);
           if (ch7Ref.current) {
             gsap.set(ch7Ref.current, {
               opacity: op7,
@@ -464,7 +747,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       clearTimeout(timer2);
       ctx.revert();
     };
-  }, [renderToCanvas]);
+  }, [renderToCanvas, renderFrameToColumnCanvas]);
 
   return (
     <section
@@ -529,70 +812,20 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0d2828]/95 via-transparent to-[#153D3D]/40 pointer-events-none" />
 
       {/* --------------------------------------------------------------------- */}
-      {/* 01. HERO / OPENING HORIZON (Exact copy from 01 - Home Page.pdf)       */}
-      {/* --------------------------------------------------------------------- */}
-      <div
-        ref={ch1Ref}
-        id="hero"
-        className="absolute inset-0 flex flex-col items-center justify-center text-center max-w-5xl mx-auto px-4 sm:px-6 z-20 pointer-events-auto opacity-0"
-      >
-        <div className="relative h-12 sm:h-22 lg:h-24 w-56 sm:w-96 lg:w-[420px] mb-4 sm:mb-6">
-          <NextImage
-            src="/new-logo.png"
-            alt="Orion One"
-            fill
-            priority
-            sizes="(max-width: 640px) 224px, (max-width: 1024px) 384px, 420px"
-            className="object-contain object-center filter brightness-110"
-          />
-        </div>
-
-        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <div className="w-6 sm:w-12 h-[1px] bg-[#62AA9E]/60" />
-          <span className="text-[8.5px] sm:text-xs tracking-[0.22em] sm:tracking-[0.45em] font-semibold text-[#62AA9E] uppercase whitespace-nowrap">
-            ORION ONE · DHA PHASE III · ISLAMABAD
-          </span>
-          <div className="w-6 sm:w-12 h-[1px] bg-[#62AA9E]/60" />
-        </div>
-
-        <h1 className="font-serif text-3xl sm:text-6xl lg:text-8xl font-light tracking-tight text-[#EDE5DA] leading-[0.95] uppercase">
-          Where the Lake
-          <span className="block font-serif italic text-[#62AA9E] font-normal text-2xl sm:text-5xl lg:text-7xl mt-1.5 sm:mt-2 normal-case">
-            Meets Living.
-          </span>
-        </h1>
-
-        <div className="mt-8 sm:mt-14 flex items-center justify-center gap-3 text-[#EDE5DA]/80">
-          <div className="w-6 sm:w-8 h-[1px] bg-[#62AA9E]" />
-          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-sans-body font-medium text-[#EDE5DA]/90">
-            Scroll
-          </span>
-          <ChevronDown className="w-4 h-4 text-[#62AA9E] animate-bounce" />
-        </div>
-      </div>
-
-      {/* --------------------------------------------------------------------- */}
-      {/* 02. ARCHITECTURE (Frame 02 from 01 - Home Page.pdf)                   */}
+      {/* 01. A NEW HORIZON OF LUXURY (Starting Chapter)                        */}
       {/* --------------------------------------------------------------------- */}
       <div
         ref={ch2Ref}
         id="architecture"
-        className="absolute inset-0 flex items-center justify-center sm:justify-end px-4 sm:px-12 lg:px-24 z-20 opacity-0"
+        className="absolute inset-0 flex items-center justify-center sm:justify-end px-4 sm:px-12 lg:px-24 z-20 pointer-events-auto opacity-0"
       >
         <div className="max-w-xl text-left sm:text-right space-y-3 sm:space-y-4">
-          <div className="flex items-center justify-start sm:justify-end gap-3 mb-1">
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-            <span className="text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
-              Architecture
-            </span>
-          </div>
-
-          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase">
+          <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase">
             A New Horizon
             <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
               of Luxury.
             </span>
-          </h2>
+          </h1>
 
           <p className="font-serif text-base sm:text-2xl font-light text-[#EDE5DA]/90 italic leading-relaxed">
             “Where architecture flows like water and every view inspires.”
@@ -807,40 +1040,167 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       <div
         ref={ch6Ref}
         id="investment"
-        className="absolute inset-0 flex items-center justify-center sm:justify-start px-4 sm:px-12 lg:px-24 z-20 opacity-0"
+        className="absolute inset-0 w-full h-full z-20 opacity-0 pointer-events-none overflow-hidden"
       >
-        <div className="max-w-xl text-left space-y-4 sm:space-y-5">
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
-              Investment
-            </span>
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
+        {/* Floating Top Header across the 3 columns */}
+        <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none px-6 sm:px-12 lg:px-16 pt-8 sm:pt-12 pb-16 bg-gradient-to-b from-[#0d2828]/95 via-[#0d2828]/60 to-transparent">
+          <div className="w-full">
+            <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase">
+              Where Lifestyle{" "}
+              <span className="font-serif italic text-[#62AA9E] font-normal normal-case">
+                Meets Investment.
+              </span>
+            </h2>
+          </div>
+        </div>
+
+        {/* 3 Columns: Full Width, Full Height, Edge-to-Edge */}
+        <div className="w-full h-full grid grid-cols-3">
+          {/* Column 01: Commercial Arcade */}
+          <div className="relative h-full overflow-hidden border-r border-[#EDE5DA]/15 flex flex-col justify-end">
+            {/* Poster fallback for instant display */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/column-1-frames/frame_0001.jpg"
+              alt="Commercial Arcade"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+            />
+            <canvas
+              ref={col1CanvasRef}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
+            />
+            {/* Base gradient for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/95 via-[#0d2828]/35 to-transparent pointer-events-none z-[15]" />
+            {/* Dynamic focus scrim */}
+            <div
+              ref={col1ScrimRef}
+              className="absolute inset-0 bg-[#0d2828] transition-opacity duration-300 pointer-events-none z-[15]"
+              style={{ opacity: 0.55 }}
+            />
+
+            {/* Column Bottom Content */}
+            <div
+              ref={col1CardRef}
+              className="relative z-20 p-4 sm:p-8 lg:p-12 pb-8 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
+            >
+              <div className="space-y-1 sm:space-y-2">
+                <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
+                  {INVESTMENT_COLUMNS[0].subtitle}
+                </span>
+                <h3 className="font-serif text-base sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
+                  {INVESTMENT_COLUMNS[0].title}
+                </h3>
+                <p className="text-[10px] sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed hidden sm:block">
+                  {INVESTMENT_COLUMNS[0].detail}
+                </p>
+              </div>
+
+              {/* Progress Indicator */}
+              <div className="pt-2 sm:pt-4">
+                <div className="w-full h-1 sm:h-1.5 rounded-full bg-[#EDE5DA]/20 overflow-hidden backdrop-blur-sm">
+                  <div
+                    ref={col1BarRef}
+                    className="h-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full transition-all duration-75"
+                    style={{ width: "0%" }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase">
-            Where Lifestyle
-            <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
-              Meets Investment.
-            </span>
-          </h2>
+          {/* Column 02: Curated Residences */}
+          <div className="relative h-full overflow-hidden border-r border-[#EDE5DA]/15 flex flex-col justify-end">
+            {/* Poster fallback for instant display */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/column-2-frames/frame_0001.jpg"
+              alt="Curated Residences"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+            />
+            <canvas
+              ref={col2CanvasRef}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/95 via-[#0d2828]/35 to-transparent pointer-events-none z-[15]" />
+            <div
+              ref={col2ScrimRef}
+              className="absolute inset-0 bg-[#0d2828] transition-opacity duration-300 pointer-events-none z-[15]"
+              style={{ opacity: 0.55 }}
+            />
 
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-1 sm:pt-2 max-w-md">
-            <div className="p-0 sm:p-3.5 sm:rounded-xl sm:bg-[#0d2828]/80 sm:border sm:border-[#EDE5DA]/10 sm:backdrop-blur-md">
-              <span className="text-[11px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block mb-0.5 sm:mb-1">
-                Prime Scarcity
-              </span>
-              <p className="text-[10px] sm:text-[11px] text-[#EDE5DA]/75 font-light leading-snug">
-                Finite lakefront land in DHA Phase III Sector F.
-              </p>
+            <div
+              ref={col2CardRef}
+              className="relative z-20 p-4 sm:p-8 lg:p-12 pb-8 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
+            >
+              <div className="space-y-1 sm:space-y-2">
+                <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
+                  {INVESTMENT_COLUMNS[1].subtitle}
+                </span>
+                <h3 className="font-serif text-base sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
+                  {INVESTMENT_COLUMNS[1].title}
+                </h3>
+                <p className="text-[10px] sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed hidden sm:block">
+                  {INVESTMENT_COLUMNS[1].detail}
+                </p>
+              </div>
+
+              <div className="pt-2 sm:pt-4">
+                <div className="w-full h-1 sm:h-1.5 rounded-full bg-[#EDE5DA]/20 overflow-hidden backdrop-blur-sm">
+                  <div
+                    ref={col2BarRef}
+                    className="h-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full transition-all duration-75"
+                    style={{ width: "0%" }}
+                  />
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div className="p-0 sm:p-3.5 sm:rounded-xl sm:bg-[#0d2828]/80 sm:border sm:border-[#EDE5DA]/10 sm:backdrop-blur-md">
-              <span className="text-[11px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block mb-0.5 sm:mb-1">
-                Ecosystem
-              </span>
-              <p className="text-[10px] sm:text-[11px] text-[#EDE5DA]/75 font-light leading-snug">
-                Built-in residential footfall & commercial prestige.
-              </p>
+          {/* Column 03: Signature Amenities */}
+          <div className="relative h-full overflow-hidden flex flex-col justify-end">
+            {/* Poster fallback for instant display */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/column-3-frames/frame_0001.jpg"
+              alt="Signature Amenities"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+            />
+            <canvas
+              ref={col3CanvasRef}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/95 via-[#0d2828]/35 to-transparent pointer-events-none z-[15]" />
+            <div
+              ref={col3ScrimRef}
+              className="absolute inset-0 bg-[#0d2828] transition-opacity duration-300 pointer-events-none z-[15]"
+              style={{ opacity: 0.55 }}
+            />
+
+            <div
+              ref={col3CardRef}
+              className="relative z-20 p-4 sm:p-8 lg:p-12 pb-8 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
+            >
+              <div className="space-y-1 sm:space-y-2">
+                <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
+                  {INVESTMENT_COLUMNS[2].subtitle}
+                </span>
+                <h3 className="font-serif text-base sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
+                  {INVESTMENT_COLUMNS[2].title}
+                </h3>
+                <p className="text-[10px] sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed hidden sm:block">
+                  {INVESTMENT_COLUMNS[2].detail}
+                </p>
+              </div>
+
+              <div className="pt-2 sm:pt-4">
+                <div className="w-full h-1 sm:h-1.5 rounded-full bg-[#EDE5DA]/20 overflow-hidden backdrop-blur-sm">
+                  <div
+                    ref={col3BarRef}
+                    className="h-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full transition-all duration-75"
+                    style={{ width: "0%" }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
