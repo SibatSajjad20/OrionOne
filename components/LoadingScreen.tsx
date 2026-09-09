@@ -1,0 +1,40 @@
+"use client";
+
+import { forwardRef } from "react";
+
+interface LoadingScreenProps {
+  progress: number;
+  className?: string;
+}
+
+const LoadingScreen = forwardRef<HTMLDivElement, LoadingScreenProps>(
+  ({ progress, className = "" }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={`fixed inset-0 z-40 flex flex-col items-center justify-center select-none pointer-events-none bg-transparent ${className}`}
+      >
+        {/* Transparent Spacer for the 3D rotating Sub Mark in screen center */}
+        <div className="w-44 h-44 sm:w-56 sm:h-56 pointer-events-none" />
+
+        {/* Understated Quiet Luxury Typography */}
+        <div className="flex flex-col items-center text-center mt-3 sm:mt-4 space-y-2">
+          <span className="font-serif text-base sm:text-lg tracking-[0.28em] text-[#EDE5DA] font-light uppercase drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+            Orion One
+          </span>
+
+          {/* Minimal Loading Indicator */}
+          <div className="flex items-center gap-2.5 text-[10px] sm:text-[11px] tracking-[0.35em] text-[#62AA9E] uppercase font-sans-body font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+            <span>Loading</span>
+            <span className="text-[#EDE5DA]/30 text-[8px]">•</span>
+            <span className="tabular-nums text-[#EDE5DA]/85">{progress}%</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+);
+
+LoadingScreen.displayName = "LoadingScreen";
+
+export default LoadingScreen;

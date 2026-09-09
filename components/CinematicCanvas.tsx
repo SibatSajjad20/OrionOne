@@ -6,13 +6,13 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import {
   Waves,
-  Sparkles,
   Trees,
   Users,
   ShieldCheck,
   ArrowRight,
 } from "lucide-react";
 import OrionLogoScrollWheel from "./OrionLogoScrollWheel";
+import LoadingScreen from "./LoadingScreen";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -41,9 +41,9 @@ interface ChapterDef {
 
 const CHAPTER_DEFS: ChapterDef[] = [
   { id: "scene2", name: "Architecture", startIdx: 0, endIdx: 65, anchorIdx: 0 },         // frames 1..66
-  { id: "scene3", name: "Waterfront", startIdx: 66, endIdx: 162, anchorIdx: 66 },        // frames 67..163
-  { id: "scene4", name: "Destination", startIdx: 163, endIdx: 196, anchorIdx: 163 },     // frames 164..197
-  { id: "scene5", name: "Masterplan", startIdx: 197, endIdx: 275, anchorIdx: 197 },      // frames 198..276
+  { id: "scene3", name: "Waterfront", startIdx: 66, endIdx: 155, anchorIdx: 66 },        // frames 67..156 (pure Waterfront)
+  { id: "scene5", name: "Masterplan", startIdx: 204, endIdx: 275, anchorIdx: 204 },      // frames 205..276 (pure Masterplan)
+  { id: "scene4", name: "Destination", startIdx: 163, endIdx: 196, anchorIdx: 163 },     // frames 164..197 (Infinity Pool)
   { id: "scene7", name: "Closing", startIdx: 329, endIdx: 392, anchorIdx: 329 },         // frames 330..393
 ];
 
@@ -53,7 +53,7 @@ function getSafeFrame(frames: HTMLImageElement[], targetIdx: number): HTMLImageE
 
   const chapter = CHAPTER_DEFS.find((c) => targetIdx >= c.startIdx && targetIdx <= c.endIdx);
   if (!chapter) {
-    return frames[329] || frames[275] || frames[0] || null;
+    return frames[163] || frames[329] || frames[204] || frames[0] || null;
   }
 
   // Nearest frame search bounded strictly within chapter
@@ -161,6 +161,9 @@ interface CinematicCanvasProps {
 function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const crossfadeCanvasRef = useRef<HTMLCanvasElement>(null);
+  const crossfadeCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const crossfadeLastFrameRef = useRef<number>(-1);
 
   // Story Chapter Overlay Refs
   const ch2Ref = useRef<HTMLDivElement>(null); // 01. Architecture / A New Horizon
@@ -210,7 +213,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const isSection6FullyOpaqueRef = useRef<boolean>(false);
 
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isPreloaderDone, setIsPreloaderDone] = useState(false);
   const [activeMobileCol, setActiveMobileCol] = useState<number>(0);
   const preloaderRef = useRef<HTMLDivElement>(null);
@@ -227,6 +230,38 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       ctxRef.current = canvas.getContext("2d", { alpha: false });
     }
     const ctx = ctxRef.current;
+    if (!ctx || !img || !img.complete || img.naturalWidth === 0) return;
+
+    const hRatio = canvas.width / img.width;
+    const vRatio = canvas.height / img.height;
+    const ratio = Math.max(hRatio, vRatio);
+
+    const centerShift_x = (canvas.width - img.width * ratio) / 2;
+    const centerShift_y = (canvas.height - img.height * ratio) / 2;
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "medium";
+    ctx.drawImage(
+      img,
+      0,
+      0,
+      img.width,
+      img.height,
+      centerShift_x,
+      centerShift_y,
+      img.width * ratio,
+      img.height * ratio
+    );
+  }, []);
+
+  // Dedicated optical crossfade canvas renderer
+  const renderCrossfadeToCanvas = useCallback((img: HTMLImageElement | null) => {
+    const canvas = crossfadeCanvasRef.current;
+    if (!canvas) return;
+    if (!crossfadeCtxRef.current) {
+      crossfadeCtxRef.current = canvas.getContext("2d", { alpha: true });
+    }
+    const ctx = crossfadeCtxRef.current;
     if (!ctx || !img || !img.complete || img.naturalWidth === 0) return;
 
     const hRatio = canvas.width / img.width;
@@ -309,6 +344,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       }
     }
 
+    if (crossfadeCanvasRef.current) {
+      crossfadeCanvasRef.current.width = window.innerWidth * dpr;
+      crossfadeCanvasRef.current.height = window.innerHeight * dpr;
+      crossfadeLastFrameRef.current = -1;
+    }
+
     const isMobile = window.innerWidth < 768;
     const colWidth = isMobile ? window.innerWidth : window.innerWidth / 3;
     const colHeight = window.innerHeight;
@@ -366,17 +407,17 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       });
     };
 
-    // Active sequence indices (340 total frames)
-    // Scene 2: 0..65 (66 frames)
-    // Scene 3: 66..162 (97 frames)
-    // Scene 4: 163..196 (34 frames)
-    // Scene 5: 197..275 (79 frames)
-    // Scene 7: 329..392 (64 frames)
+    // Active sequence indices (327 total frames in narrative order)
+    // Scene 2 (Architecture): 0..65 (66 frames)
+    // Scene 3 (Waterfront): 66..155 (90 frames, pure Waterfront)
+    // Scene 5 (Masterplan): 204..275 (72 frames, pure Masterplan)
+    // Scene 4 (Destination): 163..196 (34 frames, Infinity Pool)
+    // Scene 7 (Closing): 329..392 (64 frames)
     const activeIndices: number[] = [];
     for (let i = 0; i <= 65; i++) activeIndices.push(i);
-    for (let i = 66; i <= 162; i++) activeIndices.push(i);
+    for (let i = 66; i <= 155; i++) activeIndices.push(i);
+    for (let i = 204; i <= 275; i++) activeIndices.push(i);
     for (let i = 163; i <= 196; i++) activeIndices.push(i);
-    for (let i = 197; i <= 275; i++) activeIndices.push(i);
     for (let i = 329; i <= 392; i++) activeIndices.push(i);
 
     const runWorkerPool = async (
@@ -577,6 +618,15 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           if (img3) renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, img3);
         }
       }
+
+      // Draw crossfade frame during transition between Scene 3 and Scene 5
+      const prog = scrollProgressRef.current;
+      if (prog >= 0.245 && prog <= 0.275) {
+        if (crossfadeLastFrameRef.current !== 155 && frames[155]) {
+          crossfadeLastFrameRef.current = 155;
+          renderCrossfadeToCanvas(frames[155]);
+        }
+      }
     };
 
     gsap.ticker.add(renderTick);
@@ -584,7 +634,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     return () => {
       gsap.ticker.remove(renderTick);
     };
-  }, [renderToCanvas, renderFrameToColumnCanvas]);
+  }, [renderToCanvas, renderCrossfadeToCanvas, renderFrameToColumnCanvas]);
 
   // ---------------------------------------------------------------------------
   // GSAP SCROLL LOGIC SYNCHRONIZED WITH LENIS
@@ -628,26 +678,43 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           const progress = self.progress;
           scrollProgressRef.current = progress;
 
+          // Optical Crossfade between Scene 3 (Waterfront frame 155) and Scene 5 (Masterplan frame 204)
+          if (crossfadeCanvasRef.current) {
+            if (progress >= 0.250 && progress <= 0.272) {
+              const crossT = Math.max(0, Math.min(1, (progress - 0.252) / (0.270 - 0.252)));
+              crossfadeCanvasRef.current.style.opacity = `${(1 - crossT).toFixed(3)}`;
+            } else if (crossfadeCanvasRef.current.style.opacity !== "0") {
+              crossfadeCanvasRef.current.style.opacity = "0";
+            }
+          }
+
           // 1. Calculate piecewise main frame index
           let frameIndex = 0;
           if (progress <= 0.109) {
+            // Scene 2: Architecture (frames 0..65)
             const norm = Math.max(0, Math.min(1, progress / 0.109));
             frameIndex = Math.floor(norm * 65);
-          } else if (progress <= 0.269) {
-            const norm = Math.max(0, Math.min(1, (progress - 0.109) / (0.269 - 0.109)));
-            frameIndex = 66 + Math.floor(norm * (162 - 66));
-          } else if (progress <= 0.327) {
-            const norm = Math.max(0, Math.min(1, (progress - 0.269) / (0.327 - 0.269)));
-            frameIndex = 163 + Math.floor(norm * (196 - 163));
-          } else if (progress <= 0.440) {
-            const norm = Math.max(0, Math.min(1, (progress - 0.327) / (0.440 - 0.327)));
-            frameIndex = 197 + Math.floor(norm * (275 - 197));
-          } else if (progress <= 0.468) {
+          } else if (progress <= 0.255) {
+            // Scene 3: Waterfront (frames 66..155 - pure Waterfront)
+            const norm = Math.max(0, Math.min(1, (progress - 0.109) / (0.255 - 0.109)));
+            frameIndex = 66 + Math.floor(norm * (155 - 66));
+          } else if (progress <= 0.380) {
+            // Scene 5: Masterplan (frames 204..275 - pure Masterplan)
+            const norm = Math.max(0, Math.min(1, (progress - 0.255) / (0.380 - 0.255)));
+            frameIndex = 204 + Math.floor(norm * (275 - 204));
+          } else if (progress <= 0.405) {
+            // Hold end of Masterplan during Section 6 dissolve in
             frameIndex = 275;
-          } else if (progress <= 0.865) {
-            frameIndex = 329;
+          } else if (progress <= 0.708) {
+            // Section 6 (Investment) active: holds frame 163 ready for Scene 4 (Destination)
+            frameIndex = 163;
+          } else if (progress <= 0.845) {
+            // Scene 4: Destination & Pillars (frames 163..196 - Infinity Pool)
+            const norm = Math.max(0, Math.min(1, (progress - 0.708) / (0.845 - 0.708)));
+            frameIndex = 163 + Math.floor(norm * (196 - 163));
           } else {
-            const norm = Math.max(0, Math.min(1, (progress - 0.865) / (1.0 - 0.865)));
+            // Scene 7: Closing (frames 329..392)
+            const norm = Math.max(0, Math.min(1, (progress - 0.845) / (1.0 - 0.845)));
             frameIndex = 329 + Math.floor(norm * (392 - 329));
           }
 
@@ -655,8 +722,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           targetMainFrameRef.current = frameIndex;
 
           // Section 6 active states for render loop gating
-          isSection6ActiveRef.current = progress >= 0.43 && progress <= 0.90;
-          isSection6FullyOpaqueRef.current = progress >= 0.468 && progress <= 0.865;
+          isSection6ActiveRef.current = progress >= 0.37 && progress <= 0.74;
+          isSection6FullyOpaqueRef.current = progress >= 0.405 && progress <= 0.705;
 
           // 2. DOM Opacities with Delta Throttling to prevent layout thrashing
           const op2 = progress <= 0.078 ? 1 : Math.max(0, 1 - (progress - 0.078) / (0.109 - 0.078));
@@ -675,7 +742,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             }
           }
 
-          const op3 = calcOpacity(progress, 0.109, 0.126, 0.246, 0.269);
+          const op3 = calcOpacity(progress, 0.109, 0.126, 0.236, 0.255);
           if (ch3Ref.current && Math.abs(op3 - lastOp3) > 0.005) {
             lastOp3 = op3;
             gsap.set(ch3Ref.current, {
@@ -685,17 +752,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             });
           }
 
-          const op4 = calcOpacity(progress, 0.269, 0.282, 0.314, 0.327);
-          if (ch4Ref.current && Math.abs(op4 - lastOp4) > 0.005) {
-            lastOp4 = op4;
-            gsap.set(ch4Ref.current, {
-              opacity: op4,
-              y: (1 - op4) * 20,
-              pointerEvents: op4 > 0.5 ? "auto" : "none",
-            });
-          }
-
-          const op5 = calcOpacity(progress, 0.327, 0.343, 0.424, 0.440);
+          const op5 = calcOpacity(progress, 0.258, 0.275, 0.360, 0.380);
           if (ch5Ref.current && Math.abs(op5 - lastOp5) > 0.005) {
             lastOp5 = op5;
             gsap.set(ch5Ref.current, {
@@ -704,18 +761,18 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             });
           }
 
-          const op6 = calcOpacity(progress, 0.440, 0.468, 0.865, 0.895);
+          const op6 = calcOpacity(progress, 0.380, 0.405, 0.705, 0.730);
           if (ch6Ref.current && Math.abs(op6 - lastOp6) > 0.005) {
             lastOp6 = op6;
             gsap.set(ch6Ref.current, {
               opacity: op6,
-              y: (1 - op6) * 16,
+              y: (1 - op6) * 20,
               pointerEvents: op6 > 0.5 ? "auto" : "none",
             });
           }
 
           // 3. Investment Column Scrubbing Math
-          const investProg = Math.max(0, Math.min(1, (progress - 0.470) / (0.850 - 0.470)));
+          const investProg = Math.max(0, Math.min(1, (progress - 0.408) / (0.700 - 0.408)));
           const p1 = Math.max(0, Math.min(1, investProg / 0.33));
           const p2 = Math.max(0, Math.min(1, (investProg - 0.33) / 0.33));
           const p3 = Math.max(0, Math.min(1, (investProg - 0.66) / 0.34));
@@ -764,8 +821,19 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           if (col2CardRef.current) gsap.set(col2CardRef.current, { y: (1 - p2) * 16 });
           if (col3CardRef.current) gsap.set(col3CardRef.current, { y: (1 - p3) * 16 });
 
-          // 4. Closing Horizon
-          const op7 = calcOpacity(progress, 0.865, 0.895, 0.99, 1.0);
+          // 4. Destination & Brand Pillars (Handover starts right at 0.708 as columns dissolve, no dead delay)
+          const op4 = calcOpacity(progress, 0.708, 0.730, 0.825, 0.848);
+          if (ch4Ref.current && Math.abs(op4 - lastOp4) > 0.005) {
+            lastOp4 = op4;
+            gsap.set(ch4Ref.current, {
+              opacity: op4,
+              y: (1 - op4) * 20,
+              pointerEvents: op4 > 0.5 ? "auto" : "none",
+            });
+          }
+
+          // 5. Closing Horizon & CTA
+          const op7 = calcOpacity(progress, 0.848, 0.875, 0.99, 1.0);
           if (ch7Ref.current && Math.abs(op7 - lastOp7) > 0.005) {
             lastOp7 = op7;
             gsap.set(ch7Ref.current, {
@@ -782,10 +850,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     const CHAPTER_PROGRESS: Record<string, number> = {
       "#architecture": 0.0,
       "#waterfront": 0.16,
-      "#destination": 0.29,
-      "#masterplan": 0.37,
-      "#investment": 0.48,
-      "#closing": 0.95,
+      "#masterplan": 0.30,
+      "#investment": 0.44,
+      "#destination": 0.77,
+      "#closing": 0.94,
     };
 
     const handleAnchorClick = (e: MouseEvent) => {
@@ -846,39 +914,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
 
       {/* Preloader: Understated Quiet Luxury Screen */}
       {!isPreloaderDone && (
-        <div
-          ref={preloaderRef}
-          className="absolute inset-0 z-50 bg-[#153D3D] flex flex-col items-center justify-center px-6 space-y-5 sm:space-y-6 pointer-events-none"
-        >
-          <div className="relative h-14 sm:h-20 w-52 sm:w-64 mb-1 sm:mb-2">
-            <NextImage
-              src="/new-logo.png"
-              alt="Orion One Logo"
-              fill
-              sizes="256px"
-              priority
-              className="object-contain object-center filter brightness-110"
-            />
-          </div>
-
-          <div className="flex flex-col items-center space-y-2 text-center">
-            <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#62AA9E] font-sans-body font-semibold">
-              Prestige Lakefront Living • DHA Phase III
-            </span>
-          </div>
-
-          <div className="w-52 sm:w-56 h-[1.5px] bg-[#EDE5DA]/15 rounded-full overflow-hidden relative">
-            <div
-              className="h-full bg-gradient-to-r from-[#153D3D] via-[#62AA9E] to-[#EDE5DA] transition-all duration-200 ease-out"
-              style={{ width: `${loadingProgress}%` }}
-            />
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-sans-body text-[#EDE5DA]/70 tracking-widest uppercase">
-            <Sparkles className="w-3.5 h-3.5 text-[#62AA9E] animate-pulse" />
-            <span>Awakening Horizon... {loadingProgress}%</span>
-          </div>
-        </div>
+        <LoadingScreen ref={preloaderRef} progress={loadingProgress} />
       )}
 
       {/* Canvas Layer */}
@@ -887,6 +923,14 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         id="journey-canvas"
         className="absolute inset-0 w-full h-full object-cover z-0 will-change-transform"
         style={{ transform: "translateZ(0)" }}
+      />
+
+      {/* Optical Crossfade Transition Canvas Layer */}
+      <canvas
+        ref={crossfadeCanvasRef}
+        id="journey-crossfade-canvas"
+        className="absolute inset-0 w-full h-full object-cover z-[5] pointer-events-none will-change-transform"
+        style={{ opacity: 0, transform: "translateZ(0)" }}
       />
 
       {/* Cinematic Scrim: Deep Moss gradient overlay allowing high legibility */}
@@ -925,7 +969,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         id="waterfront"
         className="absolute inset-0 flex items-center justify-center sm:justify-start px-4 sm:px-12 lg:px-24 z-20 opacity-0"
       >
-        <div className="max-w-xl text-left space-y-3 sm:space-y-4">
+        {/* Directional Soft Vignette Scrim: Gently darkens left side to make text pop against bright background */}
+        <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#0d2828]/90 via-[#0d2828]/45 to-transparent pointer-events-none -z-10" />
+
+        <div className="relative max-w-xl text-left space-y-3 sm:space-y-4">
           <div className="flex items-center gap-3 mb-1">
             <span className="text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
               Waterfront
@@ -933,87 +980,21 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
           </div>
 
-          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase">
+          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
             Life,
             <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
               By the Water.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-lg font-sans-body text-[#EDE5DA]/90 font-light leading-relaxed max-w-md">
+          <p className="text-xs sm:text-lg font-sans-body text-[#EDE5DA]/90 font-light leading-relaxed max-w-md drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
             A lakefront address shaped around views, movement, nature and everyday living.
           </p>
         </div>
       </div>
 
       {/* --------------------------------------------------------------------- */}
-      {/* 04. DESTINATION & PILLARS (Frame 04 from 01 - Home Page.pdf)          */}
-      {/* --------------------------------------------------------------------- */}
-      <div
-        ref={ch4Ref}
-        id="destination"
-        className="absolute inset-0 flex flex-col justify-center max-w-6xl mx-auto px-4 sm:px-6 z-20 opacity-0 overflow-hidden"
-      >
-        <div className="text-center space-y-2 sm:space-y-3 mb-4 sm:mb-8">
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-            <span className="text-[10px] tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
-              Destination
-            </span>
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-          </div>
-
-          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-tight uppercase">
-            A Destination.
-            <span className="block font-serif italic text-[#62AA9E] font-normal text-xl sm:text-4xl lg:text-5xl mt-1 normal-case">
-              More Than an Address.
-            </span>
-          </h2>
-        </div>
-
-        {/* 4 Brand Pillars (Responsive 2x2 Grid on Mobile, 4 Cols on Desktop) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-          {BRAND_PILLARS.map((pillar, idx) => {
-            const Icon = pillar.icon;
-            const isSelected = activePillar === idx;
-            return (
-              <div
-                key={pillar.name}
-                onClick={() => setActivePillar(idx)}
-                className={`p-3 sm:p-5 rounded-xl border transition-all duration-300 cursor-pointer text-left backdrop-blur-md ${
-                  isSelected
-                    ? "bg-[#0d2828]/95 border-[#62AA9E] shadow-[0_10px_30px_rgba(98,170,158,0.15)]"
-                    : "bg-[#153D3D]/60 border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/60"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2 sm:mb-3">
-                  <div className={`p-1.5 sm:p-2.5 rounded-lg border ${
-                    isSelected ? "border-[#62AA9E] text-[#62AA9E] bg-[#62AA9E]/10" : "border-[#EDE5DA]/20 text-[#EDE5DA]/70"
-                  }`}>
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase text-[#62AA9E] font-semibold">
-                    0{idx + 1}
-                  </span>
-                </div>
-
-                <h3 className="font-serif text-sm sm:text-lg font-normal text-[#EDE5DA] mb-0.5 sm:mb-1">
-                  {pillar.name}
-                </h3>
-                <span className="text-[9px] sm:text-[10px] tracking-wider uppercase text-[#808080] block mb-1 sm:mb-2 font-medium truncate">
-                  {pillar.subtitle}
-                </span>
-                <p className="text-[11px] sm:text-xs text-[#EDE5DA]/75 font-light leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
-                  {pillar.desc}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* --------------------------------------------------------------------- */}
-      {/* 05. DISTRICT & MASTERPLAN (Frame 05 from 01 - Home Page.pdf)          */}
+      {/* 03. DISTRICT & MASTERPLAN (Frame 05 from 01 - Home Page.pdf)          */}
       {/* --------------------------------------------------------------------- */}
       <div
         ref={ch5Ref}
@@ -1039,7 +1020,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       </div>
 
       {/* --------------------------------------------------------------------- */}
-      {/* 06. INVESTMENT (Frame 06 from 01 - Home Page.pdf)                     */}
+      {/* 04. INVESTMENT (Frame 06 from 01 - Home Page.pdf)                     */}
       {/* --------------------------------------------------------------------- */}
       <div
         ref={ch6Ref}
@@ -1236,7 +1217,73 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       </div>
 
       {/* --------------------------------------------------------------------- */}
-      {/* 07. CLOSING HORIZON & CTA (Frame 07 from 01 - Home Page.pdf)         */}
+      {/* 05. DESTINATION & PILLARS (Frame 04 from 01 - Home Page.pdf)          */}
+      {/* --------------------------------------------------------------------- */}
+      <div
+        ref={ch4Ref}
+        id="destination"
+        className="absolute inset-0 flex flex-col justify-center max-w-6xl mx-auto px-4 sm:px-6 z-20 opacity-0 overflow-hidden"
+      >
+        <div className="text-center space-y-2 sm:space-y-3 mb-4 sm:mb-8">
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
+            <span className="text-[10px] tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
+              Destination
+            </span>
+            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
+          </div>
+
+          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-tight uppercase">
+            A Destination.
+            <span className="block font-serif italic text-[#62AA9E] font-normal text-xl sm:text-4xl lg:text-5xl mt-1 normal-case">
+              More Than an Address.
+            </span>
+          </h2>
+        </div>
+
+        {/* 4 Brand Pillars (Responsive 2x2 Grid on Mobile, 4 Cols on Desktop) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+          {BRAND_PILLARS.map((pillar, idx) => {
+            const Icon = pillar.icon;
+            const isSelected = activePillar === idx;
+            return (
+              <div
+                key={pillar.name}
+                onClick={() => setActivePillar(idx)}
+                className={`p-3 sm:p-5 rounded-xl border transition-all duration-300 cursor-pointer text-left backdrop-blur-md ${
+                  isSelected
+                    ? "bg-[#0d2828]/95 border-[#62AA9E] shadow-[0_10px_30px_rgba(98,170,158,0.15)]"
+                    : "bg-[#153D3D]/60 border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/60"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className={`p-1.5 sm:p-2.5 rounded-lg border ${
+                    isSelected ? "border-[#62AA9E] text-[#62AA9E] bg-[#62AA9E]/10" : "border-[#EDE5DA]/20 text-[#EDE5DA]/70"
+                  }`}>
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
+                  </div>
+                  <span className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase text-[#62AA9E] font-semibold">
+                    0{idx + 1}
+                  </span>
+                </div>
+
+                <h3 className="font-serif text-sm sm:text-lg font-normal text-[#EDE5DA] mb-0.5 sm:mb-1">
+                  {pillar.name}
+                </h3>
+                <span className="text-[9px] sm:text-[10px] tracking-wider uppercase text-[#808080] block mb-1 sm:mb-2 font-medium truncate">
+                  {pillar.subtitle}
+                </span>
+                <p className="text-[11px] sm:text-xs text-[#EDE5DA]/75 font-light leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
+                  {pillar.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* --------------------------------------------------------------------- */}
+      {/* 06. CLOSING HORIZON & CTA (Frame 07 from 01 - Home Page.pdf)         */}
       {/* --------------------------------------------------------------------- */}
       <div
         ref={ch7Ref}
@@ -1306,6 +1353,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       <OrionLogoScrollWheel
         progressRef={scrollProgressRef}
         targetRef={closingLogoTargetRef}
+        isLoaded={isLoaded}
       />
     </section>
   );

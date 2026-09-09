@@ -54,14 +54,14 @@ export default function Footer() {
               <a href="#waterfront" className="hover:text-[#62AA9E] transition-colors py-0.5">
                 02. Life by the Water
               </a>
-              <a href="#destination" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                03. The Destination & Pillars
-              </a>
               <a href="#masterplan" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                04. District Masterplan
+                03. District Masterplan
               </a>
               <a href="#investment" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                05. Investment Proposition
+                04. Investment Proposition
+              </a>
+              <a href="#destination" className="hover:text-[#62AA9E] transition-colors py-0.5">
+                05. The Destination & Pillars
               </a>
             </div>
           </div>

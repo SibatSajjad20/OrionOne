@@ -3,18 +3,21 @@
 import { useEffect, useRef, useCallback } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
 interface OrionLogoScrollWheelProps {
   progressRef?: React.MutableRefObject<number>;
   targetRef?: React.RefObject<HTMLElement | null>;
   onWheelClick?: () => void;
+  isLoaded?: boolean;
 }
 
 export default function OrionLogoScrollWheel({
   progressRef,
   targetRef,
   onWheelClick,
+  isLoaded = true,
 }: OrionLogoScrollWheelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,6 +35,14 @@ export default function OrionLogoScrollWheel({
   // Smooth dampening refs
   const smoothedProgressRef = useRef(0);
   const currentHoverScaleRef = useRef(1);
+
+  // Intro loading spin (1080° + 2s pause) and travel animation state
+  const introTravelRef = useRef({ progress: isLoaded ? 1 : 0 });
+  const loadingSpinAngleRef = useRef({ y: 0 });
+  const spinTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const startTravelAngleRef = useRef(0);
+  const targetTravelAngleRef = useRef(0);
+  const prevLoadedRef = useRef(isLoaded);
 
   // Handle click on the right-side wheel
   const handleClick = useCallback(() => {
@@ -61,6 +72,45 @@ export default function OrionLogoScrollWheel({
     }
   }, [onWheelClick]);
 
+  // Manage intro 1080° spin + 2s pause loop and travel transition
+  useEffect(() => {
+    if (!isLoaded) {
+      introTravelRef.current.progress = 0;
+      if (!spinTimelineRef.current) {
+        // 1080° spin (+6π radians) + 2-second pause loop
+        const tl = gsap.timeline({ repeat: -1 });
+        tl.to(loadingSpinAngleRef.current, {
+          y: "+=" + Math.PI * 6, // 1080 degrees spin
+          duration: 1.8,
+          ease: "power2.inOut",
+        }).to({}, { duration: 2.0 }); // Exactly 2 seconds delay
+        spinTimelineRef.current = tl;
+      }
+    } else {
+      if (!prevLoadedRef.current) {
+        // Just transitioned to loaded: kill spin loop and glide to right side
+        if (spinTimelineRef.current) {
+          spinTimelineRef.current.kill();
+          spinTimelineRef.current = null;
+        }
+
+        const curAngle = loadingSpinAngleRef.current.y;
+        startTravelAngleRef.current = curAngle;
+        // Round up to next 360-degree boundary to arrive front-facing
+        targetTravelAngleRef.current = Math.ceil(curAngle / (Math.PI * 2)) * (Math.PI * 2);
+
+        gsap.to(introTravelRef.current, {
+          progress: 1,
+          duration: 1.4,
+          ease: "power3.inOut",
+        });
+      } else {
+        introTravelRef.current.progress = 1;
+      }
+    }
+    prevLoadedRef.current = isLoaded;
+  }, [isLoaded]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -85,7 +135,7 @@ export default function OrionLogoScrollWheel({
     camera.lookAt(0, 0, 0);
     cameraRef.current = camera;
 
-    // 3. WebGL Renderer with High-DPI and Tone Mapping
+    // 3. WebGL Renderer with High-DPI and Tone Mapping (100% Transparent Background)
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -100,7 +150,7 @@ export default function OrionLogoScrollWheel({
     rendererRef.current = renderer;
 
     // 4. Studio Lighting Configuration
-    // Calibrated specifically for Orion Brand theme color #214546 (rgb(33, 69, 70))
+    // Calibrated specifically for Orion Brand green theme color #214546 (rgb(33, 69, 70))
     // Soft deep cyan/forest ambient fill
     const ambientLight = new THREE.AmbientLight(new THREE.Color("#153D3D"), 2.0);
     scene.add(ambientLight);
@@ -134,9 +184,9 @@ export default function OrionLogoScrollWheel({
     logoGroupRef.current = logoWrapper;
     pivotGroupRef.current = pivot;
 
-    // Orion Theme Material: #214546 / rgb(33, 69, 70)
+    // Orion Theme Material: Exact brand green #214546 / rgb(33, 69, 70)
     const orionMaterial = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#214546"), // Exact theme color
+      color: new THREE.Color("#214546"), // Exact Orion green brand color
       emissive: new THREE.Color("#0c1e1e"),
       emissiveIntensity: 0.3,
       roughness: 0.25,
@@ -216,14 +266,16 @@ export default function OrionLogoScrollWheel({
     // Initial CTA anchor measure after mount
     setTimeout(updateCtaCoords, 600);
 
-    // 7. High-Performance Animation Loop (Replacing deprecated THREE.Clock with high-precision timestamp)
+    // 7. High-Performance Animation Loop
     const startTime = performance.now();
 
     const animate = () => {
       animFrameId = requestAnimationFrame(animate);
 
-      // On mobile viewports (< 768px), disable heavy WebGL render loop to guarantee 60 FPS touch scroll
-      if (isMobile) {
+      const introT = introTravelRef.current.progress;
+
+      // On mobile viewports (< 768px), once docked into right-side wheel mode, sleep render loop to guarantee 60 FPS touch scroll
+      if (isMobile && introT >= 1) {
         return;
       }
 
@@ -242,7 +294,7 @@ export default function OrionLogoScrollWheel({
         }
       }
 
-      // Smooth progress dampening for ultra-fluid 60/120fps motion
+      // Smooth progress dampening for ultra-fluid motion
       smoothedProgressRef.current += (targetProg - smoothedProgressRef.current) * 0.14;
       const prog = smoothedProgressRef.current;
 
@@ -259,6 +311,13 @@ export default function OrionLogoScrollWheel({
         const isTablet = width >= 768 && width < 1024;
 
         // -----------------------------------------------------------------
+        // STATE 0: Center Loading Screen Position & Dimensions
+        // -----------------------------------------------------------------
+        const loadingCenterX = width * 0.5;
+        const loadingCenterY = height * 0.44;
+        const loadingPixelSize = isMobile ? 120 : isTablet ? 140 : 160;
+
+        // -----------------------------------------------------------------
         // STATE 1: Right-Side Scroll Wheel Position & Dimensions
         // -----------------------------------------------------------------
         const wheelPixelSize = isTablet ? 50 : 58;
@@ -266,10 +325,15 @@ export default function OrionLogoScrollWheel({
         const wheelScreenX = width - wheelRightMargin;
         const wheelScreenY = height * 0.5;
 
+        // Smoothly interpolate from Center Loading (introT = 0) -> Right Wheel (introT = 1)
+        const baseScreenX = (1 - introT) * loadingCenterX + introT * wheelScreenX;
+        const baseScreenY = (1 - introT) * loadingCenterY + introT * wheelScreenY;
+        const basePixelSize = (1 - introT) * loadingPixelSize + introT * wheelPixelSize;
+
         // -----------------------------------------------------------------
         // STATE 2: Target CTA Heading Position & Dimensions (Cached)
         // -----------------------------------------------------------------
-        if (prog >= 0.80 && (lastRectUpdateProg < 0.80 || Math.abs(prog - lastRectUpdateProg) > 0.08)) {
+        if (prog >= 0.83 && (lastRectUpdateProg < 0.83 || Math.abs(prog - lastRectUpdateProg) > 0.08)) {
           lastRectUpdateProg = prog;
           updateCtaCoords();
         }
@@ -278,19 +342,15 @@ export default function OrionLogoScrollWheel({
         const ctaScreenY = cachedCtaY;
         const ctaPixelSize = cachedCtaSize || (isTablet ? 74 : 88);
 
-        // -----------------------------------------------------------------
-        // TRANSITION DOCKING (Progress 0.84 -> 0.96)
-        // -----------------------------------------------------------------
-        // Smoothly interpolates from right-side wheel into center CTA position
-        const rawT = Math.max(0, Math.min(1, (prog - 0.84) / (0.96 - 0.84)));
-        // Smooth cubic ease curve
+        // TRANSITION DOCKING TO CTA (Progress 0.845 -> 0.945)
+        const rawT = Math.max(0, Math.min(1, (prog - 0.845) / (0.945 - 0.845)));
         const easeT = rawT * rawT * (3 - 2 * rawT);
 
         // Screen-Space Coordinates
-        const curScreenX = (1 - easeT) * wheelScreenX + easeT * ctaScreenX;
-        const curScreenY = (1 - easeT) * wheelScreenY + easeT * ctaScreenY;
+        const curScreenX = (1 - easeT) * baseScreenX + easeT * ctaScreenX;
+        const curScreenY = (1 - easeT) * baseScreenY + easeT * ctaScreenY;
         const curPixelSize =
-          ((1 - easeT) * wheelPixelSize + easeT * ctaPixelSize) * currentHoverScaleRef.current;
+          ((1 - easeT) * basePixelSize + easeT * ctaPixelSize) * currentHoverScaleRef.current;
 
         // Convert Screen Coordinates directly to 3D World Space
         const worldX = (curScreenX / width - 0.5) * visibleWidth;
@@ -303,35 +363,51 @@ export default function OrionLogoScrollWheel({
         logoWrapper.scale.setScalar(modelScale);
 
         // -----------------------------------------------------------------
-        // 360-DEGREE ROTATION & HEADING ORIENTATION
+        // ROTATION & CHOREOGRAPHY
         // -----------------------------------------------------------------
-        // Wheel mode: Rotates continuously 360° in sync with scroll
-        // Standing straight up, rotating 360 degrees as user scrolls
+        // Scroll wheel revolutions
         const scrollRevolutions = prog * Math.PI * 12;
         const wheelRotY = scrollRevolutions;
-        const wheelRotX = 0.0; // Completely straight up (not tilted flat)
-        const wheelRotZ = -scrollRevolutions * 0.3; // subtle wheel rolling motion
+        const wheelRotX = 0.0;
+        const wheelRotZ = -scrollRevolutions * 0.3;
 
-        // CTA mode: Front-facing upright orientation with gentle shimmer
+        // CTA mode
         const idleFloatY = Math.sin(time * 1.5) * (isMobile ? 0.04 : 0.08);
         const ctaRotY = Math.sin(time * 0.9) * 0.1;
         const ctaRotX = 0.0;
         const ctaRotZ = 0.0;
 
-        // Smoothly ease rotations between wheel spin and docked CTA orientation
-        pivot.rotation.y = (1 - easeT) * wheelRotY + easeT * ctaRotY;
-        pivot.rotation.x = (1 - easeT) * wheelRotX + easeT * ctaRotX;
-        pivot.rotation.z = (1 - easeT) * wheelRotZ + easeT * ctaRotZ;
+        const dockedRotY = (1 - easeT) * wheelRotY + easeT * ctaRotY;
+        const dockedRotX = (1 - easeT) * wheelRotX + easeT * ctaRotX;
+        const dockedRotZ = (1 - easeT) * wheelRotZ + easeT * ctaRotZ;
 
-        // Subtle floating luxury hover motion when docked at CTA
-        if (easeT > 0.3) {
-          logoWrapper.position.y += idleFloatY * easeT;
+        if (introT < 1) {
+          // Loading spin + travel transition:
+          const spinY = loadingSpinAngleRef.current.y;
+          const targetRevY = targetTravelAngleRef.current;
+          const travelRotY = (1 - introT) * spinY + introT * (targetRevY + dockedRotY);
+          pivot.rotation.y = travelRotY;
+          pivot.rotation.x = 0;
+          pivot.rotation.z = introT * dockedRotZ;
+
+          // Gentle organic float while in center
+          logoWrapper.position.y += Math.sin(time * 1.5) * 0.04 * (1 - introT);
+        } else {
+          pivot.rotation.y = dockedRotY;
+          pivot.rotation.x = dockedRotX;
+          pivot.rotation.z = dockedRotZ;
+
+          // Floating hover motion when docked at CTA
+          if (easeT > 0.3) {
+            logoWrapper.position.y += idleFloatY * easeT;
+          }
         }
 
-        // Fade out right-side HUD ring as logo moves to the center
+        // Fade out right-side HUD ring as logo moves to the center / during intro
         if (hudRef.current) {
-          hudRef.current.style.opacity = `${(1 - easeT).toFixed(3)}`;
-          hudRef.current.style.pointerEvents = easeT > 0.75 ? "none" : "auto";
+          const hudOpacity = introT >= 1 ? 1 - easeT : 0;
+          hudRef.current.style.opacity = `${hudOpacity.toFixed(3)}`;
+          hudRef.current.style.pointerEvents = introT >= 1 && easeT <= 0.75 ? "auto" : "none";
         }
       }
 
@@ -345,6 +421,10 @@ export default function OrionLogoScrollWheel({
       isCancelled = true;
       cancelAnimationFrame(animFrameId);
       window.removeEventListener("resize", handleResize);
+
+      if (spinTimelineRef.current) {
+        spinTimelineRef.current.kill();
+      }
 
       orionMaterial.dispose();
 
@@ -362,9 +442,9 @@ export default function OrionLogoScrollWheel({
   return (
     <div
       ref={containerRef}
-      className="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-35 overflow-hidden"
+      className="absolute inset-0 w-full h-full pointer-events-none z-35 overflow-hidden"
     >
-      {/* 3D WebGL Canvas for Orion Sub Mark */}
+      {/* 3D WebGL Canvas for Orion Sub Mark (100% Transparent Background) */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full block pointer-events-none"

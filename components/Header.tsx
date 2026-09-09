@@ -50,14 +50,14 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               <a href="#waterfront" className="hover:text-[#62AA9E] transition-colors py-1">
                 Waterfront
               </a>
-              <a href="#destination" className="hover:text-[#62AA9E] transition-colors py-1">
-                Destination
-              </a>
               <a href="#masterplan" className="hover:text-[#62AA9E] transition-colors py-1">
                 Masterplan
               </a>
               <a href="#investment" className="hover:text-[#62AA9E] transition-colors py-1">
                 Investment
+              </a>
+              <a href="#destination" className="hover:text-[#62AA9E] transition-colors py-1">
+                Destination
               </a>
             </nav>
 
@@ -144,19 +144,11 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                 <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Promenade</span>
               </a>
               <a
-                href="#destination"
-                onClick={() => setMenuOpen(false)}
-                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
-              >
-                <span>03. Destination & Pillars</span>
-                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">4 Pillars</span>
-              </a>
-              <a
                 href="#masterplan"
                 onClick={() => setMenuOpen(false)}
                 className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
               >
-                <span>04. District Masterplan</span>
+                <span>03. District Masterplan</span>
                 <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Interactive</span>
               </a>
               <a
@@ -164,8 +156,16 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                 onClick={() => setMenuOpen(false)}
                 className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
               >
-                <span>05. Lifestyle & Investment</span>
+                <span>04. Lifestyle & Investment</span>
                 <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Sector F</span>
+              </a>
+              <a
+                href="#destination"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+              >
+                <span>05. Destination & Pillars</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">4 Pillars</span>
               </a>
             </nav>
 
