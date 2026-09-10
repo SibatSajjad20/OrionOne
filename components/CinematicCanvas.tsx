@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, memo } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo, memo } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
@@ -161,9 +161,6 @@ interface CinematicCanvasProps {
 function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const crossfadeCanvasRef = useRef<HTMLCanvasElement>(null);
-  const crossfadeCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const crossfadeLastFrameRef = useRef<number>(-1);
 
   // Story Chapter Overlay Refs
   const ch2Ref = useRef<HTMLDivElement>(null); // 01. Architecture / A New Horizon
@@ -172,8 +169,29 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const ch5Ref = useRef<HTMLDivElement>(null); // 04. District Masterplan
   const ch6Ref = useRef<HTMLDivElement>(null); // 05. Investment Proposition
   const ch7Ref = useRef<HTMLDivElement>(null); // 06. Closing Horizon & CTA
-  const closingLogoTargetRef = useRef<HTMLDivElement>(null); // 3D Orion Logo Docking Anchor
+  const closingLogoTargetRef = useRef<HTMLDivElement>(null); // 3D Orion Logo Docking Anchor (Scene 6 / CTA)
+  const scene1LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 1 beside heading
+  const scene2LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 2 Waterfront left heading
+  const scene3LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 3 District Masterplan top
+  const col1LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 4 Column 1 top
+  const col2LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 4 Column 2 top
+  const col3LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 4 Column 3 top
+  const scene5LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 5 Destination top
   const scrollProgressRef = useRef<number>(0);
+
+  const targetRefs = useMemo(
+    () => ({
+      scene1: scene1LogoAnchorRef,
+      scene2: scene2LogoAnchorRef,
+      scene3: scene3LogoAnchorRef,
+      col1: col1LogoAnchorRef,
+      col2: col2LogoAnchorRef,
+      col3: col3LogoAnchorRef,
+      scene5: scene5LogoAnchorRef,
+      scene6: closingLogoTargetRef,
+    }),
+    []
+  );
 
   // 3 Investment Column Canvas, Content, Bar & Scrim Refs
   const col1ContainerRef = useRef<HTMLDivElement>(null);
@@ -204,8 +222,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const col2FramesRef = useRef<HTMLImageElement[]>([]);
   const col3FramesRef = useRef<HTMLImageElement[]>([]);
 
-  // Render Target State Refs for Decoupled RAF Engine
+  // Render Target State Refs for Decoupled RAF Engine (with Dual-Frame Hardware Crossfade)
   const targetMainFrameRef = useRef<number>(0);
+  const targetBlendFrameRef = useRef<number>(-1);
+  const targetBlendAlphaRef = useRef<number>(0);
+  const lastBlendFrameRef = useRef<number>(-1);
+  const lastBlendAlphaRef = useRef<number>(0);
   const targetCol1FrameRef = useRef<number>(0);
   const targetCol2FrameRef = useRef<number>(0);
   const targetCol3FrameRef = useRef<number>(0);
@@ -216,6 +238,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPreloaderDone, setIsPreloaderDone] = useState(false);
   const [activeMobileCol, setActiveMobileCol] = useState<number>(0);
+  const lastMobileColRef = useRef<number>(0);
   const preloaderRef = useRef<HTMLDivElement>(null);
   const hasAnimatedEntrance = useRef(false);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -301,69 +324,62 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     };
   }, []);
 
-  // Single-frame object-fit cover rendering engine (Hardware-accelerated, zero-redundancy)
-  const renderToCanvas = useCallback((img: HTMLImageElement | null) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    if (!ctxRef.current) {
-      ctxRef.current = canvas.getContext("2d", { alpha: false });
-    }
-    const ctx = ctxRef.current;
-    if (!ctx || !img || !img.complete || img.naturalWidth === 0) return;
+  // Dual-frame object-fit cover rendering engine (Hardware-accelerated, single-pass optical blend)
+  const renderToCanvas = useCallback(
+    (
+      imgA: HTMLImageElement | null,
+      imgB: HTMLImageElement | null = null,
+      blendAlpha: number = 0
+    ) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      if (!ctxRef.current) {
+        ctxRef.current = canvas.getContext("2d", { alpha: false });
+      }
+      const ctx = ctxRef.current;
+      if (!ctx || !imgA || !imgA.complete || imgA.naturalWidth === 0) return;
 
-    const hRatio = canvas.width / img.width;
-    const vRatio = canvas.height / img.height;
-    const ratio = Math.max(hRatio, vRatio);
+      const drawCover = (img: HTMLImageElement, alpha: number) => {
+        if (!img.complete || img.naturalWidth === 0) return;
+        const hRatio = canvas.width / img.width;
+        const vRatio = canvas.height / img.height;
+        const ratio = Math.max(hRatio, vRatio);
 
-    const centerShift_x = (canvas.width - img.width * ratio) / 2;
-    const centerShift_y = (canvas.height - img.height * ratio) / 2;
+        const centerShift_x = (canvas.width - img.width * ratio) / 2;
+        const centerShift_y = (canvas.height - img.height * ratio) / 2;
 
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "medium";
-    ctx.drawImage(
-      img,
-      0,
-      0,
-      img.width,
-      img.height,
-      centerShift_x,
-      centerShift_y,
-      img.width * ratio,
-      img.height * ratio
-    );
-  }, []);
+        if (alpha < 0.999) {
+          ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+        }
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          img.width,
+          img.height,
+          centerShift_x,
+          centerShift_y,
+          img.width * ratio,
+          img.height * ratio
+        );
+        if (alpha < 0.999) {
+          ctx.globalAlpha = 1.0;
+        }
+      };
 
-  // Dedicated optical crossfade canvas renderer
-  const renderCrossfadeToCanvas = useCallback((img: HTMLImageElement | null) => {
-    const canvas = crossfadeCanvasRef.current;
-    if (!canvas) return;
-    if (!crossfadeCtxRef.current) {
-      crossfadeCtxRef.current = canvas.getContext("2d", { alpha: true });
-    }
-    const ctx = crossfadeCtxRef.current;
-    if (!ctx || !img || !img.complete || img.naturalWidth === 0) return;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "medium";
 
-    const hRatio = canvas.width / img.width;
-    const vRatio = canvas.height / img.height;
-    const ratio = Math.max(hRatio, vRatio);
+      // Draw primary base frame
+      drawCover(imgA, 1.0);
 
-    const centerShift_x = (canvas.width - img.width * ratio) / 2;
-    const centerShift_y = (canvas.height - img.height * ratio) / 2;
-
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "medium";
-    ctx.drawImage(
-      img,
-      0,
-      0,
-      img.width,
-      img.height,
-      centerShift_x,
-      centerShift_y,
-      img.width * ratio,
-      img.height * ratio
-    );
-  }, []);
+      // Optical crossfade: smoothly blend secondary incoming frame directly into the exact same buffer
+      if (blendAlpha > 0.002 && imgB && imgB.complete && imgB.naturalWidth > 0) {
+        drawCover(imgB, blendAlpha);
+      }
+    },
+    []
+  );
 
   // Column-specific canvas renderer with aspect-ratio cover
   const renderFrameToColumnCanvas = useCallback(
@@ -417,16 +433,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       lastFrameIndexRef.current = -1; // Invalidate frame cache to force fresh redraw
+      lastBlendFrameRef.current = -1;
+      lastBlendAlphaRef.current = 0;
 
       if (framesRef.current.length > 0 && framesRef.current[0]) {
         renderToCanvas(framesRef.current[0]);
       }
-    }
-
-    if (crossfadeCanvasRef.current) {
-      crossfadeCanvasRef.current.width = window.innerWidth * dpr;
-      crossfadeCanvasRef.current.height = window.innerHeight * dpr;
-      crossfadeLastFrameRef.current = -1;
     }
 
     const isMobile = window.innerWidth < 768;
@@ -667,11 +679,24 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       if (!frames || frames.length === 0) return;
 
       const targetMain = targetMainFrameRef.current;
+      const targetBlend = targetBlendFrameRef.current;
+      const targetBlendAlpha = targetBlendAlphaRef.current;
+
+      const mainChanged = targetMain !== lastFrameIndexRef.current;
+      const blendChanged = targetBlend !== lastBlendFrameRef.current;
+      const alphaChanged = Math.abs(targetBlendAlpha - lastBlendAlphaRef.current) > 0.003;
+
       // Skip main canvas draw if Section 6 is fully covering the viewport
-      if (!isSection6FullyOpaqueRef.current && targetMain !== lastFrameIndexRef.current) {
+      if (!isSection6FullyOpaqueRef.current && (mainChanged || blendChanged || alphaChanged)) {
         lastFrameIndexRef.current = targetMain;
-        const img = getSafeFrame(frames, targetMain);
-        if (img) renderToCanvas(img);
+        lastBlendFrameRef.current = targetBlend;
+        lastBlendAlphaRef.current = targetBlendAlpha;
+
+        const imgA = getSafeFrame(frames, targetMain);
+        const imgB = targetBlend >= 0 ? getSafeFrame(frames, targetBlend) : null;
+        if (imgA) {
+          renderToCanvas(imgA, imgB, targetBlendAlpha);
+        }
       }
 
       // Only draw column canvases when Section 6 is in the visible viewport
@@ -697,15 +722,6 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           if (img3) renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, img3);
         }
       }
-
-      // Draw crossfade frame during transition between Scene 3 and Scene 5
-      const prog = scrollProgressRef.current;
-      if (prog >= 0.245 && prog <= 0.275) {
-        if (crossfadeLastFrameRef.current !== 155 && frames[155]) {
-          crossfadeLastFrameRef.current = 155;
-          renderCrossfadeToCanvas(frames[155]);
-        }
-      }
     };
 
     gsap.ticker.add(renderTick);
@@ -713,7 +729,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     return () => {
       gsap.ticker.remove(renderTick);
     };
-  }, [renderToCanvas, renderCrossfadeToCanvas, renderFrameToColumnCanvas]);
+  }, [renderToCanvas, renderFrameToColumnCanvas]);
 
   // ---------------------------------------------------------------------------
   // GSAP SCROLL LOGIC SYNCHRONIZED WITH LENIS
@@ -757,48 +773,62 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           const progress = self.progress;
           scrollProgressRef.current = progress;
 
-          // Optical Crossfade between Scene 3 (Waterfront frame 155) and Scene 5 (Masterplan frame 204)
-          if (crossfadeCanvasRef.current) {
-            if (progress >= 0.250 && progress <= 0.272) {
-              const crossT = Math.max(0, Math.min(1, (progress - 0.252) / (0.270 - 0.252)));
-              crossfadeCanvasRef.current.style.opacity = `${(1 - crossT).toFixed(3)}`;
-            } else if (crossfadeCanvasRef.current.style.opacity !== "0") {
-              crossfadeCanvasRef.current.style.opacity = "0";
-            }
-          }
-
-          // 1. Calculate piecewise main frame index
-          let frameIndex = 0;
+          // 1. Calculate piecewise main frame index & optical crossfade targets
           if (progress <= 0.109) {
             // Scene 2: Architecture (frames 0..65)
             const norm = Math.max(0, Math.min(1, progress / 0.109));
-            frameIndex = Math.floor(norm * 65);
-          } else if (progress <= 0.255) {
-            // Scene 3: Waterfront (frames 66..155 - pure Waterfront)
-            const norm = Math.max(0, Math.min(1, (progress - 0.109) / (0.255 - 0.109)));
-            frameIndex = 66 + Math.floor(norm * (155 - 66));
-          } else if (progress <= 0.380) {
-            // Scene 5: Masterplan (frames 204..275 - pure Masterplan)
-            const norm = Math.max(0, Math.min(1, (progress - 0.255) / (0.380 - 0.255)));
-            frameIndex = 204 + Math.floor(norm * (275 - 204));
+            targetMainFrameRef.current = Math.floor(norm * 65);
+            targetBlendFrameRef.current = -1;
+            targetBlendAlphaRef.current = 0;
+          } else if (progress < 0.236) {
+            // Scene 3: Waterfront pre-transition (frames 66..145)
+            const norm = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
+            targetMainFrameRef.current = 66 + Math.floor(norm * (155 - 66));
+            targetBlendFrameRef.current = -1;
+            targetBlendAlphaRef.current = 0;
+          } else if (progress <= 0.268) {
+            // Seamless Optical Crossfade between Waterfront (frames 145..155) and Masterplan (frames 204..217)
+            // Both scenes remain in fluid camera motion during the cross-dissolve: NO static frozen frame!
+            const normWF = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
+            const frameWF = 66 + Math.floor(normWF * (155 - 66));
+
+            const normMP = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
+            const frameMP = 204 + Math.floor(normMP * (275 - 204));
+
+            const t = (progress - 0.236) / (0.268 - 0.236);
+            const smoothT = t * t * (3 - 2 * t); // Smooth Hermite S-curve ease
+
+            targetMainFrameRef.current = Math.min(155, Math.max(66, frameWF));
+            targetBlendFrameRef.current = Math.min(275, Math.max(204, frameMP));
+            targetBlendAlphaRef.current = smoothT;
           } else if (progress <= 0.405) {
-            // Hold end of Masterplan during Section 6 dissolve in
-            frameIndex = 275;
-          } else if (progress <= 0.708) {
+            // Scene 5: Masterplan (frames 204..275)
+            // Continues smooth camera glide right through 0.405 as Section 6 (Investment) dissolves in
+            const norm = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
+            targetMainFrameRef.current = 204 + Math.floor(norm * (275 - 204));
+            targetBlendFrameRef.current = -1;
+            targetBlendAlphaRef.current = 0;
+          } else if (progress <= 0.705) {
             // Section 6 (Investment) active: holds frame 163 ready for Scene 4 (Destination)
-            frameIndex = 163;
+            targetMainFrameRef.current = 163;
+            targetBlendFrameRef.current = -1;
+            targetBlendAlphaRef.current = 0;
           } else if (progress <= 0.845) {
             // Scene 4: Destination & Pillars (frames 163..196 - Infinity Pool)
-            const norm = Math.max(0, Math.min(1, (progress - 0.708) / (0.845 - 0.708)));
-            frameIndex = 163 + Math.floor(norm * (196 - 163));
+            // In gentle motion as Investment section dissolves out
+            const norm = Math.max(0, Math.min(1, (progress - 0.705) / (0.845 - 0.705)));
+            targetMainFrameRef.current = 163 + Math.floor(norm * (196 - 163));
+            targetBlendFrameRef.current = -1;
+            targetBlendAlphaRef.current = 0;
           } else {
             // Scene 7: Closing (frames 329..392)
             const norm = Math.max(0, Math.min(1, (progress - 0.845) / (1.0 - 0.845)));
-            frameIndex = 329 + Math.floor(norm * (392 - 329));
+            targetMainFrameRef.current = 329 + Math.floor(norm * (392 - 329));
+            targetBlendFrameRef.current = -1;
+            targetBlendAlphaRef.current = 0;
           }
 
-          frameIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, frameIndex));
-          targetMainFrameRef.current = frameIndex;
+          targetMainFrameRef.current = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetMainFrameRef.current));
 
           // Section 6 active states for render loop gating
           isSection6ActiveRef.current = progress >= 0.37 && progress <= 0.74;
@@ -872,7 +902,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           const isAllCompleted = investProg >= 0.98;
 
           const currentMobileCol = isCol1Active ? 0 : isCol2Active ? 1 : 2;
-          setActiveMobileCol(currentMobileCol);
+          if (lastMobileColRef.current !== currentMobileCol) {
+            lastMobileColRef.current = currentMobileCol;
+            setActiveMobileCol(currentMobileCol);
+          }
 
           const isMobile = window.innerWidth < 768;
           if (isMobile) {
@@ -1004,17 +1037,6 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         style={{ transform: "translateZ(0)" }}
       />
 
-      {/* Optical Crossfade Transition Canvas Layer */}
-      <canvas
-        ref={crossfadeCanvasRef}
-        id="journey-crossfade-canvas"
-        className="absolute inset-0 w-full h-full object-cover z-[5] pointer-events-none will-change-transform"
-        style={{ opacity: 0, transform: "translateZ(0)" }}
-      />
-
-      {/* Cinematic Scrim: Deep Moss gradient overlay allowing high legibility */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0d2828]/95 via-transparent to-[#153D3D]/40 pointer-events-none" />
-
       {/* --------------------------------------------------------------------- */}
       {/* 01. A NEW HORIZON OF LUXURY (Starting Chapter)                        */}
       {/* --------------------------------------------------------------------- */}
@@ -1027,6 +1049,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-l from-[#0d2828]/90 via-[#0d2828]/45 to-transparent pointer-events-none -z-10" />
 
         <div className="relative max-w-xl text-left sm:text-right space-y-3 sm:space-y-4">
+          <div
+            ref={scene1LogoAnchorRef}
+            className="w-12 h-12 sm:w-14 sm:h-14 ml-auto mb-1 pointer-events-none flex items-center justify-center opacity-0"
+            aria-hidden="true"
+          />
           <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
             A New Horizon
             <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
@@ -1052,6 +1079,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#0d2828]/90 via-[#0d2828]/45 to-transparent pointer-events-none -z-10" />
 
         <div className="relative max-w-xl text-left space-y-3 sm:space-y-4">
+          <div
+            ref={scene2LogoAnchorRef}
+            className="w-12 h-12 sm:w-14 sm:h-14 mb-1 pointer-events-none flex items-center justify-center"
+            aria-hidden="true"
+          />
           <div className="flex items-center gap-3 mb-1">
             <span className="text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
               Waterfront
@@ -1082,6 +1114,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       >
         {/* Section Header */}
         <div className="absolute top-18 sm:top-28 left-4 sm:left-12 lg:left-16 max-w-sm sm:max-w-lg z-30 pointer-events-auto">
+          <div
+            ref={scene3LogoAnchorRef}
+            className="w-10 h-10 sm:w-12 sm:h-12 mb-1.5 pointer-events-none flex items-center justify-center"
+            aria-hidden="true"
+          />
           <div className="flex items-center gap-3 mb-1.5 sm:mb-2">
             <span className="text-[9.5px] sm:text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
               District Masterplan
@@ -1089,9 +1126,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
           </div>
 
-          <h2 className="font-serif text-xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase">
+          <h2 className="font-serif text-xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
             The Lakefront
-            <span className="block font-serif italic text-[#62AA9E] font-normal text-lg sm:text-3xl lg:text-4xl normal-case mt-0.5 sm:mt-1">
+            <span className="block font-serif italic text-[#62AA9E] font-normal text-lg sm:text-3xl lg:text-4xl normal-case mt-0.5 sm:mt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
               at the Heart of DHA Phase III.
             </span>
           </h2>
@@ -1166,6 +1203,13 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               ref={col1CardRef}
               className="relative z-20 p-4 sm:p-8 lg:p-12 pb-6 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
             >
+              {/* Column 1 Anchor: Top of heading */}
+              <div
+                ref={col1LogoAnchorRef}
+                className="w-9 h-9 sm:w-11 sm:h-11 mb-1 pointer-events-none flex items-center justify-center"
+                aria-hidden="true"
+              />
+
               <div className="space-y-1 sm:space-y-2">
                 <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
                   {INVESTMENT_COLUMNS[0].subtitle}
@@ -1218,6 +1262,13 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               ref={col2CardRef}
               className="relative z-20 p-4 sm:p-8 lg:p-12 pb-6 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
             >
+              {/* Column 2 Anchor: Top of heading */}
+              <div
+                ref={col2LogoAnchorRef}
+                className="w-9 h-9 sm:w-11 sm:h-11 mb-1 pointer-events-none flex items-center justify-center"
+                aria-hidden="true"
+              />
+
               <div className="space-y-1 sm:space-y-2">
                 <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
                   {INVESTMENT_COLUMNS[1].subtitle}
@@ -1269,6 +1320,13 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               ref={col3CardRef}
               className="relative z-20 p-4 sm:p-8 lg:p-12 pb-6 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
             >
+              {/* Column 3 Anchor: Top of heading */}
+              <div
+                ref={col3LogoAnchorRef}
+                className="w-9 h-9 sm:w-11 sm:h-11 mb-1 pointer-events-none flex items-center justify-center"
+                aria-hidden="true"
+              />
+
               <div className="space-y-1 sm:space-y-2">
                 <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
                   {INVESTMENT_COLUMNS[2].subtitle}
@@ -1304,6 +1362,13 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         className="absolute inset-0 flex flex-col justify-center max-w-6xl mx-auto px-4 sm:px-6 z-20 opacity-0 overflow-hidden"
       >
         <div className="text-center space-y-2 sm:space-y-3 mb-4 sm:mb-8">
+          {/* Scene 5 Anchor: Top of Destination label */}
+          <div
+            ref={scene5LogoAnchorRef}
+            className="w-11 h-11 sm:w-14 sm:h-14 mx-auto mb-1 pointer-events-none flex items-center justify-center"
+            aria-hidden="true"
+          />
+
           <div className="flex items-center justify-center gap-3">
             <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
             <span className="text-[10px] tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
@@ -1369,22 +1434,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         id="closing"
         className="absolute inset-0 flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-4 sm:px-6 z-20 opacity-0"
       >
-        {/* 3D Orion Logo Docking Anchor (Desktop) / Crisp Emblem (Mobile) */}
+        {/* 3D Orion Logo Docking Anchor */}
         <div
           ref={closingLogoTargetRef}
           className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-3 pointer-events-none flex items-center justify-center relative"
-        >
-          {/* Mobile Emblem Fallback: Crisp branded mark when 3D WebGL is disabled on phones */}
-          <div className="md:hidden relative w-10 h-10 flex items-center justify-center">
-            <NextImage
-              src="/new-logo.png"
-              alt="Orion One"
-              fill
-              sizes="48px"
-              className="object-contain [filter:brightness(0)_invert(1)]"
-            />
-          </div>
-        </div>
+          aria-hidden="true"
+        />
 
         <div className="flex items-center justify-center gap-3 mb-3 sm:mb-4">
           <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
@@ -1428,10 +1483,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         </span>
       </div>
 
-      {/* 3D Orion Sub Mark Scroll Wheel & CTA Transition Anchor */}
+      {/* 3D Orion Sub Mark Cinematic Companion & Scroll Anchor */}
       <OrionLogoScrollWheel
         progressRef={scrollProgressRef}
         targetRef={closingLogoTargetRef}
+        targetRefs={targetRefs}
         isLoaded={isLoaded}
       />
     </section>
