@@ -150,28 +150,27 @@ export default function OrionLogoScrollWheel({
     rendererRef.current = renderer;
 
     // 4. Studio Lighting Configuration
-    // Calibrated specifically for Orion Brand green theme color #214546 (rgb(33, 69, 70))
-    // Soft deep cyan/forest ambient fill
-    const ambientLight = new THREE.AmbientLight(new THREE.Color("#153D3D"), 2.0);
+    // Calibrated for crisp pure white #FFFFFF finish with architectural luxury depth
+    const ambientLight = new THREE.AmbientLight(new THREE.Color("#FFFFFF"), 1.8);
     scene.add(ambientLight);
 
-    // Key Light: Warm Ivory Cream for architectural highlight
-    const keyLight = new THREE.DirectionalLight(new THREE.Color("#EDE5DA"), 2.8);
+    // Key Light: Crisp pure white directional light
+    const keyLight = new THREE.DirectionalLight(new THREE.Color("#FFFFFF"), 2.6);
     keyLight.position.set(5, 7, 8);
     scene.add(keyLight);
 
-    // Rim Light: Emerald/Sage accent (#62AA9E) to bring out the beveled silhouette
-    const rimLight = new THREE.DirectionalLight(new THREE.Color("#62AA9E"), 3.4);
+    // Rim Light: Pure white accent to define the beveled silhouette
+    const rimLight = new THREE.DirectionalLight(new THREE.Color("#FFFFFF"), 2.2);
     rimLight.position.set(-6, -4, 6);
     scene.add(rimLight);
 
-    // Top Light for metallic bevel sparkle
-    const topLight = new THREE.DirectionalLight(new THREE.Color("#FFFFFF"), 1.6);
+    // Top Light for clean bevel sparkle
+    const topLight = new THREE.DirectionalLight(new THREE.Color("#FFFFFF"), 1.8);
     topLight.position.set(0, 9, 4);
     scene.add(topLight);
 
-    // Back fill to prevent dark occlusion
-    const backFillLight = new THREE.DirectionalLight(new THREE.Color("#214546"), 1.2);
+    // Back fill to keep shadow cavities luminous and clean
+    const backFillLight = new THREE.DirectionalLight(new THREE.Color("#EDE5DA"), 1.2);
     backFillLight.position.set(0, -6, -4);
     scene.add(backFillLight);
 
@@ -184,16 +183,16 @@ export default function OrionLogoScrollWheel({
     logoGroupRef.current = logoWrapper;
     pivotGroupRef.current = pivot;
 
-    // Orion Theme Material: Exact brand green #214546 / rgb(33, 69, 70)
+    // Pure White Luxury Architectural Material (#FFFFFF)
     const orionMaterial = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#214546"), // Exact Orion green brand color
-      emissive: new THREE.Color("#0c1e1e"),
-      emissiveIntensity: 0.3,
-      roughness: 0.25,
-      metalness: 0.72,
-      clearcoat: 0.6,
-      clearcoatRoughness: 0.16,
-      reflectivity: 0.92,
+      color: new THREE.Color("#FFFFFF"), // Pure white #FFFFFF
+      emissive: new THREE.Color("#FFFFFF"),
+      emissiveIntensity: 0.08,
+      roughness: 0.22,
+      metalness: 0.1,
+      clearcoat: 0.7,
+      clearcoatRoughness: 0.15,
+      reflectivity: 0.95,
       side: THREE.DoubleSide,
     });
 

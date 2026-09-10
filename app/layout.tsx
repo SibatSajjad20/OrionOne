@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Montserrat, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 
@@ -10,24 +11,29 @@ export const viewport: Viewport = {
   themeColor: "#153D3D",
 };
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+// Brand Guidelines: Luxia — Display & Headlines
+const luxia = localFont({
+  src: [
+    {
+      path: "./fonts/luxia-regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/luxia-regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  variable: "--font-luxia",
   display: "swap",
 });
 
+// Brand Guidelines: Montserrat — Body Copy, Navigation, Captions & UI
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -53,7 +59,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${montserrat.variable} ${playfair.variable} dark loading-lock`}
+      className={`${luxia.variable} ${montserrat.variable} dark loading-lock`}
       suppressHydrationWarning
     >
       <head suppressHydrationWarning>

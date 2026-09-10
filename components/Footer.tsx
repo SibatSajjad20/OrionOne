@@ -24,7 +24,7 @@ export default function Footer() {
                   alt="Orion One Logo"
                   fill
                   sizes="(max-width: 640px) 176px, 256px"
-                  className="object-contain object-left filter brightness-110"
+                  className="object-contain object-left [filter:brightness(0)_invert(1)]"
                 />
               </div>
               <span className="text-[10px] tracking-[0.25em] sm:tracking-[0.3em] text-[#62AA9E] uppercase block font-semibold">

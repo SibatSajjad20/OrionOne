@@ -18,8 +18,8 @@ const LoadingScreen = forwardRef<HTMLDivElement, LoadingScreenProps>(
             "radial-gradient(circle at 50% 45%, #1c4e4e 0%, #153D3D 50%, #081a1a 100%)",
         }}
       >
-        {/* Subtle theme green ambient glow directly behind the 3D rotating Sub Mark */}
-        <div className="absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-[#62AA9E]/10 blur-3xl pointer-events-none" />
+        {/* Subtle pure white ambient glow directly behind the 3D rotating Sub Mark */}
+        <div className="absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
         {/* Transparent Spacer for the 3D rotating Sub Mark in screen center */}
         <div className="w-44 h-44 sm:w-56 sm:h-56 pointer-events-none" />

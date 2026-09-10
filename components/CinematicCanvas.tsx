@@ -1381,7 +1381,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               alt="Orion One"
               fill
               sizes="48px"
-              className="object-contain filter brightness-125"
+              className="object-contain [filter:brightness(0)_invert(1)]"
             />
           </div>
         </div>
