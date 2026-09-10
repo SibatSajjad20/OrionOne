@@ -39,6 +39,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     // Immediately anchor scroll position at top
     lenis.scrollTo(0, { immediate: true });
 
+    // If loading screen is currently active, stop Lenis scrolling immediately
+    if (document.documentElement.classList.contains("loading-lock")) {
+      lenis.stop();
+    }
+
     lenis.on("scroll", ScrollTrigger.update);
 
     // Sync Lenis directly with GSAP Ticker for unified, jitter-free 60fps/120fps lock

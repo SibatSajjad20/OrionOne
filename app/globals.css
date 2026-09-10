@@ -42,6 +42,23 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Lock scroll and remove scrollbar completely during loading screen */
+html.loading-lock,
+body.loading-lock {
+  overflow: hidden !important;
+  height: 100% !important;
+  overscroll-behavior: none !important;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+html.loading-lock::-webkit-scrollbar,
+body.loading-lock::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 /* Custom scrollbar matching Moss Green & Mint Green palette */
 ::-webkit-scrollbar {
   width: 6px;

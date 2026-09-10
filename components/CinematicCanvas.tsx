@@ -222,6 +222,85 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const lastFrameIndexRef = useRef<number>(-1);
   const [activePillar, setActivePillar] = useState<number>(0);
 
+  // Lock scroll, hide scrollbar, and prevent all scroll interactions until loading completes
+  useEffect(() => {
+    const getLenis = () =>
+      (
+        window as unknown as {
+          lenis?: {
+            stop: () => void;
+            start: () => void;
+            scrollTo: (target: number, opts?: { immediate?: boolean }) => void;
+            resize: () => void;
+          };
+        }
+      ).lenis;
+
+    if (!isPreloaderDone) {
+      document.documentElement.classList.add("loading-lock");
+      document.body.classList.add("loading-lock");
+
+      const lenis = getLenis();
+      if (lenis) {
+        lenis.stop();
+        lenis.scrollTo(0, { immediate: true });
+      }
+      window.scrollTo(0, 0);
+
+      // Prevent wheel, touch, and scroll keys while loading
+      const preventScroll = (e: Event) => {
+        e.preventDefault();
+      };
+      const preventKeyScroll = (e: KeyboardEvent) => {
+        if (
+          [
+            "Space",
+            "ArrowUp",
+            "ArrowDown",
+            "PageUp",
+            "PageDown",
+            "Home",
+            "End",
+          ].includes(e.code)
+        ) {
+          e.preventDefault();
+        }
+      };
+
+      window.addEventListener("wheel", preventScroll, { passive: false });
+      window.addEventListener("touchmove", preventScroll, { passive: false });
+      window.addEventListener("keydown", preventKeyScroll, { passive: false });
+
+      return () => {
+        window.removeEventListener("wheel", preventScroll);
+        window.removeEventListener("touchmove", preventScroll);
+        window.removeEventListener("keydown", preventKeyScroll);
+      };
+    } else {
+      document.documentElement.classList.remove("loading-lock");
+      document.body.classList.remove("loading-lock");
+
+      const lenis = getLenis();
+      if (lenis) {
+        lenis.start();
+        lenis.resize();
+      }
+      ScrollTrigger.refresh();
+    }
+  }, [isPreloaderDone]);
+
+  // Ensure scroll lock is released if component unmounts
+  useEffect(() => {
+    return () => {
+      document.documentElement.classList.remove("loading-lock");
+      document.body.classList.remove("loading-lock");
+      const lenis = (window as unknown as { lenis?: { start: () => void } }).lenis;
+      if (lenis) {
+        lenis.start();
+      }
+    };
+  }, []);
+
   // Single-frame object-fit cover rendering engine (Hardware-accelerated, zero-redundancy)
   const renderToCanvas = useCallback((img: HTMLImageElement | null) => {
     const canvas = canvasRef.current;

@@ -234,16 +234,16 @@ export default function OrionLogoScrollWheel({
     let isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
     let cachedCtaX = cachedWidth * 0.5;
-    let cachedCtaY = cachedHeight * 0.32;
-    let cachedCtaSize = 88;
-    let lastRectUpdateProg = -1;
+    let cachedCtaY = cachedHeight * 0.36;
+    let cachedCtaSize = 64;
 
     const updateCtaCoords = () => {
-      if (targetRef && targetRef.current) {
+      if (targetRef && targetRef.current && container) {
         const rect = targetRef.current.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
-          cachedCtaX = rect.left + rect.width * 0.5;
-          cachedCtaY = rect.top + rect.height * 0.5;
+          cachedCtaX = rect.left - containerRect.left + rect.width * 0.5;
+          cachedCtaY = rect.top - containerRect.top + rect.height * 0.5;
           cachedCtaSize = Math.max(rect.width, rect.height);
         }
       }
@@ -294,8 +294,13 @@ export default function OrionLogoScrollWheel({
         }
       }
 
-      // Smooth progress dampening for ultra-fluid motion
-      smoothedProgressRef.current += (targetProg - smoothedProgressRef.current) * 0.14;
+      // Smooth progress dampening for ultra-fluid motion; accelerate on fast scrolls/skips
+      const progDiff = targetProg - smoothedProgressRef.current;
+      const dampFactor = Math.abs(progDiff) > 0.08 ? 0.35 : 0.14;
+      smoothedProgressRef.current += progDiff * dampFactor;
+      if (Math.abs(progDiff) < 0.001) {
+        smoothedProgressRef.current = targetProg;
+      }
       const prog = smoothedProgressRef.current;
 
       // Hover scale smoothing
@@ -331,19 +336,19 @@ export default function OrionLogoScrollWheel({
         const basePixelSize = (1 - introT) * loadingPixelSize + introT * wheelPixelSize;
 
         // -----------------------------------------------------------------
-        // STATE 2: Target CTA Heading Position & Dimensions (Cached)
+        // STATE 2: Target CTA Heading Position & Dimensions (Live & Fixed)
         // -----------------------------------------------------------------
-        if (prog >= 0.83 && (lastRectUpdateProg < 0.83 || Math.abs(prog - lastRectUpdateProg) > 0.08)) {
-          lastRectUpdateProg = prog;
+        if (prog >= 0.80 || targetProg >= 0.80) {
           updateCtaCoords();
         }
 
         const ctaScreenX = cachedCtaX;
         const ctaScreenY = cachedCtaY;
-        const ctaPixelSize = cachedCtaSize || (isTablet ? 74 : 88);
+        const ctaPixelSize = cachedCtaSize || (isTablet ? 64 : 72);
 
-        // TRANSITION DOCKING TO CTA (Progress 0.845 -> 0.945)
-        const rawT = Math.max(0, Math.min(1, (prog - 0.845) / (0.945 - 0.845)));
+        // TRANSITION DOCKING TO CTA:
+        // Glides into place from 0.840 to 0.885 so it is 100% docked and fixed when CTA text appears
+        const rawT = Math.max(0, Math.min(1, (prog - 0.840) / (0.885 - 0.840)));
         const easeT = rawT * rawT * (3 - 2 * rawT);
 
         // Screen-Space Coordinates
@@ -371,9 +376,8 @@ export default function OrionLogoScrollWheel({
         const wheelRotX = 0.0;
         const wheelRotZ = -scrollRevolutions * 0.3;
 
-        // CTA mode
-        const idleFloatY = Math.sin(time * 1.5) * (isMobile ? 0.04 : 0.08);
-        const ctaRotY = Math.sin(time * 0.9) * 0.1;
+        // CTA mode forward-facing rotation with subtle luxury shimmer
+        const ctaRotY = Math.sin(time * 0.9) * 0.06;
         const ctaRotX = 0.0;
         const ctaRotZ = 0.0;
 
@@ -390,17 +394,13 @@ export default function OrionLogoScrollWheel({
           pivot.rotation.x = 0;
           pivot.rotation.z = introT * dockedRotZ;
 
-          // Gentle organic float while in center
+          // Gentle organic float while in center loading screen
           logoWrapper.position.y += Math.sin(time * 1.5) * 0.04 * (1 - introT);
         } else {
           pivot.rotation.y = dockedRotY;
           pivot.rotation.x = dockedRotX;
           pivot.rotation.z = dockedRotZ;
-
-          // Floating hover motion when docked at CTA
-          if (easeT > 0.3) {
-            logoWrapper.position.y += idleFloatY * easeT;
-          }
+          // In CTA section, position remains rock-solid and fixed in its anchor
         }
 
         // Fade out right-side HUD ring as logo moves to the center / during intro
@@ -442,7 +442,7 @@ export default function OrionLogoScrollWheel({
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-35 overflow-hidden"
+      className="absolute inset-0 w-full h-full pointer-events-none z-[45] overflow-hidden"
     >
       {/* 3D WebGL Canvas for Orion Sub Mark (100% Transparent Background) */}
       <canvas

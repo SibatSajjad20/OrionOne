@@ -53,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${montserrat.variable} ${playfair.variable} dark`}
+      className={`${cormorant.variable} ${montserrat.variable} ${playfair.variable} dark loading-lock`}
       suppressHydrationWarning
     >
       <head suppressHydrationWarning>
@@ -66,7 +66,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D]">
+      <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D] loading-lock">
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
