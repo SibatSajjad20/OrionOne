@@ -3,6 +3,7 @@
 import { forwardRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MessageCircle, Menu, X, ArrowUpRight } from "lucide-react";
 
 interface HeaderProps {
@@ -13,6 +14,7 @@ interface HeaderProps {
 const Header = forwardRef<HTMLElement, HeaderProps>(
   ({ className = "", onOpenInquiry }, ref) => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const pathname = usePathname();
 
     const handleInquireClick = (e: React.MouseEvent) => {
       e.preventDefault();
@@ -33,7 +35,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               <div className="relative h-10 sm:h-14 w-44 sm:w-64 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
                   src="/new-logo.png"
-                  alt="Orion One Logo"
+                  alt="Orion One by SP Builders"
                   fill
                   sizes="(max-width: 640px) 176px, 256px"
                   className="object-contain object-left filter brightness-110"
@@ -42,29 +44,69 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               </div>
             </Link>
 
-            {/* Desktop Navigation Chapters - Unhurried Editorial Style */}
-            <nav className="hidden lg:flex items-center space-x-7 text-[11px] tracking-[0.25em] text-[#EDE5DA]/80 uppercase font-sans-body font-medium">
-              <a href="#architecture" className="hover:text-[#62AA9E] transition-colors py-1">
-                Architecture
-              </a>
-              <a href="#waterfront" className="hover:text-[#62AA9E] transition-colors py-1">
-                Waterfront
-              </a>
-              <a href="#masterplan" className="hover:text-[#62AA9E] transition-colors py-1">
-                Masterplan
-              </a>
-              <a href="#investment" className="hover:text-[#62AA9E] transition-colors py-1">
-                Investment
-              </a>
-              <a href="#destination" className="hover:text-[#62AA9E] transition-colors py-1">
-                Destination
-              </a>
+            {/* Desktop Navigation: Exactly 3 Links Across All Pages */}
+            <nav className="hidden md:flex items-center space-x-8 lg:space-x-12 text-[11px] tracking-[0.25em] text-[#EDE5DA]/80 uppercase font-sans-body font-medium">
+              <Link
+                href="/"
+                className={`transition-colors py-1 relative ${
+                  pathname === "/"
+                    ? "text-[#62AA9E] font-semibold"
+                    : "hover:text-[#62AA9E]"
+                }`}
+              >
+                <span>Home</span>
+                {pathname === "/" && (
+                  <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#62AA9E] rounded-full" />
+                )}
+              </Link>
+
+              <Link
+                href="/about"
+                className={`transition-colors py-1 relative ${
+                  pathname === "/about"
+                    ? "text-[#62AA9E] font-semibold"
+                    : "hover:text-[#62AA9E]"
+                }`}
+              >
+                <span>About Us</span>
+                {pathname === "/about" && (
+                  <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#62AA9E] rounded-full" />
+                )}
+              </Link>
+
+              <Link
+                href="/commercial"
+                className={`transition-colors py-1 relative ${
+                  pathname === "/commercial"
+                    ? "text-[#62AA9E] font-semibold"
+                    : "hover:text-[#62AA9E]"
+                }`}
+              >
+                <span>Commercial</span>
+                {pathname === "/commercial" && (
+                  <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#62AA9E] rounded-full" />
+                )}
+              </Link>
+
+              <Link
+                href="/contact"
+                className={`transition-colors py-1 relative ${
+                  pathname === "/contact"
+                    ? "text-[#62AA9E] font-semibold"
+                    : "hover:text-[#62AA9E]"
+                }`}
+              >
+                <span>Contact Us</span>
+                {pathname === "/contact" && (
+                  <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#62AA9E] rounded-full" />
+                )}
+              </Link>
             </nav>
 
             {/* Actions: Direct WhatsApp & Private Tour Desk */}
             <div className="flex items-center gap-2 sm:gap-3">
               <a
-                href="https://wa.me/923009079164?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
+                href="https://wa.me/923336660722?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Direct WhatsApp Concierge"
@@ -74,7 +116,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               </a>
 
               <a
-                href="https://wa.me/923009079164?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
+                href="https://wa.me/923336660722?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden sm:inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider text-[#EDE5DA] bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/15 px-4 py-2 rounded-full transition-all duration-300 shadow-md"
@@ -93,7 +135,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="lg:hidden text-[#EDE5DA] p-2 hover:text-[#62AA9E] transition-colors cursor-pointer"
+                className="md:hidden text-[#EDE5DA] p-2 hover:text-[#62AA9E] transition-colors cursor-pointer"
                 aria-label="Toggle menu"
               >
                 {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -104,7 +146,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
         {/* Mobile Drawer Overlay */}
         {menuOpen && (
-          <div className="fixed inset-0 z-50 bg-[#153D3D]/98 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-10 lg:hidden overflow-y-auto">
+          <div className="fixed inset-0 z-50 bg-[#153D3D]/98 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-10 md:hidden overflow-y-auto">
             {/* Top Bar inside drawer */}
             <div className="flex items-center justify-between pb-6 border-b border-[#EDE5DA]/10">
               <div className="relative h-10 w-44">
@@ -125,76 +167,87 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               </button>
             </div>
 
-            {/* Nav Links */}
-            <nav className="flex flex-col space-y-4 my-auto py-6 text-base sm:text-lg font-serif tracking-widest text-[#EDE5DA]">
-              <a
-                href="#architecture"
+            {/* Nav Links: Exactly 3 Chapters */}
+            <nav className="flex flex-col space-y-5 my-auto py-8 text-lg sm:text-xl font-serif tracking-widest text-[#EDE5DA]">
+              <Link
+                href="/"
                 onClick={() => setMenuOpen(false)}
-                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+                className={`transition-colors border-b border-[#EDE5DA]/10 pb-4 flex items-center justify-between ${
+                  pathname === "/" ? "text-[#62AA9E]" : "hover:text-[#62AA9E]"
+                }`}
               >
-                <span>01. Architecture</span>
-                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Twin Towers</span>
-              </a>
-              <a
-                href="#waterfront"
+                <span>01. Home</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">
+                  Lakefront Living
+                </span>
+              </Link>
+
+              <Link
+                href="/about"
                 onClick={() => setMenuOpen(false)}
-                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+                className={`transition-colors border-b border-[#EDE5DA]/10 pb-4 flex items-center justify-between ${
+                  pathname === "/about" ? "text-[#62AA9E]" : "hover:text-[#62AA9E]"
+                }`}
               >
-                <span>02. Life by the Water</span>
-                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Promenade</span>
-              </a>
-              <a
-                href="#masterplan"
+                <span>02. About Us</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">
+                  SP Builders Heritage
+                </span>
+              </Link>
+
+              <Link
+                href="/commercial"
                 onClick={() => setMenuOpen(false)}
-                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+                className={`transition-colors border-b border-[#EDE5DA]/10 pb-4 flex items-center justify-between ${
+                  pathname === "/commercial" ? "text-[#62AA9E]" : "hover:text-[#62AA9E]"
+                }`}
               >
-                <span>03. District Masterplan</span>
-                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Interactive</span>
-              </a>
-              <a
-                href="#investment"
+                <span>03. Commercial</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">
+                  Destination Living
+                </span>
+              </Link>
+
+              <Link
+                href="/contact"
                 onClick={() => setMenuOpen(false)}
-                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
+                className={`transition-colors border-b border-[#EDE5DA]/10 pb-4 flex items-center justify-between ${
+                  pathname === "/contact" ? "text-[#62AA9E]" : "hover:text-[#62AA9E]"
+                }`}
               >
-                <span>04. Lifestyle & Investment</span>
-                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">Sector F</span>
-              </a>
-              <a
-                href="#destination"
-                onClick={() => setMenuOpen(false)}
-                className="hover:text-[#62AA9E] transition-colors border-b border-[#EDE5DA]/10 pb-3 flex items-center justify-between"
-              >
-                <span>05. Destination & Pillars</span>
-                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">4 Pillars</span>
-              </a>
+                <span>04. Contact Us</span>
+                <span className="text-xs font-sans-body text-[#62AA9E]/70 tracking-normal font-light">
+                  Headquarters & Suite
+                </span>
+              </Link>
             </nav>
 
             {/* Actions in drawer */}
-            <div className="space-y-3 pt-4 border-t border-[#EDE5DA]/10">
+            <div className="space-y-3 pt-6 border-t border-[#EDE5DA]/10">
               <button
                 onClick={(e) => {
                   setMenuOpen(false);
                   handleInquireClick(e);
                 }}
-                className="w-full py-3 rounded-full bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] font-sans-body font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 rounded-full bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] font-sans-body font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-lg flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Book a Private Tour</span>
                 <ArrowUpRight className="w-4 h-4" />
               </button>
 
               <a
-                href="https://wa.me/923009079164?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
+                href="https://wa.me/923336660722?text=Hello,%20I%20am%20interested%20in%20Orion%20One"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMenuOpen(false)}
-                className="w-full py-2.5 rounded-full bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/15 text-[#EDE5DA] font-sans-body font-medium text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-full bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/15 text-[#EDE5DA] font-sans-body font-medium text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2"
               >
                 <MessageCircle className="w-4 h-4 text-[#62AA9E]" />
                 <span>WhatsApp Concierge</span>
               </a>
 
               <p className="text-[10px] text-center text-[#808080] font-sans-body uppercase tracking-wider pt-2">
-                Show Suite Open Daily · 10AM – 7PM
+                Show Suite Open Daily · 10AM – 6PM
               </p>
             </div>
           </div>

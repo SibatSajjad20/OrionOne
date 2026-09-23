@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -13,6 +14,9 @@ if (typeof window !== "undefined") {
 }
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const lenisRef = useRef<Lenis | null>(null);
+
   useEffect(() => {
     // Enforce manual scroll restoration and reset window scroll to top
     if ("scrollRestoration" in history) {
@@ -34,14 +38,19 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       autoRaf: false,
     });
 
+    lenisRef.current = lenis;
     (window as unknown as { lenis?: unknown }).lenis = lenis;
 
     // Immediately anchor scroll position at top
     lenis.scrollTo(0, { immediate: true });
 
-    // If loading screen is currently active, stop Lenis scrolling immediately
-    if (document.documentElement.classList.contains("loading-lock")) {
+    // If loading screen is currently active on homepage, stop Lenis scrolling immediately
+    if (pathname === "/" && document.documentElement.classList.contains("loading-lock")) {
       lenis.stop();
+    } else {
+      document.documentElement.classList.remove("loading-lock");
+      document.body.classList.remove("loading-lock");
+      lenis.start();
     }
 
     lenis.on("scroll", ScrollTrigger.update);
@@ -66,8 +75,35 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       gsap.ticker.remove(updateTicker);
       ScrollTrigger.removeEventListener("refresh", handleRefresh);
       lenis.destroy();
+      lenisRef.current = null;
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle route change synchronization: scroll reset, dimension resizing, lock release
+  useEffect(() => {
+    const lenis = lenisRef.current;
+
+    window.scrollTo(0, 0);
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+
+      // Non-home pages should never have loading-lock active
+      if (pathname !== "/") {
+        document.documentElement.classList.remove("loading-lock");
+        document.body.classList.remove("loading-lock");
+        lenis.start();
+      }
+    }
+
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+      if (lenisRef.current) {
+        lenisRef.current.resize();
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   return <>{children}</>;
 }

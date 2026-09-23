@@ -59,7 +59,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${luxia.variable} ${montserrat.variable} dark loading-lock`}
+      className={`${luxia.variable} ${montserrat.variable} dark`}
       suppressHydrationWarning
     >
       <head suppressHydrationWarning>
@@ -72,7 +72,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D] loading-lock">
+      <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D]">
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

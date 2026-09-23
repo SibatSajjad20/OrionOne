@@ -317,10 +317,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     return () => {
       document.documentElement.classList.remove("loading-lock");
       document.body.classList.remove("loading-lock");
-      const lenis = (window as unknown as { lenis?: { start: () => void } }).lenis;
+      const lenis = (window as unknown as { lenis?: { start: () => void; resize: () => void } }).lenis;
       if (lenis) {
         lenis.start();
+        lenis.resize();
       }
+      ScrollTrigger.refresh();
     };
   }, []);
 
@@ -498,18 +500,20 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       });
     };
 
-    // Active sequence indices (327 total frames in narrative order)
-    // Scene 2 (Architecture): 0..65 (66 frames)
-    // Scene 3 (Waterfront): 66..155 (90 frames, pure Waterfront)
-    // Scene 5 (Masterplan): 204..275 (72 frames, pure Masterplan)
-    // Scene 4 (Destination): 163..196 (34 frames, Infinity Pool)
-    // Scene 7 (Closing): 329..392 (64 frames)
-    const activeIndices: number[] = [];
-    for (let i = 0; i <= 65; i++) activeIndices.push(i);
-    for (let i = 66; i <= 155; i++) activeIndices.push(i);
-    for (let i = 204; i <= 275; i++) activeIndices.push(i);
-    for (let i = 163; i <= 196; i++) activeIndices.push(i);
-    for (let i = 329; i <= 392; i++) activeIndices.push(i);
+    // Critical sequence indices for immediate interactive entry (Scene 2 Architecture: 0..65)
+    const criticalIndices: number[] = [];
+    for (let i = 0; i <= 65; i++) criticalIndices.push(i);
+
+    // Remaining sequence indices streamed in the background
+    // Scene 3 (Waterfront): 66..155
+    // Scene 5 (Masterplan): 204..275
+    // Scene 4 (Destination): 163..196
+    // Scene 7 (Closing): 329..392
+    const remainingIndices: number[] = [];
+    for (let i = 66; i <= 155; i++) remainingIndices.push(i);
+    for (let i = 204; i <= 275; i++) remainingIndices.push(i);
+    for (let i = 163; i <= 196; i++) remainingIndices.push(i);
+    for (let i = 329; i <= 392; i++) remainingIndices.push(i);
 
     const runWorkerPool = async (
       tasks: (() => Promise<void>)[],
@@ -532,7 +536,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
 
     const startPreload = async () => {
       let loadedCount = 0;
-      const totalCount = activeIndices.length;
+      const totalCritical = criticalIndices.length;
 
       // Initial column poster keyframes
       const col1Initial = loadImage("/column-1-frames/frame_0001.webp").then((img) => {
@@ -557,25 +561,25 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, img);
       });
 
-      // Active main frames tasks
-      const mainTasks = activeIndices.map((idx) => async () => {
+      // Critical starting sequence tasks (Scene 2 Architecture: 0..65)
+      const criticalTasks = criticalIndices.map((idx) => async () => {
         const frameNum = String(idx + 1).padStart(4, "0");
         const img = await loadImage(`/video-frames/frame_${frameNum}.webp`);
         if (isCancelled) return;
         loadedFrames[idx] = img;
         loadedCount++;
-        const percent = Math.min(100, Math.floor((loadedCount / totalCount) * 100));
+        const percent = Math.min(100, Math.floor((loadedCount / totalCritical) * 100));
         setLoadingProgress(percent);
       });
 
-      // Fallback safety timeout: if slow network, unlock after 12s gracefully
+      // Fast fallback safety timeout (2.5s maximum) guarantees scroll is never locked
       const timeoutPromise = new Promise<void>((resolve) => {
-        setTimeout(resolve, 12000);
+        setTimeout(resolve, 2500);
       });
 
-      // Run parallel workers
+      // Run parallel workers for critical starting frames
       await Promise.race([
-        Promise.all([col1Initial, col2Initial, col3Initial, runWorkerPool(mainTasks, 16)]),
+        Promise.all([col1Initial, col2Initial, col3Initial, runWorkerPool(criticalTasks, 16)]),
         timeoutPromise,
       ]);
 
@@ -589,18 +593,24 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         renderToCanvas(loadedFrames[0]);
       }
 
-      // Smooth preloader dissolve
+      // Smooth preloader dissolve with guaranteed completion even in background tabs
+      let preloaderFinished = false;
+      const finishPreloader = () => {
+        if (preloaderFinished || isCancelled) return;
+        preloaderFinished = true;
+        setIsPreloaderDone(true);
+      };
+
       if (preloaderRef.current) {
         gsap.to(preloaderRef.current, {
           opacity: 0,
-          duration: 0.6,
+          duration: 0.5,
           ease: "power2.inOut",
-          onComplete: () => {
-            setIsPreloaderDone(true);
-          },
+          onComplete: finishPreloader,
         });
+        setTimeout(finishPreloader, 600);
       } else {
-        setIsPreloaderDone(true);
+        finishPreloader();
       }
 
       if (ch2Ref.current) {
@@ -620,8 +630,24 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         );
       }
 
-      // Immediately start background loading of column frames via worker pool
+      // Stream remaining sequence frames and column frames in the background
+      loadRemainingFramesBackground(loadedFrames, remainingIndices);
       loadColumnFramesBackground(col1Frames, col2Frames, col3Frames);
+    };
+
+    // Remaining Sequence Frames: Background streaming via worker pool
+    const loadRemainingFramesBackground = async (
+      targetFrames: HTMLImageElement[],
+      indices: number[]
+    ) => {
+      const remainingTasks = indices.map((idx) => async () => {
+        if (isCancelled) return;
+        const frameNum = String(idx + 1).padStart(4, "0");
+        const img = await loadImage(`/video-frames/frame_${frameNum}.webp`);
+        if (isCancelled) return;
+        targetFrames[idx] = img;
+      });
+      await runWorkerPool(remainingTasks, 16);
     };
 
     // Column Frames: Fast parallel loading via 16 workers
