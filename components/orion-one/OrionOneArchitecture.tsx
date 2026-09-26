@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+import { scrollToY } from "@/lib/scrollTo";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -96,10 +97,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
       const progressTargets = [0, 0.35, 0.68, 1.0];
       const targetScroll =
         st.start + (st.end - st.start) * progressTargets[idx];
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
+      scrollToY(targetScroll);
     }
   };
 

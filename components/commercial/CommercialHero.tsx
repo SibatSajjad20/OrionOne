@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { scrollToElement } from "@/lib/scrollTo";
 
 interface CommercialHeroProps {
   onOpenInquiry?: () => void;
@@ -52,7 +53,7 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
     e.preventDefault();
     const element = document.getElementById("spaces");
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      scrollToElement(element);
     }
   };
 

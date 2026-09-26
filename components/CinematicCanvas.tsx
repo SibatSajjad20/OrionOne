@@ -1004,6 +1004,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       if (!st) return;
 
       e.preventDefault();
+      e.stopPropagation();
       const prog = CHAPTER_PROGRESS[href];
       const targetY = st.start + prog * (st.end - st.start);
 

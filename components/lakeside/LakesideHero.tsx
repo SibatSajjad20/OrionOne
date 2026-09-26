@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { scrollToElement } from "@/lib/scrollTo";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -67,7 +68,7 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
     e.preventDefault();
     const element = document.getElementById("heart-of-orion");
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      scrollToElement(element);
     }
   };
 

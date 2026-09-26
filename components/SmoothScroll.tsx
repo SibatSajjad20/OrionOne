@@ -5,13 +5,7 @@ import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import {
-  DUR,
-  EASE,
-  NO_SNAP_ROUTES,
-  SOFT_SNAP_ROUTES,
-  type OrionScrollState,
-} from "@/lib/motion";
+import { DUR, EASE, type OrionScrollState } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -20,16 +14,52 @@ if (typeof window !== "undefined") {
   }
 }
 
-function allowSoftSnap(pathname: string) {
-  if (NO_SNAP_ROUTES.has(pathname)) return false;
-  if (pathname.startsWith("/residence/")) return false;
-  return SOFT_SNAP_ROUTES.has(pathname);
+const HOME_DURATION = 1.15;
+const HOME_WHEEL = 0.85;
+
+function wheelProfile(pathname: string) {
+  if (pathname === "/") {
+    return { duration: HOME_DURATION, wheelMultiplier: HOME_WHEEL };
+  }
+  return { duration: DUR.l, wheelMultiplier: 1 };
+}
+
+function applyWheelProfile(lenis: Lenis, pathname: string) {
+  const profile = wheelProfile(pathname);
+  lenis.options.duration = profile.duration;
+  lenis.options.wheelMultiplier = profile.wheelMultiplier;
+  const virtualScroll = (
+    lenis as unknown as {
+      virtualScroll?: { options?: { wheelMultiplier?: number } };
+    }
+  ).virtualScroll;
+  if (virtualScroll?.options) {
+    virtualScroll.options.wheelMultiplier = profile.wheelMultiplier;
+  }
+}
+
+function anchorOptions(reduced: boolean) {
+  return reduced
+    ? { offset: 0, immediate: true as const }
+    : { offset: 0, duration: DUR.m };
+}
+
+function isSamePageHash(anchor: HTMLAnchorElement) {
+  try {
+    const url = new URL(anchor.href, window.location.href);
+    return (
+      url.host === window.location.host &&
+      url.pathname === window.location.pathname &&
+      url.hash.length > 1
+    );
+  } catch {
+    return false;
+  }
 }
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const lenisRef = useRef<Lenis | null>(null);
-  const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if ("scrollRestoration" in history) {
@@ -44,25 +74,55 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     window.__orionScroll = { velocity: 0, progress: 0, direction: 1 };
 
-    // Home page has a 1700vh cinematic pin — use slower, more controlled settings
-    const isHomePage = pathname === "/";
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reduced = motionQuery.matches;
+
+    const profile = wheelProfile(pathname);
     const lenis = new Lenis({
-      duration: isHomePage ? 1.6 : DUR.l,
+      duration: reduced ? 0 : profile.duration,
       easing: EASE.expoOut,
-      smoothWheel: true,
-      wheelMultiplier: isHomePage ? 0.72 : 0.82,
-      touchMultiplier: 1.2,
+      smoothWheel: !reduced,
+      wheelMultiplier: profile.wheelMultiplier,
+      touchMultiplier: 1,
       syncTouch: false,
       autoRaf: false,
+      anchors: anchorOptions(reduced),
+      allowNestedScroll: true,
+      stopInertiaOnNavigate: true,
     });
 
     lenisRef.current = lenis;
     (window as unknown as { lenis?: Lenis }).lenis = lenis;
+    applyWheelProfile(lenis, pathname);
 
     const handleLenisStop = () => lenis.stop();
     const handleLenisStart = () => lenis.start();
     window.addEventListener("lenis:stop", handleLenisStop);
     window.addEventListener("lenis:start", handleLenisStart);
+
+    // Stop the browser's instant hash jump. Lenis then coasts to the target.
+    // Capture runs before the cinematic pin handler, which stopPropagates its own chapters.
+    const preventNativeHashJump = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+      const anchor = (event.target as Element | null)?.closest?.("a");
+      if (!(anchor instanceof HTMLAnchorElement) || !isSamePageHash(anchor)) return;
+      if (anchor.target && anchor.target !== "_self") return;
+      event.preventDefault();
+      const url = new URL(anchor.href, window.location.href);
+      if (window.location.hash !== url.hash) {
+        history.pushState(null, "", url.hash);
+      }
+    };
+    window.addEventListener("click", preventNativeHashJump, true);
 
     lenis.scrollTo(0, { immediate: true });
 
@@ -74,26 +134,14 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       lenis.start();
     }
 
-    const onLenisScroll = (e: {
-      velocity?: number;
-      progress?: number;
-      direction?: number;
-    }) => {
+    const onLenisScroll = (instance: Lenis) => {
       ScrollTrigger.update();
       const state: OrionScrollState = {
-        velocity: e.velocity ?? 0,
-        progress: e.progress ?? 0,
-        direction: e.direction ?? 1,
+        velocity: instance.velocity ?? 0,
+        progress: instance.progress ?? 0,
+        direction: instance.direction ?? 1,
       };
       window.__orionScroll = state;
-
-      if (!allowSoftSnap(window.location.pathname)) return;
-      if (Math.abs(state.velocity) > 0.15) {
-        if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
-        snapTimerRef.current = setTimeout(() => {
-          softSnapToNearest(lenis);
-        }, 140);
-      }
     };
 
     lenis.on("scroll", onLenisScroll);
@@ -102,8 +150,34 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       lenis.raf(time * 1000);
     };
 
-    gsap.ticker.add(updateTicker);
+    let tickerBound = false;
+    const bindTicker = () => {
+      if (tickerBound) return;
+      gsap.ticker.add(updateTicker);
+      tickerBound = true;
+    };
+    const unbindTicker = () => {
+      if (!tickerBound) return;
+      gsap.ticker.remove(updateTicker);
+      tickerBound = false;
+    };
+
+    // One display frame per tick. Late frames are not stretched into a hitch.
     gsap.ticker.lagSmoothing(0);
+    if (!reduced) bindTicker();
+
+    const onMotionChange = (event: MediaQueryListEvent) => {
+      reduced = event.matches;
+      lenis.options.smoothWheel = !reduced;
+      lenis.options.anchors = anchorOptions(reduced);
+      if (reduced) {
+        unbindTicker();
+        lenis.scrollTo(lenis.actualScroll, { immediate: true, force: true });
+      } else {
+        bindTicker();
+      }
+    };
+    motionQuery.addEventListener("change", onMotionChange);
 
     const handleRefresh = () => {
       lenis.resize();
@@ -115,8 +189,9 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("lenis:stop", handleLenisStop);
       window.removeEventListener("lenis:start", handleLenisStart);
-      if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
-      gsap.ticker.remove(updateTicker);
+      window.removeEventListener("click", preventNativeHashJump, true);
+      motionQuery.removeEventListener("change", onMotionChange);
+      unbindTicker();
       ScrollTrigger.removeEventListener("refresh", handleRefresh);
       lenis.destroy();
       lenisRef.current = null;
@@ -129,6 +204,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     window.scrollTo(0, 0);
     if (lenis) {
+      applyWheelProfile(lenis, pathname);
       lenis.scrollTo(0, { immediate: true });
 
       if (pathname !== "/") {
@@ -160,37 +236,4 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   }, [pathname]);
 
   return <>{children}</>;
-}
-
-function softSnapToNearest(lenis: Lenis) {
-  if (document.documentElement.classList.contains("modal-lock")) return;
-  if (document.documentElement.classList.contains("loading-lock")) return;
-
-  const sections = Array.from(
-    document.querySelectorAll<HTMLElement>("main section, [data-snap]")
-  );
-  if (!sections.length) return;
-
-  const vh = window.innerHeight;
-  let best: HTMLElement | null = null;
-  let bestRatio = 0;
-
-  for (const section of sections) {
-    if (section.offsetHeight < vh * 0.45) continue;
-    const rect = section.getBoundingClientRect();
-    const visible = Math.min(rect.bottom, vh) - Math.max(rect.top, 0);
-    if (visible <= 0) continue;
-    const ratio = visible / Math.min(section.offsetHeight, vh);
-    if (ratio > 0.55 && ratio > bestRatio) {
-      bestRatio = ratio;
-      best = section;
-    }
-  }
-
-  if (!best) return;
-
-  const top = best.getBoundingClientRect().top + window.scrollY;
-  if (Math.abs(window.scrollY - top) < 48) return;
-
-  lenis.scrollTo(top, { duration: DUR.m, offset: 0 });
 }

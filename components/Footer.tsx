@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUp, Mail, Phone, MapPin, Clock, ArrowRight } from "lucide-react";
+import { scrollToY } from "@/lib/scrollTo";
 
 export default function Footer() {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToY(0);
   };
 
   return (

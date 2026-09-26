@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { scrollToElement } from "@/lib/scrollTo";
 
 interface LocationHeroProps {
   onOpenInquiry?: () => void;
@@ -53,7 +54,7 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
     e.preventDefault();
     const element = document.getElementById("address");
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      scrollToElement(element);
     }
   };
 

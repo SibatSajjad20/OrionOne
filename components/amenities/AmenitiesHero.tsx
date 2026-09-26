@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { scrollToElement } from "@/lib/scrollTo";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -42,7 +43,7 @@ export default function AmenitiesHero({ onOpenInquiry }: AmenitiesHeroProps) {
     e.preventDefault();
     const el = document.getElementById("horizontal-showcase");
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      scrollToElement(el);
     }
   };
 

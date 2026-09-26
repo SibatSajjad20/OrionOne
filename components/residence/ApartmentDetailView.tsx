@@ -117,7 +117,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen bg-[#153D3D] text-[#EDE5DA] overflow-x-hidden selection:bg-[#62AA9E] selection:text-[#153D3D]"
+      className="relative min-h-screen bg-[#153D3D] text-[#EDE5DA] overflow-x-clip selection:bg-[#62AA9E] selection:text-[#153D3D]"
     >
       {/* Subtle Ambient Radial Lighting matching main residence page */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_0%,rgba(28,78,78,0.4)_0%,rgba(21,61,61,0.2)_50%,transparent_80%)]" />

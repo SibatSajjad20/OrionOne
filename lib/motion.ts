@@ -24,22 +24,6 @@ export const EASE = {
 
 export const STAGGER = 0.1;
 
-/** Routes where soft section snap is safe (no long cinematic pins). */
-export const SOFT_SNAP_ROUTES = new Set(["/about", "/contact"]);
-
-/** Routes that must never soft-snap (pinned / scrubbed journeys). */
-export const NO_SNAP_ROUTES = new Set([
-  "/",
-  "/orion-one",
-  "/location",
-  "/amenities",
-  "/commercial",
-  "/residence",
-  "/residences",
-  "/lakeside",
-  "/lakeside-experience",
-]);
-
 export type OrionScrollState = {
   velocity: number;
   progress: number;

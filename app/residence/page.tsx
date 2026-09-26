@@ -30,7 +30,7 @@ export default function ResidencePage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#153D3D] text-[#EDE5DA] overflow-x-hidden selection:bg-[#62AA9E] selection:text-[#153D3D]">
+    <div className="relative min-h-screen bg-[#153D3D] text-[#EDE5DA] overflow-x-clip selection:bg-[#62AA9E] selection:text-[#153D3D]">
       {/* Universal Fixed Header */}
       <Header onOpenInquiry={() => setIsInquiryOpen(true)} />
 

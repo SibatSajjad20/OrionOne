@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { scrollToY } from "@/lib/scrollTo";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -252,7 +253,7 @@ export default function AmenitiesHeroShowcase({
     const st = scrollTriggerInstanceRef.current;
     if (st) {
       const targetScroll = st.start + 0.09 * (st.end - st.start);
-      window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      scrollToY(targetScroll);
     }
   };
 

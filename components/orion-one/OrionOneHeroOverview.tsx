@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { ArrowDown } from "lucide-react";
+import { scrollToY } from "@/lib/scrollTo";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -338,10 +339,7 @@ export default function OrionOneHeroOverview({
     if (containerRef.current) {
       const offsetTop =
         containerRef.current.offsetTop + containerRef.current.offsetHeight * 0.18;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: "smooth",
-      });
+      scrollToY(offsetTop);
     }
   };
 
