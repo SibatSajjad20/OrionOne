@@ -52,3 +52,10 @@ CLAUDE.md
 /public/video-frames-old/
 /public/scene-4-frames/
 /public/scene-7-frames/
+
+# Scratch / content-bible files and Word docs — not part of source
+scratch_content_bible.txt
+*.docx
+
+# Stray root-level directories
+/residence/

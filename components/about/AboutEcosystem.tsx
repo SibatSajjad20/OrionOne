@@ -103,35 +103,30 @@ export default function AboutEcosystem() {
 
   return (
     <section id="ecosystem" className="relative py-28 sm:py-40 max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 overflow-hidden">
-      {/* Section Canopy */}
-      <div className="max-w-4xl mb-12 sm:mb-16 space-y-4">
-        <h2 className="font-serif-heading text-4xl sm:text-6xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
-          Prestige Lakefront Living. <br />
-          <span className="italic font-normal text-sand-gradient normal-case">Five Connected Realms.</span>
+      {/* Section Canopy - Centered */}
+      <div className="max-w-4xl mx-auto text-center mb-12 sm:mb-16 space-y-4">
+        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+          Prestige Lakefront Living <br />
+          <span className="italic font-normal text-sand-gradient normal-case">Five Connected Realms</span>
         </h2>
-        <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl">
+        <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl mx-auto">
           Designed around the lake, shaped by contemporary architecture, and created for a more considered way of living. At Orion One, every dimension of daily life exists in natural balance.
         </p>
       </div>
 
       {/* Architectural Realm Selector Tabs */}
-      <div className="border-b border-[#EDE5DA]/15 mb-10 sm:mb-14 overflow-x-auto scrollbar-none">
-        <div className="flex items-center space-x-6 sm:space-x-10 min-w-max pb-4">
+      <div className="border-b border-[#EDE5DA]/15 mb-10 sm:mb-14 overflow-x-auto no-scrollbar scroll-smooth overscroll-contain">
+        <div className="flex items-center justify-center space-x-6 sm:space-x-10 min-w-max pb-4 mx-auto">
           {realms.map((realm) => {
             const isActive = activeRealm.id === realm.id;
             return (
               <button
                 key={realm.id}
                 onClick={() => setActiveRealm(realm)}
-                className={`group flex items-baseline gap-3 text-left transition-all duration-300 cursor-pointer pb-2 relative ${
+                className={`group flex items-baseline gap-3 text-left transition-all duration-300 cursor-pointer pb-2 relative min-h-11 ${
                   isActive ? "text-[#EDE5DA]" : "text-[#EDE5DA]/40 hover:text-[#EDE5DA]/70"
                 }`}
               >
-                <span className={`font-mono text-[10px] sm:text-xs transition-colors ${
-                  isActive ? "text-[#62AA9E]" : "text-[#EDE5DA]/30 group-hover:text-[#62AA9E]/60"
-                }`}>
-                  {realm.number}
-                </span>
                 <span className="font-serif-heading text-base sm:text-xl font-light tracking-wide uppercase">
                   {realm.name}
                 </span>
@@ -165,9 +160,6 @@ export default function AboutEcosystem() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start border-t border-[#EDE5DA]/15 pt-8">
           {/* Left: Narrative */}
           <div className="lg:col-span-5 space-y-3">
-            <span className="font-mono text-[10px] text-[#62AA9E] tracking-widest uppercase block">
-              {activeRealm.elevation}
-            </span>
             <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light">
               {activeRealm.tagline}
             </h3>
@@ -178,16 +170,13 @@ export default function AboutEcosystem() {
 
           {/* Right: Technical Specifications Ledger */}
           <div className="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-[#EDE5DA]/15 pt-6 lg:pt-0 lg:pl-10 space-y-4">
-            <span className="font-mono text-[10px] text-[#EDE5DA]/50 tracking-widest uppercase block">
-              SPECIFICATION ATTRIBUTES
-            </span>
             <div className="divide-y divide-[#EDE5DA]/10">
               {activeRealm.specs.map((spec, idx) => (
                 <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 text-xs">
                   <span className="font-sans-body text-[#62AA9E] font-medium tracking-wider uppercase text-[10px]">
                     {spec.label}
                   </span>
-                  <span className="font-sans-body text-[#EDE5DA]/90 font-light text-right">
+                  <span className="font-sans-body text-[#EDE5DA]/90 font-light text-left sm:text-right">
                     {spec.detail}
                   </span>
                 </div>

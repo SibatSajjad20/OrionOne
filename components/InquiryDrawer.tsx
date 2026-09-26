@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { X, Check, MessageCircle, Calendar, Phone, User, Building } from "lucide-react";
 
@@ -27,6 +27,27 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
     }, 2500);
   };
 
+  useEffect(() => {
+    const lenis = (window as unknown as { lenis?: { stop: () => void; start: () => void } }).lenis;
+    if (isOpen) {
+      document.documentElement.classList.add("modal-lock");
+      document.body.classList.add("modal-lock");
+      if (lenis) lenis.stop();
+      window.dispatchEvent(new CustomEvent("lenis:stop"));
+    } else {
+      document.documentElement.classList.remove("modal-lock");
+      document.body.classList.remove("modal-lock");
+      if (lenis) lenis.start();
+      window.dispatchEvent(new CustomEvent("lenis:start"));
+    }
+    return () => {
+      document.documentElement.classList.remove("modal-lock");
+      document.body.classList.remove("modal-lock");
+      if (lenis) lenis.start();
+      window.dispatchEvent(new CustomEvent("lenis:start"));
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -38,7 +59,10 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
       />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-lg bg-[#153D3D] text-[#EDE5DA] border-l border-[#EDE5DA]/15 shadow-2xl p-6 sm:p-10 flex flex-col justify-between overflow-y-auto z-10">
+      <div
+        data-lenis-prevent="true"
+        className="relative w-full max-w-lg bg-[#153D3D] text-[#EDE5DA] border-l border-[#EDE5DA]/15 shadow-2xl p-5 sm:p-8 flex flex-col justify-between overflow-y-auto overscroll-contain z-10"
+      >
         <div>
           {/* Header */}
           <div className="flex items-center justify-between pb-6 border-b border-[#EDE5DA]/10">
@@ -53,7 +77,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
             </div>
             <button
               onClick={onClose}
-              className="p-2.5 text-[#EDE5DA]/70 hover:text-white transition-colors rounded-full hover:bg-white/5 cursor-pointer"
+              className="inline-flex items-center justify-center min-h-11 min-w-11 text-[#EDE5DA]/70 hover:text-white transition-colors rounded-full hover:bg-white/5 cursor-pointer"
               aria-label="Close drawer"
             >
               <X className="w-5 h-5" />
@@ -177,7 +201,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
             href="https://wa.me/923009079164?text=Hello,%20I%20would%20like%20to%20inquire%20about%20Orion%20One%20lakefront%20development"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-[#62AA9E]/40 hover:border-[#62AA9E] text-xs text-[#EDE5DA] hover:text-white transition-all bg-[#0d2828]/60"
+            className="flex items-center justify-center gap-2 w-full min-h-11 py-2.5 rounded-full border border-[#62AA9E]/40 hover:border-[#62AA9E] text-xs text-[#EDE5DA] hover:text-white transition-all bg-[#0d2828]/60"
           >
             <MessageCircle className="w-3.5 h-3.5 text-[#62AA9E]" />
             <span>Direct WhatsApp Concierge (+92 300 9079 164)</span>
@@ -186,4 +210,4 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
       </div>
     </div>
   );
-}
+}

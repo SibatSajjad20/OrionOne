@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import MagneticEffects from "@/components/MagneticEffects";
+import AgentationToolbar from "@/components/AgentationToolbar";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -38,6 +40,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://orionone.pk"),
   title: "Orion One | Where the Lake Meets Living — DHA Phase III Islamabad",
   description:
     "Orion One is a landmark lakefront destination in DHA Phase III, Islamabad — luxury residences, commercial terraces, and lakeside lifestyle by SP Builders.",
@@ -74,6 +77,8 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D]">
         <SmoothScroll>{children}</SmoothScroll>
+        <MagneticEffects />
+        {process.env.NODE_ENV === "development" && <AgentationToolbar />}
       </body>
     </html>
   );

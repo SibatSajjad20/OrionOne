@@ -117,8 +117,8 @@ export default function ContactFormSection() {
             
             {/* Editorial Header */}
             <div className="space-y-4 border-b border-[#EDE5DA]/15 pb-8">
-              <h2 className="font-serif-heading text-3xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.12]">
-                Initiate an Architectural Dialogue.
+              <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.12]">
+                Initiate an Architectural Dialogue
               </h2>
               <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed max-w-xl">
                 Every landmark project begins with an intentional conversation. Connect directly with the SP Builders executive team to review residence floor plans, commercial allocation, or private show suite reservations.
@@ -304,7 +304,7 @@ export default function ContactFormSection() {
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="inline-flex items-center justify-center gap-3 bg-[#EDE5DA] hover:bg-white text-[#0d2828] font-sans-body font-bold text-[11px] uppercase tracking-[0.22em] px-9 py-4 transition-all duration-300 cursor-pointer disabled:opacity-60 shadow-lg shadow-black/20 group"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-[#EDE5DA] hover:bg-white text-[#0d2828] font-sans-body font-bold text-[11px] uppercase tracking-[0.22em] px-9 py-4 transition-all duration-300 cursor-pointer disabled:opacity-60 shadow-lg shadow-black/20 group"
                   >
                     {status === "submitting" ? (
                       <>
@@ -343,9 +343,9 @@ export default function ContactFormSection() {
           {/* Right Column (5 cols): Executive Suite & Architectural Desk Dossier */}
           <div className="lg:col-span-5 space-y-8">
             
-            {/* Architectural Photo Monograph Card */}
-            <div className="border border-[#EDE5DA]/15 bg-[#0d2828]/60 p-3 sm:p-4 space-y-4">
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#081a1a] group">
+            {/* Architectural Photo Monograph */}
+            <div className="space-y-6">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#081a1a] rounded-sm group">
                 <Image
                   src="/images/contact/office-desk.png"
                   alt="SP Builders Corporate Executive Headquarters Desk"
@@ -356,21 +356,18 @@ export default function ContactFormSection() {
               </div>
 
               {/* Architectural Ledger Details */}
-              <div className="px-2 pt-2 space-y-6">
+              <div className="space-y-6">
                 <div>
-                  <span className="font-sans-body text-[10px] font-semibold uppercase tracking-[0.25em] text-[#62AA9E] block mb-1.5">
-                    Executive Showroom & Headquarters
-                  </span>
-                  <p className="font-serif-heading text-xl text-[#EDE5DA] font-light">
+                  <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA] font-light">
                     SP Builders Corporate Desk
-                  </p>
-                  <p className="font-sans-body text-xs text-[#C9BFB1] font-light mt-1.5 leading-relaxed">
+                  </h3>
+                  <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light mt-1.5 leading-relaxed">
                     Designed for private consultations, masterplan scale model review, and discrete transaction finalization.
                   </p>
                 </div>
 
                 {/* Directory Items with Clean Hairlines */}
-                <div className="border-t border-[#EDE5DA]/10 divide-y divide-[#EDE5DA]/10 font-sans-body">
+                <div className="border-t border-[#EDE5DA]/15 divide-y divide-[#EDE5DA]/10 font-sans-body">
                   
                   {/* Telephone & WhatsApp */}
                   <div className="py-3.5 flex items-start gap-4">

@@ -1411,44 +1411,27 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           </h2>
         </div>
 
-        {/* 4 Brand Pillars (Responsive 2x2 Grid on Mobile, 4 Cols on Desktop) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-          {BRAND_PILLARS.map((pillar, idx) => {
-            const Icon = pillar.icon;
-            const isSelected = activePillar === idx;
-            return (
-              <div
-                key={pillar.name}
-                onClick={() => setActivePillar(idx)}
-                className={`p-3 sm:p-5 rounded-xl border transition-all duration-300 cursor-pointer text-left backdrop-blur-md ${
-                  isSelected
-                    ? "bg-[#0d2828]/95 border-[#62AA9E] shadow-[0_10px_30px_rgba(98,170,158,0.15)]"
-                    : "bg-[#153D3D]/60 border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/60"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2 sm:mb-3">
-                  <div className={`p-1.5 sm:p-2.5 rounded-lg border ${
-                    isSelected ? "border-[#62AA9E] text-[#62AA9E] bg-[#62AA9E]/10" : "border-[#EDE5DA]/20 text-[#EDE5DA]/70"
-                  }`}>
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase text-[#62AA9E] font-semibold">
-                    0{idx + 1}
-                  </span>
-                </div>
-
-                <h3 className="font-serif text-sm sm:text-lg font-normal text-[#EDE5DA] mb-0.5 sm:mb-1">
-                  {pillar.name}
-                </h3>
-                <span className="text-[9px] sm:text-[10px] tracking-wider uppercase text-[#808080] block mb-1 sm:mb-2 font-medium truncate">
-                  {pillar.subtitle}
-                </span>
-                <p className="text-[11px] sm:text-xs text-[#EDE5DA]/75 font-light leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
-                  {pillar.desc}
-                </p>
-              </div>
-            );
-          })}
+        {/* 4 Brand Pillars — editorial border-top style */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 sm:gap-x-10 gap-y-6 sm:gap-y-8 mt-2 sm:mt-0">
+          {BRAND_PILLARS.map((pillar, idx) => (
+            <div
+              key={pillar.name}
+              className="group border-t border-[#EDE5DA]/20 pt-5 sm:pt-7 flex flex-col justify-start transition-colors duration-300"
+            >
+              <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#EDE5DA]/30 font-light mb-3 sm:mb-4 block">
+                0{idx + 1}
+              </span>
+              <h3 className="font-serif text-lg sm:text-2xl font-light text-[#EDE5DA] tracking-tight mb-1.5 sm:mb-2 group-hover:text-[#62AA9E] transition-colors duration-300">
+                {pillar.name}
+              </h3>
+              <span className="text-[9px] sm:text-[10px] tracking-[0.22em] uppercase text-[#62AA9E] font-semibold mb-2 sm:mb-3 block">
+                {pillar.subtitle}
+              </span>
+              <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
+                {pillar.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 

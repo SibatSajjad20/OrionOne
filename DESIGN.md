@@ -132,7 +132,6 @@ We never sound like a generic developer brochure or an AI text generator.
 ### Tech Stack Conventions
 - **Next.js 16 + React 19 + TypeScript + Tailwind CSS v4** (`@theme` variables in `globals.css`).
 - **Smooth Scroll:** Handled globally by `Lenis` via `SmoothScroll.tsx`. Native `scroll-behavior: smooth` is disabled in CSS to prevent conflicting jitter.
-- **Animation Standard:** GSAP 3 with `ScrollTrigger` plugin for scrubbed sequences; Framer Motion for discrete interactive UI transitions.
 - **Viewport & Hydration:** Standard root layout utilizes `suppressHydrationWarning` on `<html>` and `<head>` with programmatic scroll restoration.
 
 ### Component Structure Checklist for New Pages
@@ -157,15 +156,115 @@ Every new page or section must follow these structural standards:
    - Contact: `+92 300 9079 164` | `info@orionone.com.pk`.
    - Show Suite Hours: `Open Daily · 10AM – 7PM`.
 
+### Unified Motion & Transition Specification (GSAP ScrollTrigger)
+To maintain a coherent, prestigious rhythm across all pages and components, **all new sections must use the exact same standardized transition signatures**:
+
+1. **Standard Section Header & Narrative Entrance:**
+   ```ts
+   gsap.fromTo(
+     headerRef.current,
+     { opacity: 0, y: 35 },
+     {
+       opacity: 1,
+       y: 0,
+       duration: 1.0,
+       ease: "power3.out",
+       scrollTrigger: {
+         trigger: headerRef.current,
+         start: "top 85%",
+       },
+     }
+   );
+   ```
+
+2. **Standard Grid & Cards Entrance (Staggered & Strictly Symmetrical):**
+   ```ts
+   const cards = containerRef.current.querySelectorAll(".card-item");
+   gsap.fromTo(
+     cards,
+     { opacity: 0, y: 35 },
+     {
+       opacity: 1,
+       y: 0,
+       duration: 1.0,
+       stagger: 0.15,
+       ease: "power3.out",
+       scrollTrigger: {
+         trigger: containerRef.current,
+         start: "top 85%",
+       },
+     }
+   );
+   ```
+   *Note: Always animate all cards symmetrically from `{ opacity: 0, y: 35 }`. NEVER apply mismatched `y` offsets or asymmetrical scroll scrub parallax that push adjacent cards out of alignment.*
+
+3. **Standard Architectural Showcase Frame Reveal:**
+   ```ts
+   gsap.fromTo(
+     frameRef.current,
+     { opacity: 0, y: 40, scale: 0.98 },
+     {
+       opacity: 1,
+       y: 0,
+       scale: 1,
+       duration: 1.2,
+       ease: "power3.out",
+       scrollTrigger: {
+         trigger: frameRef.current,
+         start: "top 85%",
+       },
+     }
+   );
+   ```
+
+4. **The No-Scroll-Jacking Directive:**
+   - **NEVER hijack vertical scroll** with pinned scrub timelines (`pin: true, end: "+=240%"`) that lock the user's viewport while scrubbing through phases or slides. Pinned scroll-jacking feels frustrating and screams "AI template".
+   - Keep page scroll natural, unhindered, and fluid.
+   - For horizontal carousels or promenade walks, use standard pinned horizontal tracks with consistent card dimensions, or native responsive card layouts.
+
 ---
 
 ## 7. The Anti-AI-Slop Manifesto (Strict Prohibitions)
 
-1. **NO Generic UI Grids:** Do not create standard 3-box SaaS feature cards with generic rounded icons floating in colorful squares.
-2. **NO Unbranded Colors:** Do not use Tailwind default purples (`indigo-*`, `violet-*`), blues (`sky-*`, `blue-*`), or stark zinc grays. All neutrals must have warm Sand (`#EDE5DA`) or Stone (`#808080`) undertones.
-3. **NO Generic Illustrations:** Never use stock vectors, cartoon avatars, or generic isometric 3D mockups.
-4. **NO Bouncy Spring Physics:** Motion must be cinematic and weighted (duration: 500ms–800ms, smooth cubic ease, no cartoonish rubber-banding).
-5. **NO Wall-of-Text Blocks:** Use airy whitespace, generous line heights (`leading-relaxed`), and prominent typography with clear hierarchy.
+Every developer and AI agent must memorize these strict prohibitions. Violations instantly degrade the prestige of the brand:
+
+### 1. ABSOLUTELY NO TEXT, LABELS, OR BADGES OVER IMAGES
+- **Pure Architectural Photography Only:** Never place text, titles, floating pills, pulsing status dots, categories, or captions on top of images.
+- **Controls Belong Outside:** Perspective toggles, tab controls, and buttons must be placed cleanly outside the image frame (e.g. above or below the frame), never floating inside the photo.
+- **No Heavy Artificial Gradient Overlays:** Do not cover photography with heavy dark gradient ramps unless strictly required for full-bleed background video hero legibility. Let the photography breathe.
+
+### 2. NO CLUTTERED EYEBROWS, SECTION TAGS, OR MARKETING LABELS
+- Do NOT clutter section headers with gratuitous uppercase labels or accent lines (e.g., *"Flagship Experience 01 · Walk · Move · Unwind"*, *"The Waterfront Core"*, *"Move · Restore · Recharge"*, *"Culinary Promenade"*, *"Masterplan Context"*, *"Official Invitation"*).
+- Let the display headline (`font-serif-heading`) and concise narrative speak for themselves. If an eyebrow is ever strictly required for section categorization, keep it minimal, quiet, and meaningful.
+
+### 3. NO FAKE NUMBERING, STATION COUNTERS, OR TIMESTAMPS
+- Do NOT add numbers like `01 / 05 SHORELINE STATION`, `Station 01`, `01. ARCHITECTURE`, `Phase 1`, or clock timestamps (`07:15 AM`, `01:30 PM`, `08:45 PM`).
+- These elements give immediate "AI boilerplate template" vibes and clutter the layout.
+
+### 4. NO GPS COORDINATES OR TECH JARGON
+- Strictly forbidden: `33.5284° N · 73.1492° E`, `CANOPY ALLEY // SHORELINE TRANSECT`, `ELEVATION +1.2M`.
+- Orion One is a world-class luxury real estate project, not a military telemetry system or CAD software mockup.
+
+### 5. NO SCROLL MICRO-INSTRUCTIONS OR PROGRESS BARS
+- Never add micro-instruction text such as `Scroll horizontally to traverse ->`, `Scroll to advance time`, or dynamic scrub progress bar lines. Interfaces must feel intuitive, quiet, and effortless.
+
+### 6. STRICT CARD DESIGN & ALIGNMENT RULES
+- **Strict Top Alignment & Equal Height:** All cards in a row or grid MUST be aligned at the top (`items-stretch`, `h-full flex flex-col justify-start`).
+- **NO Staggered Offsets:** Never apply asymmetrical margins (e.g., `md:mt-8` on card 2) or mismatched GSAP parallax offsets that make cards appear broken or unaligned.
+- **NO Micro-Tags / Clutter Inside Cards:** No category pills, icons in colored boxes, or feature checklists in mini-boxes (`✦ Eco-paving...`).
+- **Standard Card Formula:**
+  1. Clean architectural photo (`aspect-[16/10]` or `aspect-[16/11]`, rounded-xl, zero overlays)
+  2. Clean serif title (`font-serif-heading text-2xl sm:text-3xl font-light text-[#EDE5DA]`)
+  3. Refined body narrative (`font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed`)
+
+### 7. NO REPETITIVE LOCATION WATERMARKS
+- Do not repeat long location strings (*"Sector F · DHA Phase III, Islamabad Beside Dancing Fountains · Uninterrupted Horizon"*) in hero sections or cards. Location context belongs in dedicated masterplan sections or the footer.
+
+### 8. NO Generic UI Grids or Stock Aesthetics
+- No standard 3-box SaaS feature cards with generic rounded icons floating in colorful squares.
+- No Tailwind default purples (`indigo-*`, `violet-*`), blues (`sky-*`, `blue-*`), or stark zinc grays. All neutrals must have warm Sand (`#EDE5DA`) or Stone (`#808080`) undertones.
+- No stock vectors, cartoon avatars, or generic isometric 3D mockups.
+- No bouncy rubber-band spring physics. All motion must be cinematic, stately, and weighted (`ease: "power3.out"`, duration: 1.0s–1.2s).
 
 ---
 
@@ -174,7 +273,11 @@ Every new page or section must follow these structural standards:
 Before deploying or finalizing any new page, verify every item:
 - [ ] **Background:** Uses `#153D3D` or `#0d2828` with subtle ambient radial vignette.
 - [ ] **Typography:** All major headlines use `var(--font-luxia)` (`font-serif-heading`); all body/UI uses `var(--font-montserrat)` (`font-sans-body`).
-- [ ] **Letter Spacing:** Eyebrows and labels have `tracking-[0.25em]` to `tracking-[0.35em] uppercase`.
+- [ ] **Transitions:** Follows the standardized GSAP ScrollTrigger transitions (`opacity: 0, y: 35`, `duration: 1.0`, `ease: "power3.out"`).
+- [ ] **No Scroll-Jacking:** Natural vertical scroll is preserved; no pinned scrub traps.
+- [ ] **Image Purity:** Absolutely ZERO text, labels, badges, or coordinates on top of photos.
+- [ ] **Card Alignment:** All cards in a grid/row have identical top alignment (`items-stretch`), matching image aspect ratios, and no staggered offset margins.
+- [ ] **No Clutter / Tags:** No fake numbering (`01 / 05`), no coordinates, no category badges, no micro-bullet box grids.
 - [ ] **Palette Ratios:** Dominant 55% Moss Green, 20% Sand Beige, 15% Mint Green, 10% Stone Grey.
 - [ ] **Copy Review:** Checked against the banned words list; tone is unhurried, architectural, and restrained.
 - [ ] **Icons:** Only single-weight line icons from `lucide-react` with outline styling.

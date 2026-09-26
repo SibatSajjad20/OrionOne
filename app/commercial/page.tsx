@@ -5,14 +5,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InquiryDrawer from "@/components/InquiryDrawer";
 import CommercialHero from "@/components/commercial/CommercialHero";
-import CommercialIntro from "@/components/commercial/CommercialIntro";
+import CommercialTaglineTicker from "@/components/commercial/CommercialTaglineTicker";
 import CommercialOpportunities from "@/components/commercial/CommercialOpportunities";
 import CommercialAdvantage from "@/components/commercial/CommercialAdvantage";
 import CommercialEcosystem from "@/components/commercial/CommercialEcosystem";
-import CommercialConnectivity from "@/components/commercial/CommercialConnectivity";
 import CommercialSpaces from "@/components/commercial/CommercialSpaces";
-import CommercialEcosystemFlow from "@/components/commercial/CommercialEcosystemFlow";
-import CommercialInquirySection from "@/components/commercial/CommercialInquirySection";
 import CommercialCtaBanner from "@/components/commercial/CommercialCtaBanner";
 
 export default function CommercialPage() {
@@ -25,34 +22,25 @@ export default function CommercialPage() {
 
       {/* Main Commercial Architectural Journey */}
       <main className="relative">
-        {/* Section 01: Hero Canopy */}
+        {/* Section 01: Hero with Cinematic Slideshow */}
         <CommercialHero onOpenInquiry={() => setIsInquiryOpen(true)} />
 
-        {/* Section 02: The Vision & Commercial Intro */}
-        <CommercialIntro />
+        {/* Section 02: Moving Commercial Tagline Strip */}
+        <CommercialTaglineTicker />
 
-        {/* Section 03: Curated Commercial Opportunities (Restaurants, Cafés, Retail, Offices, Lifestyle) */}
-        <CommercialOpportunities onOpenInquiry={() => setIsInquiryOpen(true)} />
+        {/* Section 03: Full-Screen Scroll Stacking Opportunities Showcase */}
+        <CommercialOpportunities />
 
-        {/* Section 04: The Commercial Advantage (Visibility, Community, Levels, Waterfront Dining) */}
+        {/* Section 04: The Commercial Advantage Quad */}
         <CommercialAdvantage />
 
-        {/* Section 05: The Surrounding Ecosystem (DHA Club, Fountains, Cinema, Hotel, Parks, Dining, Amusements) */}
+        {/* Section 05: Merged Surrounding Ecosystem & City Connectivity */}
         <CommercialEcosystem />
 
-        {/* Section 06: Connected To The City (Transit Arteries & Surrounding Nodes) */}
-        <CommercialConnectivity />
-
-        {/* Section 07: Commercial Spaces & Approved Ground-Floor Floor Plan */}
+        {/* Section 06: Commercial Spaces & Approved Ground-Floor Plan */}
         <CommercialSpaces onOpenInquiry={() => setIsInquiryOpen(true)} />
 
-        {/* Section 08: Why This Ecosystem Matters (Orion One → Amenities → Roads → Ecosystem Flow) */}
-        <CommercialEcosystemFlow />
-
-        {/* Section 09: Dedicated Commercial Inquiry Salon */}
-        <CommercialInquirySection />
-
-        {/* Section 10: Final Destination CTA & Private Tour Invitation */}
+        {/* Section 07: Destination Closing Invitation */}
         <CommercialCtaBanner onOpenInquiry={() => setIsInquiryOpen(true)} />
       </main>
 

@@ -8,7 +8,7 @@ interface ContactCtaBannerProps {
 
 export default function ContactCtaBanner({ onOpenInquiry }: ContactCtaBannerProps) {
   return (
-    <section className="relative py-28 sm:py-36 bg-[#081a1a] border-t border-[#EDE5DA]/15 overflow-hidden text-center">
+    <section className="relative py-16 sm:py-36 bg-[#081a1a] border-t border-[#EDE5DA]/15 overflow-hidden text-center">
       {/* Subtle glowing ambient background */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#62AA9E]/6 rounded-full blur-[140px] pointer-events-none -z-10"
@@ -16,19 +16,10 @@ export default function ContactCtaBanner({ onOpenInquiry }: ContactCtaBannerProp
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-        {/* Eyebrow flanked with horizontal lines */}
-        <div className="inline-flex items-center justify-center gap-4">
-          <div className="w-10 sm:w-16 h-[1px] bg-[#62AA9E]/40" />
-          <span className="font-sans-body text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.35em] text-[#62AA9E]">
-            GET IN TOUCH
-          </span>
-          <div className="w-10 sm:w-16 h-[1px] bg-[#62AA9E]/40" />
-        </div>
-
         {/* Section Headline */}
-        <h2 className="font-serif-heading text-4xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.12]">
+        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.12]">
           Let&apos;s Build Something <br className="hidden sm:inline" />
-          <span className="italic font-normal text-sand-gradient">Remarkable.</span>
+          <span className="italic font-normal text-sand-gradient">Remarkable</span>
         </h2>
 
         {/* Subtitle */}

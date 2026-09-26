@@ -14,18 +14,15 @@ export default function AboutPhilosophy() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* The Central Manifesto Spread */}
         <div className="max-w-5xl mb-16 sm:mb-24">
-          <p className="font-sans-body text-[11px] sm:text-xs font-semibold uppercase tracking-[0.35em] text-[#62AA9E] mb-6">
-            The Driving Premise
-          </p>
-          <blockquote className="font-serif-heading text-4xl sm:text-6xl lg:text-7xl xl:text-[5rem] font-light text-[#EDE5DA] tracking-tight leading-[1.08]">
-            &ldquo;We don&apos;t just build projects. <br />
-            <span className="italic font-normal text-sand-gradient">We create destinations.&rdquo;</span>
+          <blockquote className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-[5rem] font-light text-[#EDE5DA] tracking-tight leading-[1.08]">
+            &ldquo;We don&apos;t just build projects <br />
+            <span className="italic font-normal text-sand-gradient">We create destinations&rdquo;</span>
           </blockquote>
         </div>
 
         {/* Cinematic Pure Borderless Panoramic Spread */}
-        <div className="space-y-16">
-          <div className="relative aspect-[21/9] sm:aspect-[21/8] w-full overflow-hidden rounded-xl bg-[#0d2828]">
+        <div className="space-y-12 sm:space-y-16">
+          <div className="relative aspect-[16/10] sm:aspect-[21/8] w-full overflow-hidden rounded-xl bg-[#0d2828]">
             <Image
               src="/images/about/orion-marble-wall.png"
               alt="Orion One Grand Entrance and Backlit Travertine Emblem"
@@ -39,9 +36,6 @@ export default function AboutPhilosophy() {
           {/* Architectural Theses Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 border-t border-[#EDE5DA]/15 pt-12">
             <div className="space-y-3">
-              <span className="text-[10px] font-mono text-[#62AA9E] uppercase tracking-widest block">
-                THESIS 01 // WATER DATUM
-              </span>
               <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
                 Fluidity Over Rigidity
               </h3>
@@ -51,9 +45,6 @@ export default function AboutPhilosophy() {
             </div>
 
             <div className="space-y-3">
-              <span className="text-[10px] font-mono text-[#62AA9E] uppercase tracking-widest block">
-                THESIS 02 // SYMBIOSIS
-              </span>
               <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
                 Integrated Functionality
               </h3>
@@ -63,9 +54,6 @@ export default function AboutPhilosophy() {
             </div>
 
             <div className="space-y-3">
-              <span className="text-[10px] font-mono text-[#62AA9E] uppercase tracking-widest block">
-                THESIS 03 // PERMANENCE
-              </span>
               <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
                 Generational Longevity
               </h3>

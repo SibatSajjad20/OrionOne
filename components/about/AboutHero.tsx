@@ -18,12 +18,9 @@ export default function AboutHero({ onOpenInquiry }: AboutHeroProps) {
 
       {/* Massive Editorial Display Canopy */}
       <div className="pb-12 sm:pb-20">
-        <p className="font-sans-body text-[11px] sm:text-xs font-semibold uppercase tracking-[0.35em] text-[#62AA9E] mb-6">
-          SP Builders · Construction · Consultancy · Development
-        </p>
-        <h1 className="font-serif-heading text-5xl sm:text-7xl lg:text-8xl xl:text-[5.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.98] uppercase">
-          Experience <span className="text-[#EDE5DA]/40 font-normal">Shaped Us.</span> <br />
-          <span className="italic font-normal text-sand-gradient normal-case">Execution</span> Defines Us.
+        <h1 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.98] uppercase">
+          Experience <span className="text-[#EDE5DA]/40 font-normal">Shaped Us</span> <br />
+          <span className="italic font-normal text-sand-gradient normal-case">Execution</span> Defines Us
         </h1>
       </div>
 
