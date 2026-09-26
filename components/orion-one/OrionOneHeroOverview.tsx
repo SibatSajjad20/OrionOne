@@ -113,217 +113,215 @@ export default function OrionOneHeroOverview({
     const slideShades = slideShadesRef.current.filter(Boolean) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      // 1. Initial State Setup
+      gsap.set(heroLayer, { opacity: 1, display: "block" });
+      gsap.set(heroLeftDoor, { xPercent: 0 });
+      gsap.set(heroRightDoor, { xPercent: 0 });
+      gsap.set(heroContent, { opacity: 1, y: 0, scale: 1 });
 
-      mm.add("(min-width: 768px)", () => {
-        // 1. Initial State Setup
-        gsap.set(heroLayer, { opacity: 1, display: "block" });
-        gsap.set(heroLeftDoor, { xPercent: 0 });
-        gsap.set(heroRightDoor, { xPercent: 0 });
-        gsap.set(heroContent, { opacity: 1, y: 0, scale: 1 });
+      gsap.set(addressLayer, { opacity: 1, display: "flex" });
+      gsap.set(addressStatement, {
+        scale: 0.9,
+        opacity: 0,
+        filter: "blur(12px)",
+        y: 25,
+      });
+      gsap.set(addressGlow, { scale: 0.6, opacity: 0 });
 
-        gsap.set(addressLayer, { opacity: 1, display: "flex" });
-        gsap.set(addressStatement, {
-          scale: 0.9,
+      gsap.set(destinationLayer, {
+        yPercent: 100,
+        opacity: 1,
+        display: "flex",
+        pointerEvents: "none",
+      });
+      gsap.set(destinationStatement, {
+        scale: 1,
+        opacity: 1,
+        filter: "blur(0px)",
+        y: 0,
+      });
+      gsap.set(destinationGlow, { scale: 1.2, opacity: 0.8 });
+
+      slides.forEach((slide) => {
+        gsap.set(slide, { xPercent: 100 });
+      });
+
+      const masterTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top top",
+          end: "+=650%",
+          pin: stage,
+          pinSpacing: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      masterTl.to({}, { duration: 0.3 });
+
+      masterTl.addLabel("heroSplit", 0.3);
+
+      masterTl.to(
+        heroContent,
+        {
           opacity: 0,
-          filter: "blur(12px)",
-          y: 25,
-        });
-        gsap.set(addressGlow, { scale: 0.6, opacity: 0 });
+          scale: 0.94,
+          duration: 0.9,
+          ease: "power2.inOut",
+        },
+        "heroSplit"
+      );
 
-        gsap.set(destinationLayer, {
-          yPercent: 100,
-          opacity: 1,
-          display: "flex",
-          pointerEvents: "none",
-        });
-        gsap.set(destinationStatement, {
+      masterTl.to(
+        heroLeftDoor,
+        {
+          xPercent: -105,
+          duration: 1.5,
+          ease: "power2.inOut",
+        },
+        "heroSplit+=0.1"
+      );
+
+      masterTl.to(
+        heroRightDoor,
+        {
+          xPercent: 105,
+          duration: 1.5,
+          ease: "power2.inOut",
+        },
+        "heroSplit+=0.1"
+      );
+
+      masterTl.to(
+        addressGlow,
+        {
+          scale: 1.2,
+          opacity: 0.8,
+          duration: 1.3,
+          ease: "power2.out",
+        },
+        "heroSplit+=0.3"
+      );
+
+      masterTl.to(
+        addressStatement,
+        {
           scale: 1,
           opacity: 1,
           filter: "blur(0px)",
           y: 0,
-        });
-        gsap.set(destinationGlow, { scale: 1.2, opacity: 0.8 });
+          duration: 1.3,
+          ease: "power2.out",
+        },
+        "heroSplit+=0.3"
+      );
 
-        slides.forEach((slide) => {
-          gsap.set(slide, { xPercent: 100 });
-        });
+      masterTl.to({}, { duration: 0.8 });
 
-        const masterTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top top",
-            end: "+=650%",
-            pin: stage,
-            pinSpacing: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
+      masterTl.addLabel("toDestination");
 
-        masterTl.to({}, { duration: 0.3 });
+      masterTl.to(
+        addressStatement,
+        {
+          scale: 0.94,
+          opacity: 0,
+          filter: "blur(8px)",
+          y: -40,
+          duration: 1.2,
+          ease: "power2.inOut",
+        },
+        "toDestination"
+      );
 
-        masterTl.addLabel("heroSplit", 0.3);
+      masterTl.to(
+        addressGlow,
+        {
+          opacity: 0,
+          duration: 1.0,
+          ease: "power2.out",
+        },
+        "toDestination"
+      );
 
-        masterTl.to(
-          heroContent,
-          {
-            opacity: 0,
-            scale: 0.94,
-            duration: 0.9,
-            ease: "power2.inOut",
-          },
-          "heroSplit"
-        );
+      masterTl.to(
+        destinationLayer,
+        {
+          yPercent: 0,
+          duration: 1.5,
+          ease: "power2.out",
+          pointerEvents: "auto",
+        },
+        "toDestination"
+      );
 
-        masterTl.to(
-          heroLeftDoor,
-          {
-            xPercent: -105,
-            duration: 1.5,
-            ease: "power2.inOut",
-          },
-          "heroSplit+=0.1"
-        );
+      masterTl.to({}, { duration: 0.8 });
 
-        masterTl.to(
-          heroRightDoor,
-          {
-            xPercent: 105,
-            duration: 1.5,
-            ease: "power2.inOut",
-          },
-          "heroSplit+=0.1"
-        );
+      for (let i = 0; i < slides.length; i++) {
+        const label = `card_${i}`;
+        masterTl.addLabel(label);
 
         masterTl.to(
-          addressGlow,
+          slides[i],
           {
-            scale: 1.2,
-            opacity: 0.8,
-            duration: 1.3,
-            ease: "power2.out",
+            xPercent: 0,
+            duration: 1.4,
+            ease: "none",
           },
-          "heroSplit+=0.3"
+          label
         );
 
-        masterTl.to(
-          addressStatement,
-          {
-            scale: 1,
-            opacity: 1,
-            filter: "blur(0px)",
-            y: 0,
-            duration: 1.3,
-            ease: "power2.out",
-          },
-          "heroSplit+=0.3"
-        );
-
-        masterTl.to({}, { duration: 0.8 });
-
-        masterTl.addLabel("toDestination");
-
-        masterTl.to(
-          addressStatement,
-          {
-            scale: 0.94,
-            opacity: 0,
-            filter: "blur(8px)",
-            y: -40,
-            duration: 1.2,
-            ease: "power2.inOut",
-          },
-          "toDestination"
-        );
-
-        masterTl.to(
-          addressGlow,
-          {
-            opacity: 0,
-            duration: 1.0,
-            ease: "power2.out",
-          },
-          "toDestination"
-        );
-
-        masterTl.to(
-          destinationLayer,
-          {
-            yPercent: 0,
-            duration: 1.5,
-            ease: "power2.out",
-            pointerEvents: "auto",
-          },
-          "toDestination"
-        );
-
-        masterTl.to({}, { duration: 0.8 });
-
-        for (let i = 0; i < slides.length; i++) {
-          const label = `card_${i}`;
-          masterTl.addLabel(label);
-
+        if (i === 0) {
           masterTl.to(
-            slides[i],
+            destinationStatement,
             {
-              xPercent: 0,
-              duration: 1.4,
+              scale: 0.92,
+              opacity: 0,
+              filter: "blur(8px)",
+              duration: 1.2,
               ease: "none",
             },
             label
           );
-
-          if (i === 0) {
+          masterTl.to(
+            destinationGlow,
+            {
+              opacity: 0,
+              duration: 1.0,
+              ease: "none",
+            },
+            label
+          );
+        } else {
+          if (slideInners[i - 1]) {
             masterTl.to(
-              destinationStatement,
+              slideInners[i - 1],
               {
-                scale: 0.92,
-                opacity: 0,
-                filter: "blur(8px)",
-                duration: 1.2,
+                scale: 0.94,
+                duration: 1.3,
                 ease: "none",
               },
               label
             );
-            masterTl.to(
-              destinationGlow,
-              {
-                opacity: 0,
-                duration: 1.0,
-                ease: "none",
-              },
-              label
-            );
-          } else {
-            if (slideInners[i - 1]) {
-              masterTl.to(
-                slideInners[i - 1],
-                {
-                  scale: 0.94,
-                  duration: 1.3,
-                  ease: "none",
-                },
-                label
-              );
-            }
-            if (slideShades[i - 1]) {
-              masterTl.to(
-                slideShades[i - 1],
-                {
-                  opacity: 0.55,
-                  duration: 1.3,
-                  ease: "none",
-                },
-                label
-              );
-            }
           }
-
-          masterTl.to({}, { duration: i === slides.length - 1 ? 1.0 : 0.7 });
+          if (slideShades[i - 1]) {
+            masterTl.to(
+              slideShades[i - 1],
+              {
+                opacity: 0.55,
+                duration: 1.3,
+                ease: "none",
+              },
+              label
+            );
+          }
         }
-      });
+
+        masterTl.to({}, { duration: i === slides.length - 1 ? 1.0 : 0.7 });
+      }
+    
     }, container);
 
     const refreshTimer = setTimeout(() => {
@@ -352,14 +350,14 @@ export default function OrionOneHeroOverview({
       {/* Stage: vertical document on mobile, pinned viewport on md+ */}
       <div
         ref={stageRef}
-        className="relative w-full h-auto md:h-[100dvh] overflow-visible md:overflow-hidden bg-[#153D3D] text-[#EDE5DA] flex flex-col"
+        className="relative w-full h-[100dvh] overflow-hidden bg-[#153D3D] text-[#EDE5DA]"
       >
         {/* ========================================================= */}
         {/* TOP LAYER: Hero with Seamless Split Doors                 */}
         {/* ========================================================= */}
         <div
           ref={heroLayerRef}
-          className="relative md:absolute inset-0 z-50 order-1 min-h-[100dvh] md:min-h-0 overflow-hidden pointer-events-none"
+          className="absolute inset-0 z-50 overflow-hidden pointer-events-none"
         >
           {/* Left Door */}
           <div
@@ -400,7 +398,7 @@ export default function OrionOneHeroOverview({
           {/* Hero Typography & CTA */}
           <div
             ref={heroContentRef}
-            className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center px-4 sm:px-8 pointer-events-auto will-change-transform pt-[calc(var(--header-h,5rem)+1rem)] md:pt-16"
+            className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center px-4 sm:px-8 pointer-events-auto will-change-transform pt-16"
           >
             <div className="max-w-4xl mx-auto space-y-6">
               <h1 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-[#EDE5DA] leading-[1.06] uppercase">
@@ -452,7 +450,7 @@ export default function OrionOneHeroOverview({
         {/* ========================================================= */}
         <div
           ref={addressLayerRef}
-          className="relative md:absolute inset-0 order-2 flex flex-col items-center justify-center px-4 sm:px-8 py-16 md:py-0 z-10 select-none bg-[#0a2222] min-h-[50vh] md:min-h-0"
+          className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-10 select-none bg-[#0a2222]"
         >
           <div
             ref={addressGlowRef}
@@ -479,7 +477,7 @@ export default function OrionOneHeroOverview({
         {/* ========================================================= */}
         <div
           ref={destinationLayerRef}
-          className="relative md:absolute inset-0 order-3 flex flex-col items-center justify-center px-4 sm:px-8 py-16 md:py-0 z-20 select-none bg-[#0a2222] will-change-transform md:shadow-[0_-25px_60px_rgba(0,0,0,0.6)] min-h-[50vh] md:min-h-0"
+          className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-20 select-none bg-[#0a2222] will-change-transform shadow-[0_-25px_60px_rgba(0,0,0,0.6)]"
         >
           <div
             ref={destinationGlowRef}
@@ -512,14 +510,14 @@ export default function OrionOneHeroOverview({
             ref={(el) => {
               slidesRef.current[idx] = el;
             }}
-            className="relative md:absolute inset-0 order-4 w-full h-auto min-h-[70vh] md:min-h-0 md:h-full overflow-hidden will-change-transform bg-[#081a1a]"
+            className="absolute inset-0 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
             style={{ zIndex: 30 + idx }}
           >
             <div
               ref={(el) => {
                 slideInnersRef.current[idx] = el;
               }}
-              className="relative w-full h-full min-h-[70vh] md:min-h-0 will-change-transform"
+              className="relative w-full h-full will-change-transform"
             >
               <Image
                 src={pillar.image}

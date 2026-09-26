@@ -123,7 +123,7 @@ export default function AboutEcosystem() {
               <button
                 key={realm.id}
                 onClick={() => setActiveRealm(realm)}
-                className={`group flex items-baseline gap-3 text-left transition-all duration-300 cursor-pointer pb-2 relative min-h-11 ${
+                className={`group flex items-baseline gap-3 text-left transition-all duration-300 cursor-pointer pb-2 relative ${
                   isActive ? "text-[#EDE5DA]" : "text-[#EDE5DA]/40 hover:text-[#EDE5DA]/70"
                 }`}
               >

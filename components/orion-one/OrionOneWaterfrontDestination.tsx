@@ -105,7 +105,6 @@ export default function OrionOneWaterfrontDestination() {
 
   // Transition Page: "LIFE, BY THE WATER." with lake video background
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const [enableVideo, setEnableVideo] = useState(false);
   const transitionLayerRef = useRef<HTMLDivElement>(null);
   const transitionInnerRef = useRef<HTMLDivElement>(null);
   const transitionGlowRef = useRef<HTMLDivElement>(null);
@@ -127,18 +126,10 @@ export default function OrionOneWaterfrontDestination() {
   const matrixCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px) and (pointer: fine)");
-    const update = () => setEnableVideo(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
-  useEffect(() => {
-    if (enableVideo && videoRef.current) {
+    if (videoRef.current) {
       videoRef.current.playbackRate = 0.9;
     }
-  }, [enableVideo, videoLoaded]);
+  }, [videoLoaded]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -170,151 +161,180 @@ export default function OrionOneWaterfrontDestination() {
     const slideShades = slideShadesRef.current.filter(Boolean) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      gsap.set(transitionLayer, { opacity: 1, display: "flex", pointerEvents: "auto" });
+      gsap.set(transitionInner, { opacity: 1, y: 0, scale: 1 });
+      gsap.set(transitionGlow, { opacity: 0.85, scale: 1 });
 
-      mm.add("(min-width: 768px)", () => {
-        gsap.set(transitionLayer, { opacity: 1, display: "flex", pointerEvents: "auto" });
-        gsap.set(transitionInner, { opacity: 1, y: 0, scale: 1 });
-        gsap.set(transitionGlow, { opacity: 0.85, scale: 1 });
+      gsap.set(zoomCard, {
+        scale: 1,
+        borderRadius: "20px",
+        boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.7)",
+        borderColor: "rgba(237, 229, 218, 0.15)",
+      });
+      gsap.set(zoomImage, { scale: 1 });
+      gsap.set(zoomText, { opacity: 0, y: 30 });
+      gsap.set(zoomShade, { opacity: 0 });
 
-        gsap.set(zoomCard, {
-          scale: 1,
-          borderRadius: "20px",
-          boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.7)",
-          borderColor: "rgba(237, 229, 218, 0.15)",
-        });
-        gsap.set(zoomImage, { scale: 1 });
-        gsap.set(zoomText, { opacity: 0, y: 30 });
-        gsap.set(zoomShade, { opacity: 0 });
+      slides.forEach((slide) => {
+        gsap.set(slide, { yPercent: 100 });
+      });
+      slideInners.forEach((inner) => {
+        gsap.set(inner, { scale: 1, y: 0 });
+      });
+      slideShades.forEach((shade) => {
+        gsap.set(shade, { opacity: 0 });
+      });
 
-        slides.forEach((slide) => {
-          gsap.set(slide, { yPercent: 100 });
-        });
-        slideInners.forEach((inner) => {
-          gsap.set(inner, { scale: 1, y: 0 });
-        });
-        slideShades.forEach((shade) => {
-          gsap.set(shade, { opacity: 0 });
-        });
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top top",
+          end: "+=560%",
+          pin: stage,
+          pinSpacing: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top top",
-            end: "+=560%",
-            pin: stage,
-            pinSpacing: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
+      tl.to({}, { duration: 0.7 });
+
+      tl.addLabel("transitionOut");
+
+      tl.to(
+        transitionInner,
+        {
+          opacity: 0,
+          y: -28,
+          scale: 0.95,
+          filter: "blur(10px)",
+          duration: 1.0,
+          ease: "power2.inOut",
+        },
+        "transitionOut"
+      );
+
+      tl.to(
+        transitionGlow,
+        {
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+        "transitionOut"
+      );
+
+      tl.to(
+        transitionLayer,
+        {
+          opacity: 0,
+          duration: 1.2,
+          ease: "power2.inOut",
+          pointerEvents: "none",
+        },
+        "transitionOut+=0.1"
+      );
+
+      tl.to({}, { duration: 0.4 });
+
+      tl.to(
+        zoomCard,
+        {
+          scale: () => {
+            const bounds = zoomCard.getBoundingClientRect();
+            const currentScale =
+              (gsap.getProperty(zoomCard, "scale") as number) || 1;
+            const baseW = bounds.width / currentScale;
+            const baseH = bounds.height / currentScale;
+            return (
+              Math.max(
+                window.innerWidth / (baseW || 1),
+                window.innerHeight / (baseH || 1)
+              ) * 1.05
+            );
           },
-        });
+          borderRadius: 0,
+          boxShadow: "0 0 0 rgba(0,0,0,0)",
+          borderColor: "rgba(237, 229, 218, 0)",
+          duration: 1.5,
+          ease: "none",
+        },
+        "zoom"
+      );
 
-        tl.to({}, { duration: 0.7 });
+      tl.to(
+        zoomImage,
+        {
+          scale: 1.08,
+          duration: 1.5,
+          ease: "none",
+        },
+        "zoom"
+      );
 
-        tl.addLabel("transitionOut");
+      tl.to(
+        zoomText,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+        "zoom+=0.8"
+      );
 
-        tl.to(
-          transitionInner,
-          {
-            opacity: 0,
-            y: -28,
-            scale: 0.95,
-            filter: "blur(10px)",
-            duration: 1.0,
-            ease: "power2.inOut",
-          },
-          "transitionOut"
-        );
+      tl.to({}, { duration: 0.5 });
 
-        tl.to(
-          transitionGlow,
-          {
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          "transitionOut"
-        );
+      slides.forEach((slide, idx) => {
+        const label = `slide_${idx}`;
+        tl.addLabel(label);
 
-        tl.to(
-          transitionLayer,
-          {
-            opacity: 0,
-            duration: 1.2,
-            ease: "power2.inOut",
-            pointerEvents: "none",
-          },
-          "transitionOut+=0.1"
-        );
-
-        tl.to({}, { duration: 0.4 });
-
-        tl.to(
-          zoomCard,
-          {
-            scale: () => {
-              const bounds = zoomCard.getBoundingClientRect();
-              const currentScale =
-                (gsap.getProperty(zoomCard, "scale") as number) || 1;
-              const baseW = bounds.width / currentScale;
-              const baseH = bounds.height / currentScale;
-              return (
-                Math.max(
-                  window.innerWidth / (baseW || 1),
-                  window.innerHeight / (baseH || 1)
-                ) * 1.05
-              );
+        if (idx === 0) {
+          tl.to(
+            zoomText,
+            {
+              opacity: 0,
+              y: -20,
+              duration: 1.0,
+              ease: "none",
             },
-            borderRadius: 0,
-            boxShadow: "0 0 0 rgba(0,0,0,0)",
-            borderColor: "rgba(237, 229, 218, 0)",
-            duration: 1.5,
-            ease: "none",
-          },
-          "zoom"
-        );
-
-        tl.to(
-          zoomImage,
-          {
-            scale: 1.08,
-            duration: 1.5,
-            ease: "none",
-          },
-          "zoom"
-        );
-
-        tl.to(
-          zoomText,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          "zoom+=0.8"
-        );
-
-        tl.to({}, { duration: 0.5 });
-
-        slides.forEach((slide, idx) => {
-          const label = `slide_${idx}`;
-          tl.addLabel(label);
-
-          if (idx === 0) {
+            label
+          );
+          tl.to(
+            zoomShade,
+            {
+              opacity: 0.45,
+              duration: 1.2,
+              ease: "none",
+            },
+            label
+          );
+          tl.to(
+            zoomImage,
+            {
+              scale: 1.02,
+              duration: 1.2,
+              ease: "none",
+            },
+            label
+          );
+        } else {
+          if (slideInners[idx - 1]) {
             tl.to(
-              zoomText,
+              slideInners[idx - 1],
               {
-                opacity: 0,
-                y: -20,
-                duration: 1.0,
+                scale: 0.94,
+                duration: 1.2,
                 ease: "none",
               },
               label
             );
+          }
+          if (slideShades[idx - 1]) {
             tl.to(
-              zoomShade,
+              slideShades[idx - 1],
               {
                 opacity: 0.45,
                 duration: 1.2,
@@ -322,55 +342,24 @@ export default function OrionOneWaterfrontDestination() {
               },
               label
             );
-            tl.to(
-              zoomImage,
-              {
-                scale: 1.02,
-                duration: 1.2,
-                ease: "none",
-              },
-              label
-            );
-          } else {
-            if (slideInners[idx - 1]) {
-              tl.to(
-                slideInners[idx - 1],
-                {
-                  scale: 0.94,
-                  duration: 1.2,
-                  ease: "none",
-                },
-                label
-              );
-            }
-            if (slideShades[idx - 1]) {
-              tl.to(
-                slideShades[idx - 1],
-                {
-                  opacity: 0.45,
-                  duration: 1.2,
-                  ease: "none",
-                },
-                label
-              );
-            }
           }
+        }
 
-          tl.to(
-            slide,
-            {
-              yPercent: 0,
-              duration: 1.3,
-              ease: "none",
-            },
-            label
-          );
+        tl.to(
+          slide,
+          {
+            yPercent: 0,
+            duration: 1.3,
+            ease: "none",
+          },
+          label
+        );
 
-          tl.to({}, { duration: 0.6 });
-        });
-
-        tl.to({}, { duration: 0.5 });
+        tl.to({}, { duration: 0.6 });
       });
+
+      tl.to({}, { duration: 0.5 });
+    
     }, container);
 
     return () => ctx.revert();
@@ -414,7 +403,7 @@ export default function OrionOneWaterfrontDestination() {
       <section ref={containerRef} className="relative w-full bg-[#0d2828]">
         <div
           ref={stageRef}
-          className="relative w-full h-auto md:h-[100dvh] overflow-visible md:overflow-hidden bg-[#0d2828] text-[#EDE5DA] flex flex-col"
+          className="relative w-full h-[100dvh] overflow-hidden bg-[#0d2828] text-[#EDE5DA]"
         >
           {/* Ambient top border glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-[#62AA9E]/40 to-transparent z-30" />
@@ -425,13 +414,13 @@ export default function OrionOneWaterfrontDestination() {
           {/* ================================================================= */}
           <div
             ref={transitionLayerRef}
-            className="relative md:absolute inset-0 z-[25] order-1 w-full h-auto min-h-[100dvh] md:min-h-0 md:h-full overflow-hidden will-change-transform bg-[#081a1a]"
+            className="absolute inset-0 z-[25] w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
           >
             {/* Background Video & Fallback Poster Container */}
             <div className="absolute inset-0 w-full h-full overflow-hidden">
               <div
                 className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-                  enableVideo && videoLoaded
+                  videoLoaded
                     ? "opacity-0 pointer-events-none"
                     : "opacity-100"
                 }`}
@@ -446,22 +435,20 @@ export default function OrionOneWaterfrontDestination() {
                 />
               </div>
 
-              {enableVideo && (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  onCanPlayThrough={() => setVideoLoaded(true)}
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                    videoLoaded ? "opacity-100" : "opacity-0"
-                  }`}
-                >
-                  <source src="/lake_video.mp4" type="video/mp4" />
-                </video>
-              )}
+              <video
+                ref={videoRef}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                onCanPlayThrough={() => setVideoLoaded(true)}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                  videoLoaded ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <source src="/lake_video.mp4" type="video/mp4" />
+              </video>
 
               {/* Atmospheric Vignette & Scrims for text contrast and prestigious tone */}
               <div className="absolute inset-0 bg-[#081a1a]/45 pointer-events-none" />
@@ -472,7 +459,7 @@ export default function OrionOneWaterfrontDestination() {
             {/* Center Heading & Statement Container */}
             <div
               ref={transitionInnerRef}
-              className="relative z-10 w-full h-full min-h-[100dvh] md:min-h-0 flex flex-col items-center justify-center text-center px-4 sm:px-8 select-none will-change-transform"
+              className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 select-none will-change-transform"
             >
               {/* Luminous Ambient Backlight Glow */}
               <div
@@ -497,10 +484,10 @@ export default function OrionOneWaterfrontDestination() {
           {/* FIRST CARD: Display ONLY image in center, nothing else.   */}
           {/* Zooms in on scroll until it fills the entire screen.      */}
           {/* ========================================================= */}
-          <div className="relative md:absolute inset-0 order-2 flex items-stretch md:items-center justify-center pointer-events-none z-10 overflow-visible md:overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
             <div
               ref={zoomCardRef}
-              className="relative overflow-hidden will-change-transform bg-[#081a1a] border-0 md:border border-[#EDE5DA]/15 w-full md:w-[min(920px,78vw)] aspect-[16/10] md:max-h-[62vh] rounded-none md:rounded-[20px]"
+              className="relative overflow-hidden will-change-transform bg-[#081a1a] border border-[#EDE5DA]/15 w-[min(920px,78vw)] aspect-[16/10] max-h-[62vh] rounded-[20px]"
             >
               <div
                 ref={zoomImageRef}
@@ -530,7 +517,7 @@ export default function OrionOneWaterfrontDestination() {
           {/* First Card Text Layer — Outside zoomCardRef so it is NEVER scaled! */}
           <div
             ref={zoomTextRef}
-            className="relative md:absolute inset-0 order-3 z-15 flex flex-col justify-end px-4 sm:px-12 lg:px-20 py-8 md:pb-16 pointer-events-none will-change-transform bg-[#0d2828] md:bg-transparent"
+            className="absolute inset-0 z-15 flex flex-col justify-end px-4 sm:px-12 lg:px-20 pb-16 pointer-events-none will-change-transform"
           >
             <div className="w-full max-w-[1300px] mx-auto space-y-2 pointer-events-auto">
               <h3 className="font-serif-heading text-xl sm:text-3xl lg:text-4xl font-light text-[#EDE5DA] tracking-tight">
@@ -552,13 +539,13 @@ export default function OrionOneWaterfrontDestination() {
               ref={(el) => {
                 slidesRef.current[idx] = el;
               }}
-              className="relative md:absolute inset-0 order-4 w-full h-auto min-h-[70vh] md:min-h-0 md:h-full z-20 will-change-transform overflow-hidden"
+              className="absolute inset-0 w-full h-full z-20 will-change-transform overflow-hidden"
             >
               <div
                 ref={(el) => {
                   slideInnersRef.current[idx] = el;
                 }}
-                className="relative w-full h-full min-h-[70vh] md:min-h-0 will-change-transform"
+                className="relative w-full h-full will-change-transform"
               >
                 {/* Full-bleed Architectural Photograph */}
                 <Image

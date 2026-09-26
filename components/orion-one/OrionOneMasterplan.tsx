@@ -63,79 +63,77 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
     if (!el || !pinContainer) return;
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      const applySplitMerge = (p: number) => {
+        const isMobile = window.innerWidth < 768;
 
-      mm.add("(min-width: 768px)", () => {
-        const applySplitMerge = (p: number) => {
-          const isMobile = window.innerWidth < 768;
+        const widthPercent = isMobile ? 86 : 56;
+        const heightPercent = isMobile ? 40 : 44;
+        const staggerY = isMobile ? 6 : 8;
 
-          const widthPercent = isMobile ? 86 : 56;
-          const heightPercent = isMobile ? 40 : 44;
-          const staggerY = isMobile ? 6 : 8;
+        const rawAlignT = Math.max(0, Math.min(1, p / 0.38));
+        const alignT = rawAlignT * rawAlignT * (3 - 2 * rawAlignT);
 
-          const rawAlignT = Math.max(0, Math.min(1, p / 0.38));
-          const alignT = rawAlignT * rawAlignT * (3 - 2 * rawAlignT);
+        const rawMergeT = Math.max(0, Math.min(1, (p - 0.38) / 0.20));
+        const mergeT = rawMergeT * rawMergeT * (3 - 2 * rawMergeT);
 
-          const rawMergeT = Math.max(0, Math.min(1, (p - 0.38) / 0.20));
-          const mergeT = rawMergeT * rawMergeT * (3 - 2 * rawMergeT);
+        const rawZoomT = Math.max(0, Math.min(1, (p - 0.58) / 0.34));
+        const zoomT = rawZoomT * rawZoomT * (3 - 2 * rawZoomT);
 
-          const rawZoomT = Math.max(0, Math.min(1, (p - 0.58) / 0.34));
-          const zoomT = rawZoomT * rawZoomT * (3 - 2 * rawZoomT);
+        const initialCenterY = isMobile ? 60 : 62;
+        const currentCenterY = initialCenterY - zoomT * (initialCenterY - 50);
 
-          const initialCenterY = isMobile ? 60 : 62;
-          const currentCenterY = initialCenterY - zoomT * (initialCenterY - 50);
+        const { polyL, polyR } = computeSplitMergePolygons(
+          widthPercent,
+          heightPercent,
+          staggerY,
+          alignT,
+          mergeT,
+          currentCenterY
+        );
 
-          const { polyL, polyR } = computeSplitMergePolygons(
-            widthPercent,
-            heightPercent,
-            staggerY,
-            alignT,
-            mergeT,
-            currentCenterY
-          );
+        if (maskLeftRef.current) maskLeftRef.current.style.clipPath = polyL;
+        if (maskRightRef.current) maskRightRef.current.style.clipPath = polyR;
 
-          if (maskLeftRef.current) maskLeftRef.current.style.clipPath = polyL;
-          if (maskRightRef.current) maskRightRef.current.style.clipPath = polyR;
-
-          const maxScale = isMobile ? 2.6 : 2.45;
-          const maskScale = 1.0 + zoomT * (maxScale - 1.0);
-          if (maskContainerRef.current) {
-            maskContainerRef.current.style.transform = `scale(${maskScale.toFixed(4)})`;
-          }
-
-          const initHeaderOpacity = Math.max(0, 1 - rawZoomT * 2.5);
-          if (initialHeaderRef.current) {
-            initialHeaderRef.current.style.opacity = `${initHeaderOpacity.toFixed(3)}`;
-          }
-
-          const ctaOpacity = Math.max(0, Math.min(1, (rawZoomT - 0.12) / 0.55));
-          const ctaY = (1 - ctaOpacity) * 28;
-          const ctaScale = 0.92 + ctaOpacity * 0.08;
-          if (grandCtaRef.current) {
-            grandCtaRef.current.style.opacity = `${ctaOpacity.toFixed(3)}`;
-            grandCtaRef.current.style.transform = `translate3d(0, ${ctaY.toFixed(1)}px, 0) scale(${ctaScale.toFixed(3)})`;
-            grandCtaRef.current.style.pointerEvents = ctaOpacity > 0.5 ? "auto" : "none";
-          }
-        };
-
-        applySplitMerge(0);
-
-        const trigger = ScrollTrigger.create({
-          trigger: pinContainer,
-          start: "top top",
-          end: "+=200%",
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.6,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => applySplitMerge(self.progress),
-        });
-
-        if (trigger.progress > 0) {
-          applySplitMerge(trigger.progress);
+        const maxScale = isMobile ? 2.6 : 2.45;
+        const maskScale = 1.0 + zoomT * (maxScale - 1.0);
+        if (maskContainerRef.current) {
+          maskContainerRef.current.style.transform = `scale(${maskScale.toFixed(4)})`;
         }
+
+        const initHeaderOpacity = Math.max(0, 1 - rawZoomT * 2.5);
+        if (initialHeaderRef.current) {
+          initialHeaderRef.current.style.opacity = `${initHeaderOpacity.toFixed(3)}`;
+        }
+
+        const ctaOpacity = Math.max(0, Math.min(1, (rawZoomT - 0.12) / 0.55));
+        const ctaY = (1 - ctaOpacity) * 28;
+        const ctaScale = 0.92 + ctaOpacity * 0.08;
+        if (grandCtaRef.current) {
+          grandCtaRef.current.style.opacity = `${ctaOpacity.toFixed(3)}`;
+          grandCtaRef.current.style.transform = `translate3d(0, ${ctaY.toFixed(1)}px, 0) scale(${ctaScale.toFixed(3)})`;
+          grandCtaRef.current.style.pointerEvents = ctaOpacity > 0.5 ? "auto" : "none";
+        }
+      };
+
+      applySplitMerge(0);
+
+      const trigger = ScrollTrigger.create({
+        trigger: pinContainer,
+        start: "top top",
+        end: "+=200%",
+        pin: true,
+        pinSpacing: true,
+        scrub: 0.6,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => applySplitMerge(self.progress),
       });
+
+      if (trigger.progress > 0) {
+        applySplitMerge(trigger.progress);
+      }
+    
     }, el);
 
     return () => ctx.revert();
@@ -148,7 +146,7 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
       {/* ============================================================= */}
       <section
         ref={pinContainerRef}
-        className="relative w-full h-auto min-h-[100dvh] md:h-[100dvh] overflow-hidden bg-[#0d2828] select-none"
+        className="relative w-full h-[100dvh] overflow-hidden bg-[#0d2828] select-none"
       >
         {/* Layer 1: Full-Bleed Photograph with subtle atmospheric gradient */}
         <div className="absolute inset-0 w-full h-full min-h-[100dvh] overflow-hidden select-none">
@@ -167,7 +165,7 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
         {/* Layer 2: Mask — desktop pin only; hidden on mobile so image stays full-bleed */}
         <div
           ref={maskContainerRef}
-          className="hidden md:block absolute inset-0 w-full h-full pointer-events-none will-change-transform origin-center"
+          className="absolute inset-0 w-full h-full pointer-events-none will-change-transform origin-center"
           style={{ transform: "scale(1)" }}
         >
           {/* Left Mask: Covers left half of screen with dynamic clip-path cutout */}
@@ -185,7 +183,7 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
         {/* Layer 3: Initial Clean Heading (Comfortably placed above cards, zero clutter) */}
         <div
           ref={initialHeaderRef}
-          className="relative md:absolute top-0 md:top-28 left-0 right-0 z-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-24 md:pt-0 pointer-events-none transition-opacity duration-150"
+          className="absolute top-28 left-0 right-0 z-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none transition-opacity duration-150"
         >
           <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] uppercase max-w-5xl">
             The Lakefront at the Heart of{" "}
@@ -198,7 +196,7 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
         {/* Layer 4: Grand CTA — always visible on mobile; scrubbed in on md+ */}
         <div
           ref={grandCtaRef}
-          className="relative md:absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-8 lg:px-16 z-20 pointer-events-auto md:pointer-events-none opacity-100 md:opacity-0 will-change-transform space-y-6 sm:space-y-8 py-12 md:py-0"
+          className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-8 lg:px-16 z-20 pointer-events-none opacity-0 will-change-transform space-y-6 sm:space-y-8"
         >
           <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] leading-[1.08] uppercase max-w-5xl mx-auto">
             More Than An Address <br />

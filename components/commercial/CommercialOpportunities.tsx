@@ -71,64 +71,62 @@ export default function CommercialOpportunities() {
     if (!trigger) return;
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      const slides = slidesRef.current.filter(Boolean) as HTMLDivElement[];
+      const inners = innerRef.current.filter(Boolean) as HTMLDivElement[];
+      const shades = shadeRef.current.filter(Boolean) as HTMLDivElement[];
 
-      mm.add("(min-width: 768px)", () => {
-        const slides = slidesRef.current.filter(Boolean) as HTMLDivElement[];
-        const inners = innerRef.current.filter(Boolean) as HTMLDivElement[];
-        const shades = shadeRef.current.filter(Boolean) as HTMLDivElement[];
+      if (slides.length <= 1) return;
 
-        if (slides.length <= 1) return;
+      for (let i = 1; i < slides.length; i++) {
+        gsap.set(slides[i], { yPercent: 100 });
+      }
 
-        for (let i = 1; i < slides.length; i++) {
-          gsap.set(slides[i], { yPercent: 100 });
-        }
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: trigger,
+          start: "top top",
+          end: `+=${(slides.length - 1) * 100}%`,
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.65,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: trigger,
-            start: "top top",
-            end: `+=${(slides.length - 1) * 100}%`,
-            pin: true,
-            pinSpacing: true,
-            scrub: 0.65,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
+      for (let i = 1; i < slides.length; i++) {
+        tl.to(slides[i], {
+          yPercent: 0,
+          ease: "none",
+          duration: 1,
         });
 
-        for (let i = 1; i < slides.length; i++) {
-          tl.to(slides[i], {
-            yPercent: 0,
-            ease: "none",
-            duration: 1,
-          });
-
-          if (inners[i - 1]) {
-            tl.to(
-              inners[i - 1],
-              {
-                scale: 0.94,
-                ease: "none",
-                duration: 1,
-              },
-              "<"
-            );
-          }
-
-          if (shades[i - 1]) {
-            tl.to(
-              shades[i - 1],
-              {
-                opacity: 0.5,
-                ease: "none",
-                duration: 1,
-              },
-              "<"
-            );
-          }
+        if (inners[i - 1]) {
+          tl.to(
+            inners[i - 1],
+            {
+              scale: 0.94,
+              ease: "none",
+              duration: 1,
+            },
+            "<"
+          );
         }
-      });
+
+        if (shades[i - 1]) {
+          tl.to(
+            shades[i - 1],
+            {
+              opacity: 0.5,
+              ease: "none",
+              duration: 1,
+            },
+            "<"
+          );
+        }
+      }
+    
     }, triggerRef);
 
     const timer = setTimeout(() => {
@@ -145,7 +143,7 @@ export default function CommercialOpportunities() {
     <section
       id="opportunities"
       ref={triggerRef}
-      className="relative w-full h-auto md:h-[100dvh] overflow-visible md:overflow-hidden bg-[#081a1a] z-20 flex flex-col md:block"
+      className="relative w-full h-[100dvh] overflow-hidden bg-[#081a1a] z-20"
       aria-label="Commercial Spaces Showcase"
     >
       {OPPORTUNITIES.map((item, idx) => (
@@ -154,7 +152,7 @@ export default function CommercialOpportunities() {
           ref={(el) => {
             slidesRef.current[idx] = el;
           }}
-          className="relative md:absolute inset-0 w-full h-auto min-h-[70vh] md:min-h-0 md:h-full overflow-hidden will-change-transform md:shadow-[0_-15px_35px_rgba(0,0,0,0.5)] md:border-t border-[#EDE5DA]/10"
+          className="absolute inset-0 w-full h-full overflow-hidden will-change-transform shadow-[0_-15px_35px_rgba(0,0,0,0.5)] border-t border-[#EDE5DA]/10"
           style={{ zIndex: idx + 1 }}
         >
           {/* Inner Container: Handles Subtle 3D Receding Depth */}
@@ -162,7 +160,7 @@ export default function CommercialOpportunities() {
             ref={(el) => {
               innerRef.current[idx] = el;
             }}
-            className="relative w-full h-full min-h-[70vh] md:min-h-0 will-change-transform"
+            className="relative w-full h-full will-change-transform"
           >
             {/* Full-bleed Imagery */}
             <Image

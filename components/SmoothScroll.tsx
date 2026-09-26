@@ -15,18 +15,9 @@ import {
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.config({ ignoreMobileResize: true });
   if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
   }
-}
-
-function shouldSkipLenis() {
-  if (typeof window === "undefined") return true;
-  const coarse = window.matchMedia("(pointer: coarse)").matches;
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const mobileWidth = window.matchMedia("(max-width: 767px)").matches;
-  return coarse || reducedMotion || mobileWidth;
 }
 
 function allowSoftSnap(pathname: string) {
@@ -51,34 +42,16 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    const handlePageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
-        window.scrollTo(0, 0);
-        requestAnimationFrame(() => ScrollTrigger.refresh());
-      }
-    };
-    window.addEventListener("pageshow", handlePageShow);
-
     window.__orionScroll = { velocity: 0, progress: 0, direction: 1 };
 
-    if (shouldSkipLenis()) {
-      const onScroll = () => ScrollTrigger.update();
-      window.addEventListener("scroll", onScroll, { passive: true });
-
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        window.removeEventListener("pageshow", handlePageShow);
-        window.removeEventListener("scroll", onScroll);
-      };
-    }
-
-    // Era Residence recipe: duration 1.2 + expo coast
+    // Home page has a 1700vh cinematic pin — use slower, more controlled settings
+    const isHomePage = pathname === "/";
     const lenis = new Lenis({
-      duration: DUR.l,
+      duration: isHomePage ? 1.6 : DUR.l,
       easing: EASE.expoOut,
       smoothWheel: true,
-      wheelMultiplier: 0.82,
-      touchMultiplier: 1.0,
+      wheelMultiplier: isHomePage ? 0.72 : 0.82,
+      touchMultiplier: 1.2,
       syncTouch: false,
       autoRaf: false,
     });
@@ -140,7 +113,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("pageshow", handlePageShow);
       window.removeEventListener("lenis:stop", handleLenisStop);
       window.removeEventListener("lenis:start", handleLenisStart);
       if (snapTimerRef.current) clearTimeout(snapTimerRef.current);

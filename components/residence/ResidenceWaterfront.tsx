@@ -17,88 +17,86 @@ export default function ResidenceWaterfront() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      const getTargetTransform = () => {
+        const el = imageFrameRef.current;
+        if (!el) return { targetScale: 2.0, targetY: 0 };
 
-      mm.add("(min-width: 768px)", () => {
-        const getTargetTransform = () => {
-          const el = imageFrameRef.current;
-          if (!el) return { targetScale: 2.0, targetY: 0 };
+        const currentScale = (gsap.getProperty(el, "scale") as number) || 1;
+        const currentY = (gsap.getProperty(el, "y") as number) || 0;
 
-          const currentScale = (gsap.getProperty(el, "scale") as number) || 1;
-          const currentY = (gsap.getProperty(el, "y") as number) || 0;
+        const rect = el.getBoundingClientRect();
+        const unscaledWidth = rect.width / currentScale;
+        const unscaledHeight = rect.height / currentScale;
+        const unscaledTop = rect.top - currentY;
+        const unscaledCenterY = unscaledTop + unscaledHeight / 2;
 
-          const rect = el.getBoundingClientRect();
-          const unscaledWidth = rect.width / currentScale;
-          const unscaledHeight = rect.height / currentScale;
-          const unscaledTop = rect.top - currentY;
-          const unscaledCenterY = unscaledTop + unscaledHeight / 2;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
 
-          const vw = window.innerWidth;
-          const vh = window.innerHeight;
+        const scaleX = vw / (unscaledWidth || 1);
+        const scaleY = vh / (unscaledHeight || 1);
+        const targetScale = Math.max(scaleX, scaleY) * 1.06;
+        const targetY = vh / 2 - unscaledCenterY;
 
-          const scaleX = vw / (unscaledWidth || 1);
-          const scaleY = vh / (unscaledHeight || 1);
-          const targetScale = Math.max(scaleX, scaleY) * 1.06;
-          const targetY = vh / 2 - unscaledCenterY;
+        return { targetScale, targetY };
+      };
 
-          return { targetScale, targetY };
-        };
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "+=130%",
-            pin: true,
-            pinSpacing: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        tl.to(
-          imageFrameRef.current,
-          {
-            scale: () => getTargetTransform().targetScale,
-            y: () => getTargetTransform().targetY,
-            borderRadius: 0,
-            borderWidth: 0,
-            borderColor: "transparent",
-            boxShadow: "none",
-            ease: "power2.inOut",
-            duration: 0.75,
-          },
-          0
-        );
-
-        tl.to(
-          overlayRef.current,
-          {
-            opacity: 1,
-            ease: "power1.out",
-            duration: 0.35,
-          },
-          0.45
-        );
-
-        tl.fromTo(
-          headingRef.current,
-          {
-            opacity: 0,
-            y: 25,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            ease: "power2.out",
-            duration: 0.35,
-          },
-          0.48
-        );
-
-        tl.to({}, { duration: 0.25 });
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "+=130%",
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
       });
+
+      tl.to(
+        imageFrameRef.current,
+        {
+          scale: () => getTargetTransform().targetScale,
+          y: () => getTargetTransform().targetY,
+          borderRadius: 0,
+          borderWidth: 0,
+          borderColor: "transparent",
+          boxShadow: "none",
+          ease: "power2.inOut",
+          duration: 0.75,
+        },
+        0
+      );
+
+      tl.to(
+        overlayRef.current,
+        {
+          opacity: 1,
+          ease: "power1.out",
+          duration: 0.35,
+        },
+        0.45
+      );
+
+      tl.fromTo(
+        headingRef.current,
+        {
+          opacity: 0,
+          y: 25,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          ease: "power2.out",
+          duration: 0.35,
+        },
+        0.48
+      );
+
+      tl.to({}, { duration: 0.25 });
+    
     }, sectionRef);
 
     return () => ctx.revert();
@@ -107,7 +105,7 @@ export default function ResidenceWaterfront() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full min-h-[100dvh] md:h-screen md:min-h-[640px] bg-[#0d2828] text-[#EDE5DA] overflow-hidden flex flex-col md:flex-row items-center justify-center border-t border-[#EDE5DA]/10 py-16 md:py-0"
+      className="relative w-full h-screen min-h-[640px] bg-[#0d2828] text-[#EDE5DA] overflow-hidden flex items-center justify-center border-t border-[#EDE5DA]/10"
     >
       {/* Top Scrim Gradient Overlay for Text Readability */}
       <div
@@ -118,7 +116,7 @@ export default function ResidenceWaterfront() {
       {/* Top Left Corner Heading — visible on mobile; transitions in on md+ pin */}
       <div
         ref={headingRef}
-        className="relative md:absolute top-auto md:top-28 lg:top-32 left-0 md:left-4 lg:left-20 pr-4 z-20 pointer-events-none max-w-2xl opacity-100 md:opacity-0 order-1 md:order-none px-4 md:px-0 mb-8 md:mb-0"
+        className="absolute top-28 lg:top-32 left-4 lg:left-20 pr-4 z-20 pointer-events-none max-w-2xl opacity-0"
       >
         <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.12] uppercase">
           EVERY DAY COMES

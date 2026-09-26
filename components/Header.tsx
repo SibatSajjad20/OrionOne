@@ -173,7 +173,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Direct WhatsApp Concierge"
-                className="sm:hidden inline-flex items-center justify-center min-h-11 min-w-11 text-[#62AA9E] hover:text-[#7ec1b6] transition-colors rounded-full hover:bg-white/5 shrink-0"
+                className="sm:hidden inline-flex items-center justify-center p-2.5 text-[#62AA9E] hover:text-[#7ec1b6] transition-colors rounded-full hover:bg-white/5 shrink-0"
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
@@ -183,7 +183,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                 onClick={handleInquireClick}
                 data-magnetic
                 data-magnetic-strength="14"
-                className="inline-flex items-center justify-center gap-1 sm:gap-1.5 min-h-11 text-[9.5px] sm:text-[10.5px] xl:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] xl:tracking-[0.16em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#081a1a] px-2.5 sm:px-4.5 py-2.5 sm:py-2.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.75,0,0.25,1)] shadow-[0_4px_16px_rgba(98,170,158,0.2)] hover:shadow-[0_4px_24px_rgba(98,170,158,0.35)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 cursor-pointer group"
+                className="inline-flex items-center justify-center gap-1 sm:gap-1.5 text-[9.5px] sm:text-[10.5px] xl:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] xl:tracking-[0.16em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#081a1a] px-2.5 sm:px-4.5 py-2.5 sm:py-2.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.75,0,0.25,1)] shadow-[0_4px_16px_rgba(98,170,158,0.2)] hover:shadow-[0_4px_24px_rgba(98,170,158,0.35)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 cursor-pointer group"
               >
                 <span>
                   <span className="hidden min-[360px]:inline">Book a </span>
@@ -195,7 +195,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               {/* Mobile/Tablet Menu Button */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="lg:hidden inline-flex items-center justify-center gap-1 sm:gap-1.5 min-h-11 text-[#EDE5DA] hover:text-[#62AA9E] bg-[#153D3D]/50 hover:bg-[#153D3D] border border-[#EDE5DA]/15 px-2.5 sm:px-3 py-2 rounded-full transition-all duration-200 cursor-pointer shrink-0"
+                className="lg:hidden inline-flex items-center justify-center gap-1 sm:gap-1.5 text-[#EDE5DA] hover:text-[#62AA9E] bg-[#153D3D]/50 hover:bg-[#153D3D] border border-[#EDE5DA]/15 px-2.5 sm:px-3 py-2 rounded-full transition-all duration-200 cursor-pointer shrink-0"
                 aria-label="Toggle navigation menu"
               >
                 <span className="text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.15em] font-sans-body">
@@ -230,7 +230,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               </div>
               <button
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex items-center justify-center min-h-11 min-w-11 text-[#EDE5DA] hover:text-[#62AA9E] border border-[#EDE5DA]/15 hover:border-[#62AA9E]/40 rounded-full transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center p-2.5 text-[#EDE5DA] hover:text-[#62AA9E] border border-[#EDE5DA]/15 hover:border-[#62AA9E]/40 rounded-full transition-colors cursor-pointer"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />

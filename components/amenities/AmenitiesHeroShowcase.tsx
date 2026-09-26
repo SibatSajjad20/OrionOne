@@ -110,83 +110,103 @@ export default function AmenitiesHeroShowcase({
     const slideShades = slideShadesRef.current.filter(Boolean) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      gsap.set(heroLayer, { opacity: 1, pointerEvents: "auto", display: "flex" });
+      gsap.set(heroContent, { scale: 1, opacity: 1 });
 
-      mm.add("(min-width: 768px)", () => {
-        gsap.set(heroLayer, { opacity: 1, pointerEvents: "auto", display: "flex" });
-        gsap.set(heroContent, { scale: 1, opacity: 1 });
+      gsap.fromTo(
+        heroContent,
+        { opacity: 0, y: 35 },
+        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
+      );
 
-        gsap.fromTo(
-          heroContent,
-          { opacity: 0, y: 35 },
-          { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
-        );
+      gsap.set(transitionLayer, { yPercent: 100 });
 
-        gsap.set(transitionLayer, { yPercent: 100 });
+      slides.forEach((slide) => {
+        gsap.set(slide, { xPercent: 100 });
+      });
 
-        slides.forEach((slide) => {
-          gsap.set(slide, { xPercent: 100 });
-        });
+      const masterTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top top",
+          end: "+=550%",
+          pin: stage,
+          pinSpacing: true,
+          scrub: 0.6,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
 
-        const masterTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top top",
-            end: "+=550%",
-            pin: stage,
-            pinSpacing: true,
-            scrub: 0.6,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
+      scrollTriggerInstanceRef.current = masterTl.scrollTrigger || null;
 
-        scrollTriggerInstanceRef.current = masterTl.scrollTrigger || null;
+      masterTl.to({}, { duration: 0.1 });
 
-        masterTl.to({}, { duration: 0.1 });
+      masterTl.addLabel("transitionUp", 0.1);
 
-        masterTl.addLabel("transitionUp", 0.1);
+      masterTl.to(
+        transitionLayer,
+        {
+          yPercent: 0,
+          duration: 0.9,
+          ease: "power2.out",
+        },
+        "transitionUp"
+      );
+
+      masterTl.to(
+        heroContent,
+        {
+          scale: 0.94,
+          opacity: 0.15,
+          duration: 0.9,
+          ease: "power2.out",
+        },
+        "transitionUp"
+      );
+
+      masterTl.to({}, { duration: 0.5 });
+
+      for (let i = 0; i < slides.length; i++) {
+        const label = `slide_${i}`;
+        masterTl.addLabel(label);
 
         masterTl.to(
-          transitionLayer,
+          slides[i],
           {
-            yPercent: 0,
-            duration: 0.9,
-            ease: "power2.out",
+            xPercent: 0,
+            duration: 1.2,
+            ease: "none",
           },
-          "transitionUp"
+          label
         );
 
-        masterTl.to(
-          heroContent,
-          {
-            scale: 0.94,
-            opacity: 0.15,
-            duration: 0.9,
-            ease: "power2.out",
-          },
-          "transitionUp"
-        );
-
-        masterTl.to({}, { duration: 0.5 });
-
-        for (let i = 0; i < slides.length; i++) {
-          const label = `slide_${i}`;
-          masterTl.addLabel(label);
-
+        if (i === 0) {
           masterTl.to(
-            slides[i],
+            transitionInner,
             {
-              xPercent: 0,
+              scale: 0.94,
               duration: 1.2,
               ease: "none",
             },
             label
           );
-
-          if (i === 0) {
+          if (transitionShadeRef.current) {
             masterTl.to(
-              transitionInner,
+              transitionShadeRef.current,
+              {
+                opacity: 0.65,
+                duration: 1.2,
+                ease: "none",
+              },
+              label
+            );
+          }
+        } else {
+          if (slideInners[i - 1]) {
+            masterTl.to(
+              slideInners[i - 1],
               {
                 scale: 0.94,
                 duration: 1.2,
@@ -194,49 +214,27 @@ export default function AmenitiesHeroShowcase({
               },
               label
             );
-            if (transitionShadeRef.current) {
-              masterTl.to(
-                transitionShadeRef.current,
-                {
-                  opacity: 0.65,
-                  duration: 1.2,
-                  ease: "none",
-                },
-                label
-              );
-            }
-          } else {
-            if (slideInners[i - 1]) {
-              masterTl.to(
-                slideInners[i - 1],
-                {
-                  scale: 0.94,
-                  duration: 1.2,
-                  ease: "none",
-                },
-                label
-              );
-            }
-            if (slideShades[i - 1]) {
-              masterTl.to(
-                slideShades[i - 1],
-                {
-                  opacity: 0.55,
-                  duration: 1.2,
-                  ease: "none",
-                },
-                label
-              );
-            }
           }
-
-          masterTl.to({}, { duration: i === slides.length - 1 ? 1.0 : 0.7 });
+          if (slideShades[i - 1]) {
+            masterTl.to(
+              slideShades[i - 1],
+              {
+                opacity: 0.55,
+                duration: 1.2,
+                ease: "none",
+              },
+              label
+            );
+          }
         }
 
-        return () => {
-          scrollTriggerInstanceRef.current = null;
-        };
-      });
+        masterTl.to({}, { duration: i === slides.length - 1 ? 1.0 : 0.7 });
+      }
+
+      return () => {
+        scrollTriggerInstanceRef.current = null;
+      };
+    
     }, containerRef);
 
     const timer = setTimeout(() => {
@@ -255,10 +253,7 @@ export default function AmenitiesHeroShowcase({
     if (st) {
       const targetScroll = st.start + 0.09 * (st.end - st.start);
       window.scrollTo({ top: targetScroll, behavior: "smooth" });
-      return;
     }
-    // Mobile: scroll to the transition heading in document flow
-    transitionLayerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -270,14 +265,14 @@ export default function AmenitiesHeroShowcase({
       {/* Pinned Viewport Stage */}
       <div
         ref={stageRef}
-        className="relative w-full h-auto md:min-h-[100dvh] overflow-visible md:overflow-hidden will-change-transform flex flex-col"
+        className="relative w-full h-[100dvh] overflow-hidden will-change-transform"
       >
         {/* ========================================================================= */}
         {/* LAYER 0: HERO SECTION (HEADING ONLY, NO IMAGE)                            */}
         {/* ========================================================================= */}
         <div
           ref={heroLayerRef}
-          className="relative md:absolute inset-0 z-10 order-1 w-full h-auto min-h-[100dvh] md:min-h-0 md:h-full flex flex-col justify-center items-center text-center px-4 sm:px-8 lg:px-16 pt-[calc(var(--header-h,5rem)+1rem)] md:pt-0 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
+          className="absolute inset-0 z-10 w-full h-full flex flex-col justify-center items-center text-center px-4 sm:px-8 lg:px-16 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
         >
           {/* Ambient background glow vignette */}
           <div
@@ -328,11 +323,11 @@ export default function AmenitiesHeroShowcase({
         {/* ========================================================================= */}
         <div
           ref={transitionLayerRef}
-          className="relative md:absolute inset-0 z-20 order-2 w-full h-auto min-h-[50vh] md:min-h-0 md:h-full overflow-hidden will-change-transform bg-[#081a1a]"
+          className="absolute inset-0 z-20 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
         >
           <div
             ref={transitionInnerRef}
-            className="relative w-full h-full min-h-[50vh] md:min-h-0 flex flex-col items-center justify-center text-center px-4 sm:px-8 py-16 md:py-0 will-change-transform"
+            className="relative w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 will-change-transform"
           >
             {/* Darkening shade when first slide covers it */}
             <div
@@ -367,7 +362,7 @@ export default function AmenitiesHeroShowcase({
             ref={(el) => {
               slidesRef.current[idx] = el;
             }}
-            className="relative md:absolute inset-0 order-3 w-full h-auto min-h-[70vh] md:min-h-0 md:h-full overflow-hidden will-change-transform bg-[#081a1a]"
+            className="absolute inset-0 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
             style={{ zIndex: 30 + idx }}
           >
             {/* Inner Container: Handles subtle 3D depth scale */}
@@ -375,7 +370,7 @@ export default function AmenitiesHeroShowcase({
               ref={(el) => {
                 slideInnersRef.current[idx] = el;
               }}
-              className="relative w-full h-full min-h-[70vh] md:min-h-0 will-change-transform"
+              className="relative w-full h-full will-change-transform"
             >
               {/* Full-bleed Architectural Photography */}
               <Image

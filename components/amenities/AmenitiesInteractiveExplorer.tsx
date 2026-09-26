@@ -78,83 +78,80 @@ export default function AmenitiesInteractiveExplorer({
     if (!pinContainer) return;
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      const slides = slideRefs.current.filter(Boolean) as HTMLDivElement[];
+      const total = slides.length;
+      if (total <= 1) return;
 
-      // Desktop: Full-Screen Pinned Upward Slide Transitions
-      mm.add("(min-width: 1024px)", () => {
-        const slides = slideRefs.current.filter(Boolean) as HTMLDivElement[];
-        const total = slides.length;
-        if (total <= 1) return;
-
-        // Slide 0 starts in view; subsequent slides parked below at translateY 100%
-        slides.forEach((slide, i) => {
-          gsap.set(slide, {
-            yPercent: i === 0 ? 0 : 100,
-            scale: 1,
-            opacity: 1,
-            zIndex: 10 + i * 10,
-          });
+      // Slide 0 starts in view; subsequent slides parked below at translateY 100%
+      slides.forEach((slide, i) => {
+        gsap.set(slide, {
+          yPercent: i === 0 ? 0 : 100,
+          scale: 1,
+          opacity: 1,
+          zIndex: 10 + i * 10,
         });
-
-        // Pin full-screen container and scrub slide-up deck
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            id: "curated-spaces-pin",
-            trigger: pinContainer,
-            start: "top top",
-            end: `+=${(total - 1) * 125}%`,
-            pin: pinContainer,
-            pinSpacing: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // Staggered upward slides
-        for (let i = 0; i < total - 1; i++) {
-          const startTime = i;
-
-          // Outgoing slide smoothly recedes
-          tl.to(
-            slides[i],
-            {
-              scale: 0.94,
-              opacity: 0.25,
-              yPercent: -10,
-              ease: "power1.inOut",
-              duration: 1,
-            },
-            startTime
-          );
-
-          // Incoming slide slides UPWARDS from bottom to cover full screen
-          tl.to(
-            slides[i + 1],
-            {
-              yPercent: 0,
-              ease: "power1.inOut",
-              duration: 1,
-            },
-            startTime
-          );
-
-          // Image parallax inside incoming slide
-          const imgInner = slides[i + 1].querySelector(".slide-image-inner");
-          if (imgInner) {
-            tl.fromTo(
-              imgInner,
-              { scale: 1.12 },
-              { scale: 1, ease: "power1.inOut", duration: 1 },
-              startTime
-            );
-          }
-        }
-
-        return () => {
-          tl.kill();
-        };
       });
+
+      // Pin full-screen container and scrub slide-up deck
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          id: "curated-spaces-pin",
+          trigger: pinContainer,
+          start: "top top",
+          end: `+=${(total - 1) * 125}%`,
+          pin: pinContainer,
+          pinSpacing: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Staggered upward slides
+      for (let i = 0; i < total - 1; i++) {
+        const startTime = i;
+
+        // Outgoing slide smoothly recedes
+        tl.to(
+          slides[i],
+          {
+            scale: 0.94,
+            opacity: 0.25,
+            yPercent: -10,
+            ease: "power1.inOut",
+            duration: 1,
+          },
+          startTime
+        );
+
+        // Incoming slide slides UPWARDS from bottom to cover full screen
+        tl.to(
+          slides[i + 1],
+          {
+            yPercent: 0,
+            ease: "power1.inOut",
+            duration: 1,
+          },
+          startTime
+        );
+
+        // Image parallax inside incoming slide
+        const imgInner = slides[i + 1].querySelector(".slide-image-inner");
+        if (imgInner) {
+          tl.fromTo(
+            imgInner,
+            { scale: 1.12 },
+            { scale: 1, ease: "power1.inOut", duration: 1 },
+            startTime
+          );
+        }
+      }
+
+      return () => {
+        tl.kill();
+      };
+    
     }, pinContainerRef);
 
     const timer = setTimeout(() => {
@@ -197,12 +194,11 @@ export default function AmenitiesInteractiveExplorer({
         </div>
       </div>
 
-      {/* Desktop Experience: Full-Screen Pinned Upward Slide-Deck */}
-      <div className="hidden lg:block">
-        <div
-          ref={pinContainerRef}
-          className="relative w-full h-screen min-h-[100dvh] overflow-hidden bg-[#081a1a]"
-        >
+      {/* Full-Screen Pinned Upward Slide-Deck */}
+      <div
+        ref={pinContainerRef}
+        className="relative w-full h-screen min-h-[100dvh] overflow-hidden bg-[#081a1a]"
+      >
           {DOMAINS.map((domain, idx) => (
             <div
               key={domain.id}
@@ -286,75 +282,6 @@ export default function AmenitiesInteractiveExplorer({
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Mobile & Tablet Experience: Sticky Upward Stacking Cards */}
-      <div className="lg:hidden py-16 px-4 sm:px-8 space-y-8">
-        <div className="max-w-[1400px] mx-auto space-y-8">
-          {DOMAINS.map((domain) => (
-            <div
-              key={domain.id}
-              className="relative sm:sticky sm:top-24 bg-[#0d2828] rounded-xl border border-[#EDE5DA]/15 p-5 sm:p-8 shadow-[0_-20px_50px_rgba(0,0,0,0.85)] space-y-5"
-            >
-              {/* Header: Category & Title */}
-              <div className="border-b border-[#EDE5DA]/10 pb-4 space-y-1">
-                <span className="font-sans-body text-[10px] font-semibold uppercase tracking-[0.25em] text-[#62AA9E]">
-                  {domain.category}
-                </span>
-                <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light">
-                  {domain.title}
-                </h3>
-              </div>
-
-              {/* Landscape Image */}
-              <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-[#081a1a] border border-[#EDE5DA]/15 shadow-xl">
-                <Image
-                  src={domain.image}
-                  alt={domain.alt}
-                  fill
-                  sizes="100vw"
-                  className="object-cover object-center"
-                />
-              </div>
-
-              {/* Narrative Content */}
-              <div className="space-y-4 pt-1">
-                <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
-                  {domain.description}
-                </p>
-
-                {/* Spaces List */}
-                <div className="pt-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#EDE5DA]/50 mb-2">
-                    Featured Facilities
-                  </p>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[#EDE5DA] font-sans-body font-light">
-                    {domain.spaces.map((space, sIdx) => (
-                      <span key={space} className="flex items-center gap-3">
-                        <span>{space}</span>
-                        {sIdx < domain.spaces.length - 1 && (
-                          <span className="text-[#62AA9E]/40 select-none">•</span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => onOpenInquiry?.()}
-                    className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#EDE5DA] bg-[#153D3D] hover:bg-[#153D3D]/80 border border-[#EDE5DA]/20 px-6 py-3 rounded-full transition-all duration-300 shadow-md cursor-pointer"
-                  >
-                    <span>Inquire About Spaces</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#62AA9E]" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );

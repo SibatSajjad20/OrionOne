@@ -77,7 +77,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
             </div>
             <button
               onClick={onClose}
-              className="inline-flex items-center justify-center min-h-11 min-w-11 text-[#EDE5DA]/70 hover:text-white transition-colors rounded-full hover:bg-white/5 cursor-pointer"
+              className="p-2.5 text-[#EDE5DA]/70 hover:text-white transition-colors rounded-full hover:bg-white/5 cursor-pointer"
               aria-label="Close drawer"
             >
               <X className="w-5 h-5" />
@@ -201,7 +201,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
             href="https://wa.me/923009079164?text=Hello,%20I%20would%20like%20to%20inquire%20about%20Orion%20One%20lakefront%20development"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full min-h-11 py-2.5 rounded-full border border-[#62AA9E]/40 hover:border-[#62AA9E] text-xs text-[#EDE5DA] hover:text-white transition-all bg-[#0d2828]/60"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-[#62AA9E]/40 hover:border-[#62AA9E] text-xs text-[#EDE5DA] hover:text-white transition-all bg-[#0d2828]/60"
           >
             <MessageCircle className="w-3.5 h-3.5 text-[#62AA9E]" />
             <span>Direct WhatsApp Concierge (+92 300 9079 164)</span>

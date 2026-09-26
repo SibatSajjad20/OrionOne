@@ -118,102 +118,99 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
     ) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      if (facetCards[0]) {
+        gsap.set(facetCards[0], { opacity: 1, y: 0 });
+      }
 
-      // Pin + scrub only on large screens; mobile shows all facets stacked
-      mm.add("(min-width: 1024px)", () => {
-        if (facetCards[0]) {
-          gsap.set(facetCards[0], { opacity: 1, y: 0 });
-        }
-
-        facetCards.slice(1).forEach((card) => {
-          gsap.set(card, { opacity: 0, y: 80 });
-        });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top top",
-            end: "+=180%",
-            pin: stage,
-            pinSpacing: true,
-            scrub: 0.5,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const p = self.progress;
-              if (p >= 0.72) {
-                if (activeElevationRef.current !== 3) {
-                  setActiveElevation(3);
-                  activeElevationRef.current = 3;
-                }
-              } else if (p >= 0.44) {
-                if (activeElevationRef.current !== 2) {
-                  setActiveElevation(2);
-                  activeElevationRef.current = 2;
-                }
-              } else if (p >= 0.16) {
-                if (activeElevationRef.current !== 1) {
-                  setActiveElevation(1);
-                  activeElevationRef.current = 1;
-                }
-              } else {
-                if (activeElevationRef.current !== 0) {
-                  setActiveElevation(0);
-                  activeElevationRef.current = 0;
-                }
-              }
-            },
-          },
-        });
-
-        tlRef.current = tl;
-
-        if (facetCards[1]) {
-          tl.to(
-            facetCards[1],
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power2.out",
-            },
-            0.15
-          );
-        }
-
-        if (facetCards[2]) {
-          tl.to(
-            facetCards[2],
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power2.out",
-            },
-            0.85
-          );
-        }
-
-        if (facetCards[3]) {
-          tl.to(
-            facetCards[3],
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power2.out",
-            },
-            1.55
-          );
-        }
-
-        tl.to({}, { duration: 0.4 });
-
-        return () => {
-          tlRef.current = null;
-        };
+      facetCards.slice(1).forEach((card) => {
+        gsap.set(card, { opacity: 0, y: 80 });
       });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top top",
+          end: "+=180%",
+          pin: stage,
+          pinSpacing: true,
+          scrub: 0.5,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const p = self.progress;
+            if (p >= 0.72) {
+              if (activeElevationRef.current !== 3) {
+                setActiveElevation(3);
+                activeElevationRef.current = 3;
+              }
+            } else if (p >= 0.44) {
+              if (activeElevationRef.current !== 2) {
+                setActiveElevation(2);
+                activeElevationRef.current = 2;
+              }
+            } else if (p >= 0.16) {
+              if (activeElevationRef.current !== 1) {
+                setActiveElevation(1);
+                activeElevationRef.current = 1;
+              }
+            } else {
+              if (activeElevationRef.current !== 0) {
+                setActiveElevation(0);
+                activeElevationRef.current = 0;
+              }
+            }
+          },
+        },
+      });
+
+      tlRef.current = tl;
+
+      if (facetCards[1]) {
+        tl.to(
+          facetCards[1],
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+          },
+          0.15
+        );
+      }
+
+      if (facetCards[2]) {
+        tl.to(
+          facetCards[2],
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+          },
+          0.85
+        );
+      }
+
+      if (facetCards[3]) {
+        tl.to(
+          facetCards[3],
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+          },
+          1.55
+        );
+      }
+
+      tl.to({}, { duration: 0.4 });
+
+      return () => {
+        tlRef.current = null;
+      };
+    
     }, container);
 
     return () => ctx.revert();
@@ -224,14 +221,14 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
       {/* Pinned Stage Viewport */}
       <div
         ref={stageRef}
-        className="relative w-full h-auto min-h-0 lg:min-h-[100dvh] lg:h-[100dvh] overflow-visible lg:overflow-hidden bg-[#081a1a] text-[#EDE5DA] flex flex-col lg:block"
+        className="relative w-full h-[100dvh] overflow-hidden bg-[#081a1a] text-[#EDE5DA]"
       >
         {/* ========================================================= */}
         {/* 1. LEFT PANEL: FULL 50% WIDTH, FULL HEIGHT, PARTITIONS ONLY*/}
         {/* ========================================================= */}
         <div
           ref={leftPanelRef}
-          className="relative lg:absolute top-0 left-0 w-full lg:w-1/2 h-auto lg:h-full z-20 flex flex-col pt-2 sm:pt-4 lg:pt-24 pb-0 order-2 lg:order-1 overflow-visible lg:overflow-hidden bg-[#081a1a]"
+          className="absolute top-0 left-0 w-1/2 h-full z-20 flex flex-col pt-24 pb-0 overflow-hidden bg-[#081a1a]"
         >
           <div className="flex-1 flex flex-col w-full h-full">
             {ARCHITECTURAL_FACETS.map((facet, idx) => {
@@ -245,7 +242,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
                     facetCardsRef.current[idx] = el;
                   }}
                   onClick={() => handleCardClick(idx)}
-                  className={`flex-none lg:flex-1 w-full flex flex-col justify-center px-4 sm:px-12 lg:px-14 xl:px-16 py-6 lg:py-0 transition-all duration-400 cursor-pointer will-change-transform relative opacity-100 ${
+                  className={`flex-1 w-full flex flex-col justify-center px-12 lg:px-14 xl:px-16 transition-all duration-400 cursor-pointer will-change-transform relative opacity-100 ${
                     !isLast ? "border-b border-[#EDE5DA]/15" : ""
                   } ${
                     isCurrent
@@ -289,7 +286,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
         {/* ========================================================= */}
         <div
           ref={imagePanelRef}
-          className="relative lg:absolute top-0 right-0 w-full lg:w-1/2 h-[50vw] max-h-[420px] lg:max-h-none lg:h-full overflow-hidden z-10 border-b lg:border-b-0 lg:border-l border-[#EDE5DA]/10 shadow-[-12px_0_35px_rgba(0,0,0,0.45)] order-1 lg:order-2 shrink-0"
+          className="absolute top-0 right-0 w-1/2 h-full overflow-hidden z-10 border-l border-[#EDE5DA]/10 shadow-[-12px_0_35px_rgba(0,0,0,0.45)]"
         >
           {ELEVATION_PERSPECTIVES.map((elev, idx) => (
             <div

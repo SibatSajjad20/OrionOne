@@ -16,25 +16,16 @@ interface LakesideHeroProps {
 
 export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const [enableVideo, setEnableVideo] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const mediaWrapRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px) and (pointer: fine)");
-    const update = () => setEnableVideo(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
-  useEffect(() => {
-    if (enableVideo && videoRef.current) {
+    if (videoRef.current) {
       videoRef.current.playbackRate = 0.85;
     }
-  }, [enableVideo, videoLoaded]);
+  }, [videoLoaded]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -91,10 +82,10 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
         ref={mediaWrapRef}
         className="absolute inset-0 w-full h-full overflow-hidden will-change-transform"
       >
-        {/* Poster / Fallback Image — always shown below md; fades once video ready on md+ */}
+        {/* Poster / Fallback Image — fades once video is ready */}
         <div
           className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-            enableVideo && videoLoaded ? "opacity-0" : "opacity-100"
+            videoLoaded ? "opacity-0" : "opacity-100"
           }`}
         >
           <Image
@@ -107,23 +98,20 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
           />
         </div>
 
-        {/* Cinematic Waterfront video — desktop / fine pointer only */}
-        {enableVideo && (
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            onCanPlayThrough={() => setVideoLoaded(true)}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              videoLoaded ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <source src="/scene_3.mp4" type="video/mp4" />
-          </video>
-        )}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onCanPlayThrough={() => setVideoLoaded(true)}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            videoLoaded ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <source src="/scene_3.mp4" type="video/mp4" />
+        </video>
 
         {/* Architectural Vignette Gradients */}
         <div

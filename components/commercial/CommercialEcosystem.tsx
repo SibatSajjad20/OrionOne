@@ -214,467 +214,464 @@ export default function CommercialEcosystem() {
     const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      gsap.set(cards, { opacity: 0, y: 35, pointerEvents: "none" });
+      if (hud) gsap.set(hud, { opacity: 0, y: -20, pointerEvents: "none" });
+      if (pinsContainer) gsap.set(pinsContainer, { opacity: 0, pointerEvents: "none" });
+      if (overviewBanner) gsap.set(overviewBanner, { opacity: 0, y: 25, pointerEvents: "none" });
 
-      // Pin + aerial tour only on md+; mobile stays a static document stack
-      mm.add("(min-width: 768px)", () => {
-        gsap.set(cards, { opacity: 0, y: 35, pointerEvents: "none" });
-        if (hud) gsap.set(hud, { opacity: 0, y: -20, pointerEvents: "none" });
-        if (pinsContainer) gsap.set(pinsContainer, { opacity: 0, pointerEvents: "none" });
-        if (overviewBanner) gsap.set(overviewBanner, { opacity: 0, y: 25, pointerEvents: "none" });
-
-        gsap.set(imageMap, {
-          scale: 1,
-          transformOrigin: "50% 50%",
-        });
-
-        const isDesktop = true;
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=550%",
-            pin: true,
-            pinSpacing: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const p = self.progress;
-
-              if (p < 0.10) {
-                setActiveWaypoint(-1);
-                setCurrentAmenityIdx(0);
-                setIsOverviewActive(false);
-              } else if (p >= 0.10 && p < 0.21) {
-                setActiveWaypoint(0);
-                setCurrentAmenityIdx(0);
-                setIsOverviewActive(false);
-              } else if (p >= 0.21 && p < 0.26) {
-                setActiveWaypoint(-1);
-                setCurrentAmenityIdx(0);
-                setIsOverviewActive(false);
-              } else if (p >= 0.26 && p < 0.37) {
-                setActiveWaypoint(1);
-                setCurrentAmenityIdx(1);
-                setIsOverviewActive(false);
-              } else if (p >= 0.37 && p < 0.42) {
-                setActiveWaypoint(-1);
-                setCurrentAmenityIdx(1);
-                setIsOverviewActive(false);
-              } else if (p >= 0.42 && p < 0.53) {
-                setActiveWaypoint(2);
-                setCurrentAmenityIdx(2);
-                setIsOverviewActive(false);
-              } else if (p >= 0.53 && p < 0.58) {
-                setActiveWaypoint(-1);
-                setCurrentAmenityIdx(2);
-                setIsOverviewActive(false);
-              } else if (p >= 0.58 && p < 0.69) {
-                setActiveWaypoint(3);
-                setCurrentAmenityIdx(3);
-                setIsOverviewActive(false);
-              } else if (p >= 0.69 && p < 0.74) {
-                setActiveWaypoint(-1);
-                setCurrentAmenityIdx(3);
-                setIsOverviewActive(false);
-              } else if (p >= 0.74 && p < 0.85) {
-                setActiveWaypoint(4);
-                setCurrentAmenityIdx(4);
-                setIsOverviewActive(false);
-              } else if (p >= 0.85 && p < 0.90) {
-                setActiveWaypoint(-1);
-                setCurrentAmenityIdx(4);
-                setIsOverviewActive(false);
-              } else {
-                setActiveWaypoint(-1);
-                setCurrentAmenityIdx(4);
-                setIsOverviewActive(true);
-              }
-            },
-          },
-        });
-
-        scrollTriggerRef.current = tl.scrollTrigger ?? null;
-
-        tl.to(
-          header,
-          {
-            y: -50,
-            opacity: 0,
-            height: 0,
-            paddingTop: 0,
-            paddingBottom: 0,
-            marginTop: 0,
-            marginBottom: 0,
-            duration: 0.10,
-            ease: "power2.inOut",
-          },
-          0
-        );
-
-        tl.to(
-          frameWrapper,
-          {
-            maxWidth: "100vw",
-            width: "100vw",
-            height: "100vh",
-            paddingLeft: 0,
-            paddingRight: 0,
-            paddingTop: 0,
-            paddingBottom: 0,
-            duration: 0.10,
-            ease: "power2.inOut",
-          },
-          0
-        );
-
-        tl.to(
-          frame,
-          {
-            borderRadius: "0px",
-            borderWidth: "0px",
-            duration: 0.10,
-            ease: "power2.inOut",
-          },
-          0
-        );
-
-        if (hud) {
-          tl.to(
-            hud,
-            {
-              opacity: 1,
-              y: 0,
-              pointerEvents: "auto",
-              duration: 0.03,
-              ease: "power2.out",
-            },
-            0.08
-          );
-        }
-
-        if (pinsContainer) {
-          tl.to(
-            pinsContainer,
-            {
-              opacity: 1,
-              pointerEvents: "auto",
-              duration: 0.03,
-              ease: "power2.out",
-            },
-            0.08
-          );
-        }
-
-        const wp0 = DESTINATION_AMENITIES[0];
-        const origin0 = isDesktop ? wp0.desktop.origin : wp0.mobile.origin;
-        const scale0 = isDesktop ? wp0.desktop.scale : wp0.mobile.scale;
-
-        tl.to(
-          imageMap,
-          {
-            scale: scale0,
-            transformOrigin: origin0,
-            duration: 0.05,
-            ease: "power2.out",
-          },
-          0.10
-        );
-
-        if (cards[0]) {
-          tl.to(
-            cards[0],
-            {
-              opacity: 1,
-              y: 0,
-              pointerEvents: "auto",
-              duration: 0.03,
-              ease: "power2.out",
-            },
-            0.12
-          );
-          tl.to(
-            cards[0],
-            {
-              opacity: 0,
-              y: -20,
-              pointerEvents: "none",
-              duration: 0.025,
-              ease: "power2.in",
-            },
-            0.20
-          );
-        }
-
-        tl.to(
-          imageMap,
-          {
-            scale: 1.0,
-            transformOrigin: origin0,
-            duration: 0.05,
-            ease: "power2.inOut",
-          },
-          0.21
-        );
-
-        const wp1 = DESTINATION_AMENITIES[1];
-        const origin1 = isDesktop ? wp1.desktop.origin : wp1.mobile.origin;
-        const scale1 = isDesktop ? wp1.desktop.scale : wp1.mobile.scale;
-
-        tl.to(
-          imageMap,
-          {
-            scale: scale1,
-            transformOrigin: origin1,
-            duration: 0.05,
-            ease: "power2.out",
-          },
-          0.26
-        );
-
-        if (cards[1]) {
-          tl.to(
-            cards[1],
-            {
-              opacity: 1,
-              y: 0,
-              pointerEvents: "auto",
-              duration: 0.03,
-              ease: "power2.out",
-            },
-            0.28
-          );
-          tl.to(
-            cards[1],
-            {
-              opacity: 0,
-              y: -20,
-              pointerEvents: "none",
-              duration: 0.025,
-              ease: "power2.in",
-            },
-            0.36
-          );
-        }
-
-        tl.to(
-          imageMap,
-          {
-            scale: 1.0,
-            transformOrigin: origin1,
-            duration: 0.05,
-            ease: "power2.inOut",
-          },
-          0.37
-        );
-
-        const wp2 = DESTINATION_AMENITIES[2];
-        const origin2 = isDesktop ? wp2.desktop.origin : wp2.mobile.origin;
-        const scale2 = isDesktop ? wp2.desktop.scale : wp2.mobile.scale;
-
-        tl.to(
-          imageMap,
-          {
-            scale: scale2,
-            transformOrigin: origin2,
-            duration: 0.05,
-            ease: "power2.out",
-          },
-          0.42
-        );
-
-        if (cards[2]) {
-          tl.to(
-            cards[2],
-            {
-              opacity: 1,
-              y: 0,
-              pointerEvents: "auto",
-              duration: 0.03,
-              ease: "power2.out",
-            },
-            0.44
-          );
-          tl.to(
-            cards[2],
-            {
-              opacity: 0,
-              y: -20,
-              pointerEvents: "none",
-              duration: 0.025,
-              ease: "power2.in",
-            },
-            0.52
-          );
-        }
-
-        tl.to(
-          imageMap,
-          {
-            scale: 1.0,
-            transformOrigin: origin2,
-            duration: 0.05,
-            ease: "power2.inOut",
-          },
-          0.53
-        );
-
-        const wp3 = DESTINATION_AMENITIES[3];
-        const origin3 = isDesktop ? wp3.desktop.origin : wp3.mobile.origin;
-        const scale3 = isDesktop ? wp3.desktop.scale : wp3.mobile.scale;
-
-        tl.to(
-          imageMap,
-          {
-            scale: scale3,
-            transformOrigin: origin3,
-            duration: 0.05,
-            ease: "power2.out",
-          },
-          0.58
-        );
-
-        if (cards[3]) {
-          tl.to(
-            cards[3],
-            {
-              opacity: 1,
-              y: 0,
-              pointerEvents: "auto",
-              duration: 0.03,
-              ease: "power2.out",
-            },
-            0.60
-          );
-          tl.to(
-            cards[3],
-            {
-              opacity: 0,
-              y: -20,
-              pointerEvents: "none",
-              duration: 0.025,
-              ease: "power2.in",
-            },
-            0.68
-          );
-        }
-
-        tl.to(
-          imageMap,
-          {
-            scale: 1.0,
-            transformOrigin: origin3,
-            duration: 0.05,
-            ease: "power2.inOut",
-          },
-          0.69
-        );
-
-        const wp4 = DESTINATION_AMENITIES[4];
-        const origin4 = isDesktop ? wp4.desktop.origin : wp4.mobile.origin;
-        const scale4 = isDesktop ? wp4.desktop.scale : wp4.mobile.scale;
-
-        tl.to(
-          imageMap,
-          {
-            scale: scale4,
-            transformOrigin: origin4,
-            duration: 0.05,
-            ease: "power2.out",
-          },
-          0.74
-        );
-
-        if (cards[4]) {
-          tl.to(
-            cards[4],
-            {
-              opacity: 1,
-              y: 0,
-              pointerEvents: "auto",
-              duration: 0.03,
-              ease: "power2.out",
-            },
-            0.76
-          );
-          tl.to(
-            cards[4],
-            {
-              opacity: 0,
-              y: -20,
-              pointerEvents: "none",
-              duration: 0.025,
-              ease: "power2.in",
-            },
-            0.84
-          );
-        }
-
-        tl.to(
-          imageMap,
-          {
-            scale: 1.0,
-            transformOrigin: origin4,
-            duration: 0.05,
-            ease: "power2.inOut",
-          },
-          0.85
-        );
-
-        tl.to(
-          imageMap,
-          {
-            scale: 1.04,
-            transformOrigin: "50% 50%",
-            duration: 0.08,
-            ease: "power2.inOut",
-          },
-          0.90
-        );
-
-        if (overviewBanner) {
-          tl.to(
-            overviewBanner,
-            {
-              opacity: 1,
-              y: 0,
-              pointerEvents: "auto",
-              duration: 0.04,
-              ease: "power2.out",
-            },
-            0.92
-          ).to(
-            overviewBanner,
-            {
-              opacity: 0,
-              y: -15,
-              pointerEvents: "none",
-              duration: 0.03,
-              ease: "power2.in",
-            },
-            0.96
-          );
-        }
-
-        if (hud) {
-          tl.to(
-            hud,
-            {
-              opacity: 0,
-              y: -20,
-              duration: 0.03,
-              ease: "power2.in",
-            },
-            0.97
-          );
-        }
-
-        return () => {
-          scrollTriggerRef.current = null;
-        };
+      gsap.set(imageMap, {
+        scale: 1,
+        transformOrigin: "50% 50%",
       });
+
+      const isDesktop = true;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "+=550%",
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const p = self.progress;
+
+            if (p < 0.10) {
+              setActiveWaypoint(-1);
+              setCurrentAmenityIdx(0);
+              setIsOverviewActive(false);
+            } else if (p >= 0.10 && p < 0.21) {
+              setActiveWaypoint(0);
+              setCurrentAmenityIdx(0);
+              setIsOverviewActive(false);
+            } else if (p >= 0.21 && p < 0.26) {
+              setActiveWaypoint(-1);
+              setCurrentAmenityIdx(0);
+              setIsOverviewActive(false);
+            } else if (p >= 0.26 && p < 0.37) {
+              setActiveWaypoint(1);
+              setCurrentAmenityIdx(1);
+              setIsOverviewActive(false);
+            } else if (p >= 0.37 && p < 0.42) {
+              setActiveWaypoint(-1);
+              setCurrentAmenityIdx(1);
+              setIsOverviewActive(false);
+            } else if (p >= 0.42 && p < 0.53) {
+              setActiveWaypoint(2);
+              setCurrentAmenityIdx(2);
+              setIsOverviewActive(false);
+            } else if (p >= 0.53 && p < 0.58) {
+              setActiveWaypoint(-1);
+              setCurrentAmenityIdx(2);
+              setIsOverviewActive(false);
+            } else if (p >= 0.58 && p < 0.69) {
+              setActiveWaypoint(3);
+              setCurrentAmenityIdx(3);
+              setIsOverviewActive(false);
+            } else if (p >= 0.69 && p < 0.74) {
+              setActiveWaypoint(-1);
+              setCurrentAmenityIdx(3);
+              setIsOverviewActive(false);
+            } else if (p >= 0.74 && p < 0.85) {
+              setActiveWaypoint(4);
+              setCurrentAmenityIdx(4);
+              setIsOverviewActive(false);
+            } else if (p >= 0.85 && p < 0.90) {
+              setActiveWaypoint(-1);
+              setCurrentAmenityIdx(4);
+              setIsOverviewActive(false);
+            } else {
+              setActiveWaypoint(-1);
+              setCurrentAmenityIdx(4);
+              setIsOverviewActive(true);
+            }
+          },
+        },
+      });
+
+      scrollTriggerRef.current = tl.scrollTrigger ?? null;
+
+      tl.to(
+        header,
+        {
+          y: -50,
+          opacity: 0,
+          height: 0,
+          paddingTop: 0,
+          paddingBottom: 0,
+          marginTop: 0,
+          marginBottom: 0,
+          duration: 0.10,
+          ease: "power2.inOut",
+        },
+        0
+      );
+
+      tl.to(
+        frameWrapper,
+        {
+          maxWidth: "100vw",
+          width: "100vw",
+          height: "100vh",
+          paddingLeft: 0,
+          paddingRight: 0,
+          paddingTop: 0,
+          paddingBottom: 0,
+          duration: 0.10,
+          ease: "power2.inOut",
+        },
+        0
+      );
+
+      tl.to(
+        frame,
+        {
+          borderRadius: "0px",
+          borderWidth: "0px",
+          duration: 0.10,
+          ease: "power2.inOut",
+        },
+        0
+      );
+
+      if (hud) {
+        tl.to(
+          hud,
+          {
+            opacity: 1,
+            y: 0,
+            pointerEvents: "auto",
+            duration: 0.03,
+            ease: "power2.out",
+          },
+          0.08
+        );
+      }
+
+      if (pinsContainer) {
+        tl.to(
+          pinsContainer,
+          {
+            opacity: 1,
+            pointerEvents: "auto",
+            duration: 0.03,
+            ease: "power2.out",
+          },
+          0.08
+        );
+      }
+
+      const wp0 = DESTINATION_AMENITIES[0];
+      const origin0 = isDesktop ? wp0.desktop.origin : wp0.mobile.origin;
+      const scale0 = isDesktop ? wp0.desktop.scale : wp0.mobile.scale;
+
+      tl.to(
+        imageMap,
+        {
+          scale: scale0,
+          transformOrigin: origin0,
+          duration: 0.05,
+          ease: "power2.out",
+        },
+        0.10
+      );
+
+      if (cards[0]) {
+        tl.to(
+          cards[0],
+          {
+            opacity: 1,
+            y: 0,
+            pointerEvents: "auto",
+            duration: 0.03,
+            ease: "power2.out",
+          },
+          0.12
+        );
+        tl.to(
+          cards[0],
+          {
+            opacity: 0,
+            y: -20,
+            pointerEvents: "none",
+            duration: 0.025,
+            ease: "power2.in",
+          },
+          0.20
+        );
+      }
+
+      tl.to(
+        imageMap,
+        {
+          scale: 1.0,
+          transformOrigin: origin0,
+          duration: 0.05,
+          ease: "power2.inOut",
+        },
+        0.21
+      );
+
+      const wp1 = DESTINATION_AMENITIES[1];
+      const origin1 = isDesktop ? wp1.desktop.origin : wp1.mobile.origin;
+      const scale1 = isDesktop ? wp1.desktop.scale : wp1.mobile.scale;
+
+      tl.to(
+        imageMap,
+        {
+          scale: scale1,
+          transformOrigin: origin1,
+          duration: 0.05,
+          ease: "power2.out",
+        },
+        0.26
+      );
+
+      if (cards[1]) {
+        tl.to(
+          cards[1],
+          {
+            opacity: 1,
+            y: 0,
+            pointerEvents: "auto",
+            duration: 0.03,
+            ease: "power2.out",
+          },
+          0.28
+        );
+        tl.to(
+          cards[1],
+          {
+            opacity: 0,
+            y: -20,
+            pointerEvents: "none",
+            duration: 0.025,
+            ease: "power2.in",
+          },
+          0.36
+        );
+      }
+
+      tl.to(
+        imageMap,
+        {
+          scale: 1.0,
+          transformOrigin: origin1,
+          duration: 0.05,
+          ease: "power2.inOut",
+        },
+        0.37
+      );
+
+      const wp2 = DESTINATION_AMENITIES[2];
+      const origin2 = isDesktop ? wp2.desktop.origin : wp2.mobile.origin;
+      const scale2 = isDesktop ? wp2.desktop.scale : wp2.mobile.scale;
+
+      tl.to(
+        imageMap,
+        {
+          scale: scale2,
+          transformOrigin: origin2,
+          duration: 0.05,
+          ease: "power2.out",
+        },
+        0.42
+      );
+
+      if (cards[2]) {
+        tl.to(
+          cards[2],
+          {
+            opacity: 1,
+            y: 0,
+            pointerEvents: "auto",
+            duration: 0.03,
+            ease: "power2.out",
+          },
+          0.44
+        );
+        tl.to(
+          cards[2],
+          {
+            opacity: 0,
+            y: -20,
+            pointerEvents: "none",
+            duration: 0.025,
+            ease: "power2.in",
+          },
+          0.52
+        );
+      }
+
+      tl.to(
+        imageMap,
+        {
+          scale: 1.0,
+          transformOrigin: origin2,
+          duration: 0.05,
+          ease: "power2.inOut",
+        },
+        0.53
+      );
+
+      const wp3 = DESTINATION_AMENITIES[3];
+      const origin3 = isDesktop ? wp3.desktop.origin : wp3.mobile.origin;
+      const scale3 = isDesktop ? wp3.desktop.scale : wp3.mobile.scale;
+
+      tl.to(
+        imageMap,
+        {
+          scale: scale3,
+          transformOrigin: origin3,
+          duration: 0.05,
+          ease: "power2.out",
+        },
+        0.58
+      );
+
+      if (cards[3]) {
+        tl.to(
+          cards[3],
+          {
+            opacity: 1,
+            y: 0,
+            pointerEvents: "auto",
+            duration: 0.03,
+            ease: "power2.out",
+          },
+          0.60
+        );
+        tl.to(
+          cards[3],
+          {
+            opacity: 0,
+            y: -20,
+            pointerEvents: "none",
+            duration: 0.025,
+            ease: "power2.in",
+          },
+          0.68
+        );
+      }
+
+      tl.to(
+        imageMap,
+        {
+          scale: 1.0,
+          transformOrigin: origin3,
+          duration: 0.05,
+          ease: "power2.inOut",
+        },
+        0.69
+      );
+
+      const wp4 = DESTINATION_AMENITIES[4];
+      const origin4 = isDesktop ? wp4.desktop.origin : wp4.mobile.origin;
+      const scale4 = isDesktop ? wp4.desktop.scale : wp4.mobile.scale;
+
+      tl.to(
+        imageMap,
+        {
+          scale: scale4,
+          transformOrigin: origin4,
+          duration: 0.05,
+          ease: "power2.out",
+        },
+        0.74
+      );
+
+      if (cards[4]) {
+        tl.to(
+          cards[4],
+          {
+            opacity: 1,
+            y: 0,
+            pointerEvents: "auto",
+            duration: 0.03,
+            ease: "power2.out",
+          },
+          0.76
+        );
+        tl.to(
+          cards[4],
+          {
+            opacity: 0,
+            y: -20,
+            pointerEvents: "none",
+            duration: 0.025,
+            ease: "power2.in",
+          },
+          0.84
+        );
+      }
+
+      tl.to(
+        imageMap,
+        {
+          scale: 1.0,
+          transformOrigin: origin4,
+          duration: 0.05,
+          ease: "power2.inOut",
+        },
+        0.85
+      );
+
+      tl.to(
+        imageMap,
+        {
+          scale: 1.04,
+          transformOrigin: "50% 50%",
+          duration: 0.08,
+          ease: "power2.inOut",
+        },
+        0.90
+      );
+
+      if (overviewBanner) {
+        tl.to(
+          overviewBanner,
+          {
+            opacity: 1,
+            y: 0,
+            pointerEvents: "auto",
+            duration: 0.04,
+            ease: "power2.out",
+          },
+          0.92
+        ).to(
+          overviewBanner,
+          {
+            opacity: 0,
+            y: -15,
+            pointerEvents: "none",
+            duration: 0.03,
+            ease: "power2.in",
+          },
+          0.96
+        );
+      }
+
+      if (hud) {
+        tl.to(
+          hud,
+          {
+            opacity: 0,
+            y: -20,
+            duration: 0.03,
+            ease: "power2.in",
+          },
+          0.97
+        );
+      }
+
+      return () => {
+        scrollTriggerRef.current = null;
+      };
+    
     }, section);
 
     const timer = setTimeout(() => {
@@ -725,7 +722,7 @@ export default function CommercialEcosystem() {
       <section
         id="aerial-ecosystem"
         ref={sectionRef}
-        className="relative w-full h-auto md:h-[100dvh] overflow-visible md:overflow-hidden bg-[#153D3D] text-[#EDE5DA] select-none flex flex-col justify-between"
+        className="relative w-full h-[100dvh] overflow-hidden bg-[#153D3D] text-[#EDE5DA] select-none flex flex-col justify-between"
       >
         {/* Section Editorial Header: Cleanly positioned ABOVE the frame in natural flex flow */}
         <div
@@ -748,7 +745,7 @@ export default function CommercialEcosystem() {
         {/* Master Frame Wrapper: Positioned BELOW the header at scroll 0, expands to 100vw x 100vh */}
         <div
           ref={frameWrapperRef}
-          className="w-full max-w-5xl mx-auto px-4 sm:px-8 pb-6 sm:pb-8 flex-none md:flex-1 min-h-0 flex items-center justify-center z-10 overflow-hidden aspect-[4/3] md:aspect-auto h-[50vw] max-h-[360px] md:max-h-none md:h-auto"
+          className="w-full max-w-5xl mx-auto px-4 sm:px-8 pb-6 sm:pb-8 flex-1 min-h-0 flex items-center justify-center z-10 overflow-hidden"
         >
           {/* Framed Container */}
           <div

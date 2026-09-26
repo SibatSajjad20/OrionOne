@@ -697,7 +697,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
               <button
                 type="button"
                 onClick={() => setIsLightboxOpen(false)}
-                className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-full border border-[#EDE5DA]/20 hover:bg-[#EDE5DA]/10 hover:text-white transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center p-2.5 rounded-full border border-[#EDE5DA]/20 hover:bg-[#EDE5DA]/10 hover:text-white transition-colors cursor-pointer"
                 aria-label="Close layout"
               >
                 <X className="w-5 h-5 text-[#EDE5DA]" />

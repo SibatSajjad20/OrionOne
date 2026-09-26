@@ -32,8 +32,6 @@
   --accent-mint: #62AA9E;
   --text-stone: #808080;
   --accent-martian: #B2CE93;
-  /* Fixed header height (h-20 / 80px) — use for hero offsets */
-  --header-h: 5rem;
 
   /* Motion tokens (Era-inspired) — timing only, not layout */
   --dur-s: 0.4s;
@@ -42,16 +40,6 @@
   --ease-inout: cubic-bezier(0.75, 0, 0.25, 1);
   --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
-}
-
-/* Full-viewport hero plane using dynamic viewport units */
-.hero-viewport {
-  min-height: 100dvh;
-}
-
-/* Offset hero content below the fixed header */
-.hero-header-offset {
-  padding-top: calc(var(--header-h) + 1rem);
 }
 
 html {

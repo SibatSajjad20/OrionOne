@@ -166,273 +166,270 @@ export default function LocationAddressConnectivity() {
     const urbanShades = urbanShadesRef.current.filter(Boolean) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      
+      // -------------------------------------------------------------
+      // Initial State Setup
+      // -------------------------------------------------------------
+      gsap.set(blindsLayer, { opacity: 1, pointerEvents: "auto", display: "flex" });
+      gsap.set(leftCol, { xPercent: 0, opacity: 1 });
+      gsap.set(rightCol, { xPercent: 0, opacity: 1 });
 
-      // Desktop / tablet: pinned scrubbed master timeline
-      mm.add("(min-width: 768px)", () => {
-        // -------------------------------------------------------------
-        // Initial State Setup
-        // -------------------------------------------------------------
-        gsap.set(blindsLayer, { opacity: 1, pointerEvents: "auto", display: "flex" });
-        gsap.set(leftCol, { xPercent: 0, opacity: 1 });
-        gsap.set(rightCol, { xPercent: 0, opacity: 1 });
+      gsap.set(centerHeading, {
+        scale: 0.86,
+        opacity: 0,
+        filter: "blur(14px)",
+        y: 30,
+      });
+      gsap.set(centerGlow, { scale: 0.5, opacity: 0 });
+      gsap.set(centerHeadingLayer, { opacity: 1, display: "flex" });
 
-        gsap.set(centerHeading, {
-          scale: 0.86,
+      gsap.set(dhaSlidesLayer, { display: "none" });
+      dhaSlides.forEach((slide) => {
+        gsap.set(slide, { yPercent: 100, scale: 1, opacity: 1 });
+      });
+
+      gsap.set(urbanIntroLayer, { xPercent: -100 });
+
+      urbanSlides.forEach((slide) => {
+        gsap.set(slide, { xPercent: -100 });
+      });
+
+      const masterTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top top",
+          end: "+=1150%",
+          pin: stage,
+          pinSpacing: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      masterTl.to({}, { duration: 1.0 });
+
+      masterTl.addLabel("splitStart", 1.0);
+
+      masterTl.to(
+        leftCol,
+        {
+          xPercent: -105,
+          duration: 1.8,
+          ease: "power2.inOut",
+        },
+        "splitStart"
+      );
+
+      masterTl.to(
+        rightCol,
+        {
+          xPercent: 105,
+          duration: 1.8,
+          ease: "power2.inOut",
+        },
+        "splitStart"
+      );
+
+      masterTl.to(
+        centerGlow,
+        {
+          scale: 1.2,
+          opacity: 0.9,
+          duration: 1.6,
+          ease: "power2.out",
+        },
+        "splitStart+=0.2"
+      );
+
+      masterTl.to(
+        centerHeading,
+        {
+          scale: 1,
+          opacity: 1,
+          filter: "blur(0px)",
+          y: 0,
+          duration: 1.6,
+          ease: "power2.out",
+        },
+        "splitStart+=0.2"
+      );
+
+      masterTl.set(blindsLayer, { pointerEvents: "none", display: "none" }, "splitStart+=1.8");
+
+      masterTl.to({}, { duration: 1.4 });
+
+      masterTl.addLabel("dhaSlide1Enter", 4.2);
+      masterTl.set(dhaSlidesLayer, { display: "block" }, "dhaSlide1Enter");
+
+      masterTl.to(
+        centerHeading,
+        {
+          yPercent: -35,
           opacity: 0,
-          filter: "blur(14px)",
-          y: 30,
-        });
-        gsap.set(centerGlow, { scale: 0.5, opacity: 0 });
-        gsap.set(centerHeadingLayer, { opacity: 1, display: "flex" });
+          scale: 1.05,
+          filter: "blur(10px)",
+          duration: 1.4,
+          ease: "power2.inOut",
+        },
+        "dhaSlide1Enter"
+      );
 
-        gsap.set(dhaSlidesLayer, { display: "none" });
-        dhaSlides.forEach((slide) => {
-          gsap.set(slide, { yPercent: 100, scale: 1, opacity: 1 });
-        });
+      masterTl.to(
+        centerGlow,
+        {
+          opacity: 0,
+          scale: 0.7,
+          duration: 1.2,
+          ease: "power2.in",
+        },
+        "dhaSlide1Enter"
+      );
 
-        gsap.set(urbanIntroLayer, { xPercent: -100 });
-
-        urbanSlides.forEach((slide) => {
-          gsap.set(slide, { xPercent: -100 });
-        });
-
-        const masterTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top top",
-            end: "+=1150%",
-            pin: stage,
-            pinSpacing: true,
-            scrub: 1,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        masterTl.to({}, { duration: 1.0 });
-
-        masterTl.addLabel("splitStart", 1.0);
-
+      if (dhaSlides[0]) {
         masterTl.to(
-          leftCol,
+          dhaSlides[0],
           {
-            xPercent: -105,
-            duration: 1.8,
-            ease: "power2.inOut",
-          },
-          "splitStart"
-        );
-
-        masterTl.to(
-          rightCol,
-          {
-            xPercent: 105,
-            duration: 1.8,
-            ease: "power2.inOut",
-          },
-          "splitStart"
-        );
-
-        masterTl.to(
-          centerGlow,
-          {
-            scale: 1.2,
-            opacity: 0.9,
+            yPercent: 0,
             duration: 1.6,
             ease: "power2.out",
           },
-          "splitStart+=0.2"
-        );
-
-        masterTl.to(
-          centerHeading,
-          {
-            scale: 1,
-            opacity: 1,
-            filter: "blur(0px)",
-            y: 0,
-            duration: 1.6,
-            ease: "power2.out",
-          },
-          "splitStart+=0.2"
-        );
-
-        masterTl.set(blindsLayer, { pointerEvents: "none", display: "none" }, "splitStart+=1.8");
-
-        masterTl.to({}, { duration: 1.4 });
-
-        masterTl.addLabel("dhaSlide1Enter", 4.2);
-        masterTl.set(dhaSlidesLayer, { display: "block" }, "dhaSlide1Enter");
-
-        masterTl.to(
-          centerHeading,
-          {
-            yPercent: -35,
-            opacity: 0,
-            scale: 1.05,
-            filter: "blur(10px)",
-            duration: 1.4,
-            ease: "power2.inOut",
-          },
           "dhaSlide1Enter"
         );
+      }
+      masterTl.set(centerHeadingLayer, { display: "none" }, "dhaSlide1Enter+=1.6");
+      masterTl.to({}, { duration: 1.0 });
 
-        masterTl.to(
-          centerGlow,
-          {
-            opacity: 0,
-            scale: 0.7,
-            duration: 1.2,
-            ease: "power2.in",
-          },
-          "dhaSlide1Enter"
-        );
-
+      if (dhaSlides[1]) {
+        masterTl.addLabel("dhaSlide2", 6.8);
+        masterTl.to(dhaSlides[1], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide2");
         if (dhaSlides[0]) {
-          masterTl.to(
-            dhaSlides[0],
-            {
-              yPercent: 0,
-              duration: 1.6,
-              ease: "power2.out",
-            },
-            "dhaSlide1Enter"
-          );
+          masterTl.to(dhaSlides[0], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide2");
         }
-        masterTl.set(centerHeadingLayer, { display: "none" }, "dhaSlide1Enter+=1.6");
-        masterTl.to({}, { duration: 1.0 });
+        masterTl.to({}, { duration: 0.6 });
+      }
 
+      if (dhaSlides[2]) {
+        masterTl.addLabel("dhaSlide3", 8.8);
+        masterTl.to(dhaSlides[2], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide3");
         if (dhaSlides[1]) {
-          masterTl.addLabel("dhaSlide2", 6.8);
-          masterTl.to(dhaSlides[1], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide2");
-          if (dhaSlides[0]) {
-            masterTl.to(dhaSlides[0], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide2");
-          }
-          masterTl.to({}, { duration: 0.6 });
+          masterTl.to(dhaSlides[1], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide3");
         }
+        masterTl.to({}, { duration: 0.6 });
+      }
 
+      if (dhaSlides[3]) {
+        masterTl.addLabel("dhaSlide4", 10.8);
+        masterTl.to(dhaSlides[3], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide4");
         if (dhaSlides[2]) {
-          masterTl.addLabel("dhaSlide3", 8.8);
-          masterTl.to(dhaSlides[2], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide3");
-          if (dhaSlides[1]) {
-            masterTl.to(dhaSlides[1], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide3");
-          }
-          masterTl.to({}, { duration: 0.6 });
+          masterTl.to(dhaSlides[2], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide4");
         }
+        masterTl.to({}, { duration: 0.6 });
+      }
 
+      if (dhaSlides[4]) {
+        masterTl.addLabel("dhaSlide5", 12.8);
+        masterTl.to(dhaSlides[4], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide5");
         if (dhaSlides[3]) {
-          masterTl.addLabel("dhaSlide4", 10.8);
-          masterTl.to(dhaSlides[3], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide4");
-          if (dhaSlides[2]) {
-            masterTl.to(dhaSlides[2], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide4");
-          }
-          masterTl.to({}, { duration: 0.6 });
+          masterTl.to(dhaSlides[3], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide5");
         }
+        masterTl.to({}, { duration: 0.8 });
+      }
 
-        if (dhaSlides[4]) {
-          masterTl.addLabel("dhaSlide5", 12.8);
-          masterTl.to(dhaSlides[4], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide5");
-          if (dhaSlides[3]) {
-            masterTl.to(dhaSlides[3], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide5");
-          }
-          masterTl.to({}, { duration: 0.8 });
-        }
+      masterTl.addLabel("urbanIntroEnter", 15.0);
 
-        masterTl.addLabel("urbanIntroEnter", 15.0);
+      masterTl.to(
+        urbanIntroLayer,
+        {
+          xPercent: 0,
+          duration: 1.6,
+          ease: "power2.out",
+        },
+        "urbanIntroEnter"
+      );
 
+      if (dhaSlides[4]) {
         masterTl.to(
-          urbanIntroLayer,
+          dhaSlides[4],
           {
-            xPercent: 0,
+            scale: 0.94,
+            opacity: 0.35,
             duration: 1.6,
             ease: "power2.out",
           },
           "urbanIntroEnter"
         );
+      }
 
-        if (dhaSlides[4]) {
-          masterTl.to(
-            dhaSlides[4],
-            {
-              scale: 0.94,
-              opacity: 0.35,
-              duration: 1.6,
-              ease: "power2.out",
-            },
-            "urbanIntroEnter"
-          );
-        }
+      masterTl.to({}, { duration: 1.2 });
 
-        masterTl.to({}, { duration: 1.2 });
+      for (let i = 0; i < urbanSlides.length; i++) {
+        const label = `urbanSlide_${i}`;
+        masterTl.addLabel(label);
 
-        for (let i = 0; i < urbanSlides.length; i++) {
-          const label = `urbanSlide_${i}`;
-          masterTl.addLabel(label);
+        masterTl.to(
+          urbanSlides[i],
+          {
+            xPercent: 0,
+            duration: 1.4,
+            ease: "none",
+          },
+          label
+        );
 
-          masterTl.to(
-            urbanSlides[i],
-            {
-              xPercent: 0,
-              duration: 1.4,
-              ease: "none",
-            },
-            label
-          );
-
-          if (i === 0) {
-            if (urbanIntroInnerRef.current) {
-              masterTl.to(
-                urbanIntroInnerRef.current,
-                {
-                  scale: 0.94,
-                  duration: 1.4,
-                  ease: "none",
-                },
-                label
-              );
-            }
-            if (urbanIntroShadeRef.current) {
-              masterTl.to(
-                urbanIntroShadeRef.current,
-                {
-                  opacity: 0.6,
-                  duration: 1.4,
-                  ease: "none",
-                },
-                label
-              );
-            }
-          } else {
-            if (urbanInners[i - 1]) {
-              masterTl.to(
-                urbanInners[i - 1],
-                {
-                  scale: 0.94,
-                  duration: 1.4,
-                  ease: "none",
-                },
-                label
-              );
-            }
-            if (urbanShades[i - 1]) {
-              masterTl.to(
-                urbanShades[i - 1],
-                {
-                  opacity: 0.55,
-                  duration: 1.4,
-                  ease: "none",
-                },
-                label
-              );
-            }
+        if (i === 0) {
+          if (urbanIntroInnerRef.current) {
+            masterTl.to(
+              urbanIntroInnerRef.current,
+              {
+                scale: 0.94,
+                duration: 1.4,
+                ease: "none",
+              },
+              label
+            );
           }
-
-          masterTl.to({}, { duration: 0.6 });
+          if (urbanIntroShadeRef.current) {
+            masterTl.to(
+              urbanIntroShadeRef.current,
+              {
+                opacity: 0.6,
+                duration: 1.4,
+                ease: "none",
+              },
+              label
+            );
+          }
+        } else {
+          if (urbanInners[i - 1]) {
+            masterTl.to(
+              urbanInners[i - 1],
+              {
+                scale: 0.94,
+                duration: 1.4,
+                ease: "none",
+              },
+              label
+            );
+          }
+          if (urbanShades[i - 1]) {
+            masterTl.to(
+              urbanShades[i - 1],
+              {
+                opacity: 0.55,
+                duration: 1.4,
+                ease: "none",
+              },
+              label
+            );
+          }
         }
 
-        masterTl.to({}, { duration: 0.8 });
-      });
+        masterTl.to({}, { duration: 0.6 });
+      }
+
+      masterTl.to({}, { duration: 0.8 });
+    
     }, container);
 
     return () => ctx.revert();
@@ -448,19 +445,19 @@ export default function LocationAddressConnectivity() {
       {/* Stage: document stack on mobile, pinned viewport on md+ */}
       <div
         ref={stageRef}
-        className="relative w-full h-auto md:h-[100dvh] overflow-visible md:overflow-hidden flex flex-col md:justify-center select-none"
+        className="relative w-full h-[100dvh] overflow-hidden flex justify-center select-none"
       >
         {/* ========================================================================= */}
         {/* LAYER 1: SECTION 02 - A LAKEFRONT ADDRESS (SEAMLESS DUAL-DOOR BLINDS)      */}
         {/* ========================================================================= */}
         <div
           ref={blindsLayerRef}
-          className="relative md:absolute inset-0 z-30 w-full h-auto md:h-full flex flex-col lg:flex-row overflow-visible md:overflow-hidden pointer-events-auto"
+          className="absolute inset-0 z-30 w-full h-full flex flex-col lg:flex-row overflow-hidden pointer-events-auto"
         >
           {/* Left Panel: Photo card resting seamlessly on #081a1a */}
           <div
             ref={leftColRef}
-            className="w-full lg:w-1/2 h-auto md:h-1/2 lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-end p-4 sm:p-10 lg:pr-14 will-change-transform"
+            className="w-full lg:w-1/2 h-1/2 lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-end p-4 sm:p-10 lg:pr-14 will-change-transform"
           >
             <div className="relative w-full max-w-[560px] aspect-[4/3] sm:aspect-[16/11] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl">
               <Image
@@ -477,7 +474,7 @@ export default function LocationAddressConnectivity() {
           {/* Right Panel: Editorial narrative resting seamlessly on #081a1a */}
           <div
             ref={rightColRef}
-            className="w-full lg:w-1/2 h-auto md:h-1/2 lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-start p-4 sm:p-10 lg:pl-14 will-change-transform"
+            className="w-full lg:w-1/2 h-1/2 lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-start p-4 sm:p-10 lg:pl-14 will-change-transform"
           >
             <div className="max-w-[540px] space-y-3 sm:space-y-6 text-left">
               <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
@@ -509,7 +506,7 @@ export default function LocationAddressConnectivity() {
         {/* ========================================================================= */}
         <div
           ref={centerHeadingLayerRef}
-          className="relative md:absolute inset-0 z-20 w-full h-auto md:h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 py-16 md:py-0 bg-[#081a1a] overflow-hidden"
+          className="absolute inset-0 z-20 w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 bg-[#081a1a] overflow-hidden"
         >
           {/* Blooming ambient center emerald halo */}
           <div
@@ -537,7 +534,7 @@ export default function LocationAddressConnectivity() {
         <div
           id="connectivity"
           ref={dhaSlidesLayerRef}
-          className="relative md:absolute inset-0 z-22 w-full h-auto md:h-full overflow-visible md:overflow-hidden will-change-transform flex flex-col"
+          className="absolute inset-0 z-22 w-full h-full overflow-hidden will-change-transform"
         >
           {ARTERIES.map((a, idx) => (
             <div
@@ -545,7 +542,7 @@ export default function LocationAddressConnectivity() {
               ref={(el) => {
                 dhaSlidesRef.current[idx] = el;
               }}
-              className="relative md:absolute inset-0 w-full h-auto min-h-[70vh] md:min-h-0 md:h-full overflow-hidden will-change-transform bg-[#081a1a]"
+              className="absolute inset-0 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
               style={{ zIndex: idx + 1 }}
             >
               {/* Full-Screen Pure Photographic Visual */}
@@ -580,12 +577,12 @@ export default function LocationAddressConnectivity() {
         <div
           id="urban-ecosystem"
           ref={urbanIntroLayerRef}
-          className="relative md:absolute inset-0 z-25 w-full h-auto md:h-full overflow-hidden will-change-transform md:shadow-[25px_0_50px_rgba(0,0,0,0.7)] md:border-r border-[#EDE5DA]/15 bg-[#081a1a]"
+          className="absolute inset-0 z-25 w-full h-full overflow-hidden will-change-transform shadow-[25px_0_50px_rgba(0,0,0,0.7)] border-r border-[#EDE5DA]/15 bg-[#081a1a]"
         >
           {/* Inner container for depth scale */}
           <div
             ref={urbanIntroInnerRef}
-            className="relative w-full h-auto md:h-full min-h-[50vh] md:min-h-0 flex flex-col items-center justify-center text-center px-4 sm:px-8 py-16 md:py-0 overflow-hidden will-change-transform"
+            className="relative w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 overflow-hidden will-change-transform"
           >
             {/* Darkening shade when next slide covers it */}
             <div
@@ -619,7 +616,7 @@ export default function LocationAddressConnectivity() {
             ref={(el) => {
               urbanSlidesRef.current[idx] = el;
             }}
-            className="relative md:absolute inset-0 w-full h-auto min-h-[70vh] md:min-h-0 md:h-full overflow-hidden will-change-transform md:shadow-[25px_0_50px_rgba(0,0,0,0.65)] md:border-r border-[#EDE5DA]/15"
+            className="absolute inset-0 w-full h-full overflow-hidden will-change-transform shadow-[25px_0_50px_rgba(0,0,0,0.65)] border-r border-[#EDE5DA]/15"
             style={{ zIndex: 26 + idx }}
           >
             {/* Inner Container: Handles subtle 3D depth scale */}
@@ -627,7 +624,7 @@ export default function LocationAddressConnectivity() {
               ref={(el) => {
                 urbanInnersRef.current[idx] = el;
               }}
-              className="relative w-full h-full min-h-[70vh] md:min-h-0 will-change-transform"
+              className="relative w-full h-full will-change-transform"
             >
               {/* Full-bleed Architectural Photography */}
               <Image

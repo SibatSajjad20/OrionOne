@@ -51,28 +51,28 @@ export default function Footer() {
                 Quick Links
               </span>
               <div className="flex flex-col space-y-1 text-xs sm:text-sm text-[#EDE5DA]/85 font-light">
-                <Link href="/" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Home
                 </Link>
-                <Link href="/orion-one" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/orion-one" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Orion One
                 </Link>
-                <Link href="/about" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/about" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   About Us
                 </Link>
-                <Link href="/commercial" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/commercial" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Commercial
                 </Link>
-                <Link href="/lakeside" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/lakeside" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Lakeside Experience
                 </Link>
-                <Link href="/location" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/location" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Location
                 </Link>
-                <Link href="/amenities" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/amenities" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Amenities
                 </Link>
-                <Link href="/contact" className="hover:text-[#62AA9E] transition-colors py-2 min-h-11 flex items-center">
+                <Link href="/contact" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Contact Us
                 </Link>
               </div>
@@ -90,7 +90,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
+                  className="p-2.5 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
@@ -102,7 +102,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
-                  className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
+                  className="p-2.5 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
@@ -115,7 +115,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="TikTok"
-                  className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
+                  className="p-2.5 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
@@ -127,7 +127,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
+                  className="p-2.5 rounded-lg border border-[#EDE5DA]/15 hover:border-[#62AA9E] text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-all bg-[#153D3D]/30"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
