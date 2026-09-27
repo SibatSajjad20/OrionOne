@@ -112,8 +112,8 @@ const DESTINATION_AMENITIES: DestinationAmenity[] = [
       origin: "70% 42%",
     },
     pin: {
-      x: 68,
-      y: 40,
+      x: 70,
+      y: 42,
       label: "Five-Star Hotel",
     },
   },
@@ -769,59 +769,66 @@ export default function CommercialEcosystem() {
 
               {/* Subtle Vignette */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/65 via-transparent to-[#081a1a]/35 pointer-events-none" />
+            </div>
 
-              {/* Floating Radar Pins (Hidden during Phase 1 until tour starts) */}
-              <div
-                ref={pinsContainerRef}
-                className="absolute inset-0 pointer-events-none opacity-0"
-              >
-                {DESTINATION_AMENITIES.map((amenity, idx) => {
-                  const isActive = !isOverviewActive && activeWaypoint === idx;
-                  return (
-                    <div
-                      key={amenity.id}
-                      onClick={() => handleWaypointClick(idx)}
-                      style={{ left: `${amenity.pin.x}%`, top: `${amenity.pin.y}%` }}
-                      className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer pointer-events-auto group transition-transform duration-300 ${
-                        isActive ? "scale-110" : "scale-90 hover:scale-105"
-                      }`}
-                    >
-                      <div className="relative flex items-center justify-center">
-                        <span
-                          className={`absolute rounded-full transition-all duration-500 ${
-                            isActive
-                              ? "w-8 h-8 bg-[#62AA9E]/40 animate-ping"
-                              : "w-4 h-4 bg-[#62AA9E]/15"
-                          }`}
-                        />
-                        <span
-                          className={`w-3.5 h-3.5 rounded-full transition-colors duration-300 border-2 ${
-                            isActive
-                              ? "bg-[#62AA9E] border-[#EDE5DA] shadow-[0_0_14px_#62AA9E]"
-                              : "bg-[#153D3D] border-[#62AA9E] shadow-[0_0_8px_rgba(98,170,158,0.5)]"
-                          }`}
-                        />
+            {/* Floating Radar Pins (Placed outside zoomable canvas to preserve crisp, constant scale & prevent overflowing labels) */}
+            <div
+              ref={pinsContainerRef}
+              className="absolute inset-0 pointer-events-none opacity-0 z-20"
+            >
+              {DESTINATION_AMENITIES.map((amenity, idx) => {
+                const isFocused = !isOverviewActive && activeWaypoint === idx;
+                const isOverview = isOverviewActive || activeWaypoint === -1;
 
-                        {/* Hover / Active Badge — dynamically placed opposite to card direction to eliminate any overlap */}
-                        <div
-                          className={`absolute ${
-                            amenity.desktop.cardPlacement === "right"
-                              ? "right-5 -translate-x-0"
-                              : "left-5 translate-x-0"
-                          } top-1/2 -translate-y-1/2 whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-sans-body tracking-wider transition-all duration-300 backdrop-blur-md shadow-xl flex items-center gap-1.5 ${
-                            isActive
-                              ? "bg-[#0d2828]/95 border border-[#62AA9E] text-[#EDE5DA] opacity-100 shadow-[0_0_16px_rgba(98,170,158,0.35)]"
-                              : "bg-[#0d2828]/80 border border-[#EDE5DA]/20 text-[#C9BFB1] opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
-                          }`}
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#62AA9E] animate-pulse" />
-                          <span className="font-medium">{amenity.pin.label}</span>
-                        </div>
+                // When focused on a waypoint, only display the active pin to avoid unaligned out-of-focus pins
+                if (!isFocused && !isOverview) {
+                  return null;
+                }
+
+                const isRightHalf = amenity.pin.x >= 50;
+
+                return (
+                  <div
+                    key={amenity.id}
+                    onClick={() => handleWaypointClick(idx)}
+                    style={{ left: `${amenity.pin.x}%`, top: `${amenity.pin.y}%` }}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer pointer-events-auto group transition-all duration-300 ${
+                      isFocused ? "scale-100" : "scale-90 hover:scale-100"
+                    }`}
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <span
+                        className={`absolute rounded-full transition-all duration-500 ${
+                          isFocused
+                            ? "w-7 h-7 bg-[#62AA9E]/40 animate-ping"
+                            : "w-4 h-4 bg-[#62AA9E]/20"
+                        }`}
+                      />
+                      <span
+                        className={`w-3.5 h-3.5 rounded-full transition-colors duration-300 border-2 ${
+                          isFocused
+                            ? "bg-[#62AA9E] border-[#EDE5DA] shadow-[0_0_12px_#62AA9E]"
+                            : "bg-[#153D3D] border-[#62AA9E] shadow-[0_0_8px_rgba(98,170,158,0.5)]"
+                        }`}
+                      />
+
+                      {/* Directional Badge — always points inward towards center of screen so it never overflows */}
+                      <div
+                        className={`absolute ${
+                          isRightHalf ? "right-5" : "left-5"
+                        } top-1/2 -translate-y-1/2 whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-sans-body tracking-wider transition-all duration-300 backdrop-blur-md shadow-xl flex items-center gap-1.5 max-w-[200px] sm:max-w-none ${
+                          isFocused
+                            ? "bg-[#0d2828]/95 border border-[#62AA9E] text-[#EDE5DA] opacity-100 shadow-[0_0_16px_rgba(98,170,158,0.35)]"
+                            : "bg-[#0d2828]/85 border border-[#EDE5DA]/20 text-[#C9BFB1] opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+                        }`}
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#62AA9E] animate-pulse shrink-0" />
+                        <span className="font-medium truncate">{amenity.pin.label}</span>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Waypoint Minimalist Cards — responsive overlays on both mobile and desktop */}

@@ -119,11 +119,11 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
           let animClass = "scale-100";
 
           if (isCurrent) {
-            zIndexClass = "z-20";
+            zIndexClass = "z-10";
             opacityClass = "opacity-100 transition-opacity duration-[1800ms] ease-in-out";
             animClass = "animate-hero-kenburns";
           } else if (isPrev) {
-            zIndexClass = "z-10";
+            zIndexClass = "z-0";
             opacityClass = "opacity-100";
             animClass = "scale-106";
           }
@@ -152,29 +152,29 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
       {/* 2. ARCHITECTURAL MULTI-STOP GRADIENT SCRIM (Legibility & Seamless Flow)   */}
       {/* ========================================================================= */}
       <div
-        className="absolute top-0 inset-x-0 h-44 sm:h-56 bg-gradient-to-b from-[#081a1a]/90 via-[#081a1a]/40 to-transparent pointer-events-none z-30"
+        className="absolute top-0 inset-x-0 h-44 sm:h-56 bg-gradient-to-b from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-20"
         aria-hidden="true"
       />
 
       <div
-        className="absolute inset-0 bg-gradient-to-t from-[#153D3D] via-[#0d2828]/80 via-40% to-transparent pointer-events-none z-30"
+        className="absolute inset-0 bg-gradient-to-t from-[#153D3D] via-[#0d2828]/70 via-45% to-transparent pointer-events-none z-20"
         aria-hidden="true"
       />
       <div
-        className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/40 sm:via-[#081a1a]/20 to-transparent pointer-events-none z-30"
+        className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/80 via-[#081a1a]/40 sm:via-[#081a1a]/15 to-transparent pointer-events-none z-20"
         aria-hidden="true"
       />
 
       {/* Subtle brand ambient mint glow behind heading */}
       <div
-        className="absolute bottom-1/3 left-10 sm:left-24 w-[400px] sm:w-[700px] h-[350px] bg-[#62AA9E]/10 rounded-full blur-[140px] pointer-events-none z-30"
+        className="absolute bottom-1/3 left-10 sm:left-24 w-[400px] sm:w-[700px] h-[350px] bg-[#62AA9E]/15 rounded-full blur-[140px] pointer-events-none z-20"
         aria-hidden="true"
       />
 
       {/* ========================================================================= */}
       {/* 3. EDITORIAL DISPLAY CANOPY (Positioned atop Full-Bleed Showcase)         */}
       {/* ========================================================================= */}
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 lg:pb-20">
+      <div className="relative z-30 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 lg:pb-20">
         <div className="max-w-4xl">
           {/* Hero Headline */}
           <h1
