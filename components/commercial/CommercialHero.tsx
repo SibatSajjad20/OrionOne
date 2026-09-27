@@ -174,12 +174,12 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
       {/* ========================================================================= */}
       {/* 3. EDITORIAL DISPLAY CANOPY (Positioned atop Full-Bleed Showcase)         */}
       {/* ========================================================================= */}
-      <div className="relative z-40 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pt-32 sm:pt-40 lg:pt-44 pb-16 sm:pb-24 lg:pb-28">
+      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 lg:pb-20">
         <div className="max-w-4xl">
           {/* Hero Headline */}
           <h1
             ref={headlineRef}
-            className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.98] uppercase"
+            className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.04] uppercase"
           >
             Where Business <br />
             <span className="italic font-normal text-sand-gradient normal-case">

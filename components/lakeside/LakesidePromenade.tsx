@@ -143,37 +143,37 @@ export default function LakesidePromenade() {
       />
 
       {/* Clean Stage Header */}
-      <div className="pt-16 sm:pt-24 pb-4 px-4 sm:px-8 lg:px-16 max-w-[1500px] mx-auto w-full">
-        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+      <div className="pt-8 sm:pt-12 pb-2 sm:pb-3 px-4 sm:px-8 lg:px-16 max-w-[1500px] mx-auto w-full shrink-0">
+        <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
           The Lakeside <span className="italic font-normal text-sand-gradient normal-case">Promenade</span>
         </h2>
       </div>
 
       {/* Horizontal Sliding Track (Desktop & Mobile Synchronized) */}
-      <div className="py-6 sm:py-12 md:py-16 overflow-hidden w-full">
+      <div className="pt-3 sm:pt-4 pb-6 sm:pb-8 overflow-hidden w-full">
         <div
           ref={trackRef}
-          className="flex flex-row items-stretch gap-4 md:gap-8 px-4 sm:px-8 lg:px-16 w-max will-change-transform"
+          className="flex flex-row items-stretch gap-4 md:gap-6 px-4 sm:px-8 lg:px-16 w-max will-change-transform"
         >
           {PROMENADE_ITEMS.map((item) => (
             <article
               key={item.id}
-              className="promenade-card w-[84vw] sm:w-[500px] md:w-[540px] lg:w-[600px] shrink-0 rounded-2xl bg-[#0d2828] border border-[#EDE5DA]/15 p-5 sm:p-7 shadow-2xl flex flex-col justify-start group transition-colors duration-500 hover:border-[#62AA9E]/40"
+              className="promenade-card w-[82vw] sm:w-[420px] md:w-[460px] lg:w-[480px] shrink-0 rounded-2xl bg-[#0d2828] border border-[#EDE5DA]/15 p-4 sm:p-5 shadow-2xl flex flex-col justify-start group transition-colors duration-500 hover:border-[#62AA9E]/40"
             >
               {/* Clean Architectural Photo */}
-              <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-[#081a1a] border border-[#EDE5DA]/10 shrink-0">
+              <div className="relative aspect-[16/9.5] w-full rounded-xl overflow-hidden bg-[#081a1a] border border-[#EDE5DA]/10 shrink-0">
                 <Image
                   src={item.image}
                   alt={item.alt}
                   fill
-                  sizes="(max-width: 768px) 85vw, 600px"
+                  sizes="(max-width: 768px) 82vw, 480px"
                   className="object-cover object-center transition-transform duration-[2500ms] group-hover:scale-105"
                 />
               </div>
 
               {/* Clean Editorial Narrative */}
-              <div className="pt-4 sm:pt-6 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-start">
-                <h3 className="font-serif-heading text-xl sm:text-3xl text-[#EDE5DA] font-light leading-snug">
+              <div className="pt-3 sm:pt-4 space-y-1.5 sm:space-y-2 flex-1 flex flex-col justify-start">
+                <h3 className="font-serif-heading text-lg sm:text-2xl text-[#EDE5DA] font-light leading-snug">
                   {item.title}
                 </h3>
 

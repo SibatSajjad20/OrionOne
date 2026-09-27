@@ -245,15 +245,15 @@ h1, h2, h3, h4, h5, h6 {
 
 @keyframes marqueeLtr {
   0% {
-    transform: translateX(-50%);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translateX(0%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
 .animate-marquee-ltr {
-  animation: marqueeLtr 45s linear infinite;
+  animation: marqueeLtr 35s linear infinite !important;
   will-change: transform;
 }
 
@@ -271,7 +271,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee-ltr,
   .animate-hero-kenburns,
   .animate-spin-slow {
     animation: none !important;

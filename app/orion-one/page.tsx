@@ -19,12 +19,22 @@ export default function OrionOnePage() {
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
 
   useEffect(() => {
-    // Refresh GSAP ScrollTrigger coordinates after mount to synchronize with smooth scroll
+    // Refresh and sort GSAP ScrollTrigger coordinates after mount to synchronize pinned sections
     const timer = setTimeout(() => {
+      ScrollTrigger.sort();
       ScrollTrigger.refresh();
     }, 400);
 
-    return () => clearTimeout(timer);
+    const handleLoad = () => {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener("load", handleLoad);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("load", handleLoad);
+    };
   }, []);
 
   return (

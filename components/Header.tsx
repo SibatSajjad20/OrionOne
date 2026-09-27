@@ -127,7 +127,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
       <>
         <header
           ref={ref}
-          className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b border-[#EDE5DA]/10 backdrop-blur-none md:backdrop-blur-xl ${
+          className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 border-b border-[#EDE5DA]/10 backdrop-blur-none md:backdrop-blur-xl ${
             scrolled
               ? "bg-[#081a1a] md:bg-[#081a1a]/95 shadow-[0_8px_32px_rgba(0,0,0,0.5)] h-[72px]"
               : "bg-[#0d2828] md:bg-[#0d2828]/85 shadow-[0_4px_24px_rgba(0,0,0,0.3)] h-20"

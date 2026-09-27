@@ -408,14 +408,8 @@ export default function AmenitiesHeroShowcase({
               <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/60 via-45% to-transparent pointer-events-none z-[3]" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
 
-              {/* Bottom Content: Headline & Narrative with Safe-Area Elevation and Environment Badge */}
+              {/* Bottom Content: Headline & Narrative with Safe-Area Elevation */}
               <div className="absolute bottom-16 sm:bottom-20 lg:bottom-24 left-4 sm:left-8 lg:left-16 max-w-3xl z-10 space-y-2 sm:space-y-3 pr-4 sm:pr-8 pb-[env(safe-area-inset-bottom,0px)]">
-                <div className="inline-flex items-center gap-2 mb-1 px-3 py-1 rounded-full bg-[#081a1a]/85 backdrop-blur-md border border-[#EDE5DA]/15 shadow-lg">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#62AA9E] animate-pulse" />
-                  <span className="font-sans-body text-[10px] sm:text-xs text-[#EDE5DA]/80 tracking-widest uppercase">
-                    Signature Environment 0{idx + 1} of 0{SIGNATURE_SLIDES.length}
-                  </span>
-                </div>
                 <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.08]">
                   {slide.title}
                 </h3>

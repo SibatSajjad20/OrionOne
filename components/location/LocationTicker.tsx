@@ -26,7 +26,10 @@ export default function LocationTicker({ className = "" }: LocationTickerProps) 
       />
 
       {/* Infinite Left-to-Right Scrolling Track */}
-      <div className="flex w-max animate-marquee-ltr hover:[animation-play-state:paused] cursor-default">
+      <div
+        className="flex w-max will-change-transform cursor-default"
+        style={{ animation: "marqueeLtr 35s linear infinite" }}
+      >
         {/* Track Half 1 */}
         <div className="flex shrink-0 items-center">
           {items.map((_, i) => (

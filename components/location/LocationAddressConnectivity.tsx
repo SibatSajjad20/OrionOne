@@ -582,8 +582,9 @@ export default function LocationAddressConnectivity() {
         </div>
 
         {/* ========================================================================= */}
+        {/* ========================================================================= */}
         {/* LAYER 4: "EVERYTHING AROUND US" TRANSITION PANEL (SLIDES IN FROM LEFT!)   */}
-        {/* Clear background, big heading, slides in from the left over DHA Slide 5   */}
+        {/* Clean minimal background without background image, big centered heading   */}
         {/* ========================================================================= */}
         <div
           id="urban-ecosystem"
@@ -595,18 +596,10 @@ export default function LocationAddressConnectivity() {
             ref={urbanIntroInnerRef}
             className="relative w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 overflow-hidden will-change-transform"
           >
-            {/* Background texture image for depth */}
-            <Image
-              src="/images/location/urban-growth.jpg"
-              alt="Everything Around Us"
-              fill
-              className="object-cover object-center filter brightness-[0.25]"
-            />
-
             {/* Darkening shade when next slide covers it */}
             <div
               ref={urbanIntroShadeRef}
-              className="absolute inset-0 bg-[#081a1a]/70 pointer-events-none z-[4]"
+              className="absolute inset-0 bg-[#081a1a]/40 pointer-events-none z-[4]"
             />
 
             {/* Ambient center emerald glow */}
@@ -670,9 +663,9 @@ export default function LocationAddressConnectivity() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/60 via-45% to-transparent pointer-events-none z-[3]" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
 
-              {/* Bottom Content: Headline & Narrative */}
-              <div className="absolute bottom-20 sm:bottom-20 lg:bottom-24 left-6 sm:left-12 lg:left-20 max-w-3xl z-10 space-y-2 sm:space-y-3 pr-4 pb-[max(5rem,env(safe-area-inset-bottom,20px))]">
-                <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.02] uppercase">
+              {/* Bottom Content: Headline & Narrative grounded at bottom */}
+              <div className="absolute bottom-8 sm:bottom-12 lg:bottom-16 left-6 sm:left-12 lg:left-20 max-w-3xl z-10 space-y-2 sm:space-y-3 pr-4 pb-[env(safe-area-inset-bottom,0px)]">
+                <h3 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
                   {item.title}
                 </h3>
 

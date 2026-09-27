@@ -141,7 +141,7 @@ export default function OrionLogoScrollWheel({
     }
   }, [onWheelClick, progressRef]);
 
-  // Measure and cache all anchor coordinates relative to container
+  // Measure and cache CTA target coordinate
   const updateAllAnchorCoords = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -149,150 +149,44 @@ export default function OrionLogoScrollWheel({
     const width = container.clientWidth;
     const height = Math.max(container.clientHeight, 1);
     const isMobile = width < 768;
-    const isTablet = width >= 768 && width < 1024;
 
-    const getCoord = (
-      ref: React.RefObject<HTMLElement | null> | undefined,
-      fallback: AnchorCoord
-    ): AnchorCoord => {
-      if (ref && ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          return {
-            x: rect.left - containerRect.left + rect.width * 0.5,
-            y: rect.top - containerRect.top + rect.height * 0.5,
-            size: Math.max(rect.width, rect.height),
-          };
-        }
+    const tRef = targetRefHolder.current;
+    if (tRef && tRef.current) {
+      const rect = tRef.current.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        cachedCoordsRef.current.scene6 = {
+          x: rect.left - containerRect.left + rect.width * 0.5,
+          y: rect.top - containerRect.top + rect.height * 0.5,
+          size: Math.max(rect.width, rect.height),
+        };
+        return;
       }
-      return fallback;
-    };
-
-    // Responsive fallbacks in case DOM element isn't active or in DOM yet
-    const def1: AnchorCoord = {
-      x: width - (isMobile ? 42 : isTablet ? 50 : 64),
-      y: height * 0.5,
-      size: isMobile ? 48 : 58,
-    };
-    const def2: AnchorCoord = {
-      x: isMobile ? width * 0.5 : isTablet ? 120 : 160,
-      y: isMobile ? height * 0.32 : height * 0.38,
-      size: isMobile ? 46 : 54,
-    };
-    const def3: AnchorCoord = {
-      x: isMobile ? 70 : isTablet ? 110 : 130,
-      y: isMobile ? 120 : isTablet ? 150 : 170,
-      size: isMobile ? 40 : 48,
-    };
-    const defCol1: AnchorCoord = {
-      x: isMobile ? width * 0.5 : width * 0.167,
-      y: isMobile ? height * 0.68 : height * 0.72,
-      size: isMobile ? 38 : 44,
-    };
-    const defCol2: AnchorCoord = {
-      x: isMobile ? width * 0.5 : width * 0.5,
-      y: isMobile ? height * 0.68 : height * 0.72,
-      size: isMobile ? 38 : 44,
-    };
-    const defCol3: AnchorCoord = {
-      x: isMobile ? width * 0.5 : width * 0.833,
-      y: isMobile ? height * 0.68 : height * 0.72,
-      size: isMobile ? 38 : 44,
-    };
-    const def5: AnchorCoord = {
-      x: width * 0.5,
-      y: isMobile ? height * 0.28 : height * 0.30,
-      size: isMobile ? 44 : 52,
-    };
-    const def6: AnchorCoord = {
+    }
+    cachedCoordsRef.current.scene6 = {
       x: width * 0.5,
       y: isMobile ? height * 0.32 : height * 0.36,
       size: isMobile ? 54 : 64,
     };
-
-    const tRefs = targetRefsHolder.current;
-    const tRef = targetRefHolder.current;
-
-    cachedCoordsRef.current = {
-      scene1: getCoord(tRefs?.scene1, def1),
-      scene2: getCoord(tRefs?.scene2, def2),
-      scene3: getCoord(tRefs?.scene3, def3),
-      col1: getCoord(tRefs?.col1, defCol1),
-      col2: getCoord(tRefs?.col2, defCol2),
-      col3: getCoord(tRefs?.col3, defCol3),
-      scene5: getCoord(tRefs?.scene5, def5),
-      scene6: getCoord(tRefs?.scene6 || tRef, def6),
-    };
   }, []);
 
-  // Piecewise interpolation for journey screen positions
-  const getJourneyPos = (prog: number): AnchorCoord => {
-    const c = cachedCoordsRef.current;
-    // 1. Scene 1 (Hero/Architecture: beside heading on right side)
-    if (prog <= 0.080) {
-      return c.scene1;
+  // Return fixed right-side companion position (and docks to CTA only at closing frame)
+  const getJourneyPos = (prog: number, width: number, height: number): AnchorCoord => {
+    const isMobile = width < 768;
+    const isTablet = width >= 768 && width < 1024;
+    const wheelPixelSize = isMobile ? 44 : isTablet ? 50 : 56;
+    const wheelRightMargin = isMobile ? 32 : isTablet ? 42 : 52;
+    const fixedCoord: AnchorCoord = {
+      x: width - wheelRightMargin,
+      y: height * 0.5,
+      size: wheelPixelSize,
+    };
+
+    if (prog >= 0.86) {
+      const ctaCoord = cachedCoordsRef.current.scene6;
+      const ctaT = smoothstep((prog - 0.86) / (0.93 - 0.86));
+      return lerpCoord(fixedCoord, ctaCoord, ctaT);
     }
-    // 1 -> 2 (Scene 1 to Scene 2 Waterfront / Life by the Water on left side)
-    if (prog <= 0.130) {
-      const t = smoothstep((prog - 0.080) / (0.130 - 0.080));
-      return lerpCoord(c.scene1, c.scene2, t);
-    }
-    // 2. Scene 2 (Life by the Water)
-    if (prog <= 0.230) {
-      return c.scene2;
-    }
-    // 2 -> 3 (Scene 2 to Scene 3 District Masterplan top of text)
-    if (prog <= 0.275) {
-      const t = smoothstep((prog - 0.230) / (0.275 - 0.230));
-      return lerpCoord(c.scene2, c.scene3, t);
-    }
-    // 3. Scene 3 (District Masterplan)
-    if (prog <= 0.370) {
-      return c.scene3;
-    }
-    // 3 -> 4A (District Masterplan to Column 1 Commercial Arcade top of heading)
-    if (prog <= 0.415) {
-      const t = smoothstep((prog - 0.370) / (0.415 - 0.370));
-      return lerpCoord(c.scene3, c.col1, t);
-    }
-    // 4A. Column 1 (Commercial Arcade)
-    if (prog <= 0.485) {
-      return c.col1;
-    }
-    // 4A -> 4B (Column 1 to Column 2 Curated Residences top of heading)
-    if (prog <= 0.525) {
-      const t = smoothstep((prog - 0.485) / (0.525 - 0.485));
-      return lerpCoord(c.col1, c.col2, t);
-    }
-    // 4B. Column 2 (Curated Residences)
-    if (prog <= 0.585) {
-      return c.col2;
-    }
-    // 4B -> 4C (Column 2 to Column 3 Signature Amenities top of heading)
-    if (prog <= 0.625) {
-      const t = smoothstep((prog - 0.585) / (0.625 - 0.585));
-      return lerpCoord(c.col2, c.col3, t);
-    }
-    // 4C. Column 3 (Signature Amenities)
-    if (prog <= 0.695) {
-      return c.col3;
-    }
-    // 4C -> 5 (Column 3 to Destination top of label)
-    if (prog <= 0.740) {
-      const t = smoothstep((prog - 0.695) / (0.740 - 0.695));
-      return lerpCoord(c.col3, c.scene5, t);
-    }
-    // 5. Destination
-    if (prog <= 0.825) {
-      return c.scene5;
-    }
-    // 5 -> 6 (Destination to CTA top of heading)
-    if (prog <= 0.875) {
-      const t = smoothstep((prog - 0.825) / (0.875 - 0.825));
-      return lerpCoord(c.scene5, c.scene6, t);
-    }
-    // 6. CTA Docked
-    return c.scene6;
+    return fixedCoord;
   };
 
   // Manage intro travel transition from loading screen to journey
@@ -521,7 +415,7 @@ export default function OrionLogoScrollWheel({
           size: isMobile ? 120 : isTablet ? 140 : 160,
         };
 
-        const journeyTarget = getJourneyPos(prog);
+        const journeyTarget = getJourneyPos(prog, width, height);
         const curScreenCoord =
           introT < 1 ? lerpCoord(loadingCenter, journeyTarget, introT) : journeyTarget;
 

@@ -127,10 +127,21 @@ export default function OrionOneWaterfrontDestination() {
   const matrixCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.9;
-    }
-  }, [videoLoaded]);
+    const video = videoRef.current;
+    if (!video) return;
+    video.playbackRate = 0.9;
+    const attemptPlay = () => {
+      video
+        .play()
+        .then(() => {
+          setVideoLoaded(true);
+        })
+        .catch(() => {
+          // Autoplay policy or low battery mode catch
+        });
+    };
+    attemptPlay();
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -461,9 +472,12 @@ export default function OrionOneWaterfrontDestination() {
                 loop
                 muted
                 playsInline
-                preload="metadata"
+                preload="auto"
+                onLoadedData={() => setVideoLoaded(true)}
+                onCanPlay={() => setVideoLoaded(true)}
+                onPlaying={() => setVideoLoaded(true)}
                 onCanPlayThrough={() => setVideoLoaded(true)}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
                   videoLoaded ? "opacity-100" : "opacity-0"
                 }`}
               >

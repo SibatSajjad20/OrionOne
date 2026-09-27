@@ -802,12 +802,16 @@ export default function CommercialEcosystem() {
                           }`}
                         />
 
-                        {/* Hover / Active Badge */}
+                        {/* Hover / Active Badge — dynamically placed opposite to card direction to eliminate any overlap */}
                         <div
-                          className={`absolute left-5 top-1/2 -translate-y-1/2 whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-sans-body tracking-wider transition-all duration-300 backdrop-blur-md shadow-xl flex items-center gap-1.5 ${
+                          className={`absolute ${
+                            amenity.desktop.cardPlacement === "right"
+                              ? "right-5 -translate-x-0"
+                              : "left-5 translate-x-0"
+                          } top-1/2 -translate-y-1/2 whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-sans-body tracking-wider transition-all duration-300 backdrop-blur-md shadow-xl flex items-center gap-1.5 ${
                             isActive
-                              ? "bg-[#0d2828]/95 border border-[#62AA9E] text-[#EDE5DA] opacity-100 translate-x-0 shadow-[0_0_16px_rgba(98,170,158,0.35)]"
-                              : "bg-[#0d2828]/80 border border-[#EDE5DA]/20 text-[#C9BFB1] opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 pointer-events-none group-hover:pointer-events-auto"
+                              ? "bg-[#0d2828]/95 border border-[#62AA9E] text-[#EDE5DA] opacity-100 shadow-[0_0_16px_rgba(98,170,158,0.35)]"
+                              : "bg-[#0d2828]/80 border border-[#EDE5DA]/20 text-[#C9BFB1] opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
                           }`}
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-[#62AA9E] animate-pulse" />
@@ -831,15 +835,12 @@ export default function CommercialEcosystem() {
                     cardRefs.current[idx] = el;
                   }}
                   className={`absolute z-30 pointer-events-none opacity-0
-                    bottom-6 left-4 right-4 sm:bottom-10 sm:left-6 sm:right-6
-                    md:bottom-12 md:left-auto md:right-auto md:max-w-md
-                    ${isRight ? "md:right-12 lg:right-16" : "md:left-12 lg:left-16"}
+                    bottom-6 left-4 right-4 sm:bottom-8 sm:left-6 sm:right-6
+                    md:bottom-8 md:left-auto md:right-auto md:max-w-sm lg:max-w-md
+                    ${isRight ? "md:right-8 lg:right-12" : "md:left-8 lg:left-12"}
                   `}
                 >
                   <div className="bg-[#0a2020]/95 backdrop-blur-xl rounded-2xl p-4 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.65)] pointer-events-auto border border-[#EDE5DA]/20">
-                    <div className="inline-flex items-center gap-1.5 mb-1.5 px-2.5 py-0.5 rounded-full bg-[#62AA9E]/15 border border-[#62AA9E]/30 text-[10px] text-[#62AA9E] uppercase font-mono tracking-wider">
-                      <span>{amenity.category}</span>
-                    </div>
                     <h3 className="font-serif-heading text-lg sm:text-2xl text-[#EDE5DA] font-light leading-snug tracking-tight mb-1.5 sm:mb-2.5">
                       {amenity.title}
                     </h3>
