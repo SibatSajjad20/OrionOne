@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { ArrowDown } from "lucide-react";
 import { scrollToY } from "@/lib/scrollTo";
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -76,7 +79,7 @@ export default function OrionOneHeroOverview({
   const slideInnersRef = useRef<(HTMLDivElement | null)[]>([]);
   const slideShadesRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const container = containerRef.current;
     const stage = stageRef.current;
     const heroLayer = heroLayerRef.current;
@@ -453,7 +456,6 @@ export default function OrionOneHeroOverview({
         <div
           ref={addressLayerRef}
           className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-10 select-none bg-[#0a2222]"
-          style={{ opacity: 0, pointerEvents: "none" }}
         >
           <div
             ref={addressGlowRef}
@@ -481,7 +483,6 @@ export default function OrionOneHeroOverview({
         <div
           ref={destinationLayerRef}
           className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-20 select-none bg-[#0a2222] will-change-transform shadow-[0_-25px_60px_rgba(0,0,0,0.6)]"
-          style={{ transform: "translateY(100%)", pointerEvents: "none" }}
         >
           <div
             ref={destinationGlowRef}
@@ -515,7 +516,7 @@ export default function OrionOneHeroOverview({
               slidesRef.current[idx] = el;
             }}
             className="absolute inset-0 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
-            style={{ zIndex: 30 + idx, transform: "translateX(100%)" }}
+            style={{ zIndex: 30 + idx }}
           >
             <div
               ref={(el) => {
