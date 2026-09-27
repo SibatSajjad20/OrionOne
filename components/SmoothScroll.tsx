@@ -9,23 +9,23 @@ import { DUR, EASE, type OrionScrollState } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({
+    ignoreMobileResize: true,
+  });
   if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
   }
 }
 
-const HOME_DURATION = 1.15;
-const HOME_WHEEL = 0.85;
+const ERA_DURATION = DUR.l; // 1.2s matching Era Residence
+const ERA_TOUCH_MULTIPLIER = 2; // Instant flick response matching Era Residence
 
-function wheelProfile(pathname: string) {
-  if (pathname === "/") {
-    return { duration: HOME_DURATION, wheelMultiplier: HOME_WHEEL };
-  }
-  return { duration: DUR.l, wheelMultiplier: 1 };
+function wheelProfile() {
+  return { duration: ERA_DURATION, wheelMultiplier: 1 };
 }
 
-function applyWheelProfile(lenis: Lenis, pathname: string) {
-  const profile = wheelProfile(pathname);
+function applyWheelProfile(lenis: Lenis) {
+  const profile = wheelProfile();
   lenis.options.duration = profile.duration;
   lenis.options.wheelMultiplier = profile.wheelMultiplier;
   const virtualScroll = (
@@ -41,7 +41,7 @@ function applyWheelProfile(lenis: Lenis, pathname: string) {
 function anchorOptions(reduced: boolean) {
   return reduced
     ? { offset: 0, immediate: true as const }
-    : { offset: 0, duration: DUR.m };
+    : { offset: 0, duration: ERA_DURATION };
 }
 
 function isSamePageHash(anchor: HTMLAnchorElement) {
@@ -77,14 +77,13 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let reduced = motionQuery.matches;
 
-    const profile = wheelProfile(pathname);
+    const profile = wheelProfile();
     const lenis = new Lenis({
       duration: reduced ? 0 : profile.duration,
       easing: EASE.expoOut,
       smoothWheel: !reduced,
       wheelMultiplier: profile.wheelMultiplier,
-      touchMultiplier: 1,
-      syncTouch: false,
+      touchMultiplier: ERA_TOUCH_MULTIPLIER,
       autoRaf: false,
       anchors: anchorOptions(reduced),
       allowNestedScroll: true,
@@ -93,7 +92,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     lenisRef.current = lenis;
     (window as unknown as { lenis?: Lenis }).lenis = lenis;
-    applyWheelProfile(lenis, pathname);
+    applyWheelProfile(lenis);
 
     const handleLenisStop = () => lenis.stop();
     const handleLenisStart = () => lenis.start();
@@ -162,7 +161,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       tickerBound = false;
     };
 
-    // One display frame per tick. Late frames are not stretched into a hitch.
+    // Era Residence architecture: lagSmoothing(0) ensures 1:1 instantaneous response
+    // without GSAP's artificial frame-time dilation delaying smooth-scroll physics.
     gsap.ticker.lagSmoothing(0);
     if (!reduced) bindTicker();
 
@@ -204,7 +204,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     window.scrollTo(0, 0);
     if (lenis) {
-      applyWheelProfile(lenis, pathname);
+      applyWheelProfile(lenis);
       lenis.scrollTo(0, { immediate: true });
 
       if (pathname !== "/") {

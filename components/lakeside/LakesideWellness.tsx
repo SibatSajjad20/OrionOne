@@ -17,14 +17,35 @@ interface LakesideWellnessProps {
 
 export default function LakesideWellness({ onOpenInquiry }: LakesideWellnessProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const cardsWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
+    const header = headerRef.current;
     const cardsWrap = cardsWrapRef.current;
     if (!section || !cardsWrap) return;
 
     const ctx = gsap.context(() => {
+      if (header) {
+        gsap.fromTo(
+          header,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: header,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
       const cards = cardsWrap.querySelectorAll(".wellness-card");
       gsap.fromTo(
         cards,
@@ -32,9 +53,10 @@ export default function LakesideWellness({ onOpenInquiry }: LakesideWellnessProp
         {
           opacity: 1,
           y: 0,
-          duration: 1,
+          duration: 1.1,
           stagger: 0.15,
           ease: "power3.out",
+          clearProps: "all",
           scrollTrigger: {
             trigger: cardsWrap,
             start: "top 85%",
@@ -62,7 +84,7 @@ export default function LakesideWellness({ onOpenInquiry }: LakesideWellnessProp
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Header */}
-        <div className="max-w-4xl mb-12 sm:mb-16 space-y-4">
+        <div ref={headerRef} className="max-w-4xl mb-12 sm:mb-16 space-y-4">
           <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
             Wellness by the <br />
             <span className="italic font-normal text-sand-gradient normal-case">

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InquiryDrawer from "@/components/InquiryDrawer";
@@ -12,8 +14,20 @@ import CommercialEcosystem from "@/components/commercial/CommercialEcosystem";
 import CommercialSpaces from "@/components/commercial/CommercialSpaces";
 import CommercialCtaBanner from "@/components/commercial/CommercialCtaBanner";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function CommercialPage() {
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-[#153D3D] text-[#EDE5DA] overflow-x-clip selection:bg-[#62AA9E] selection:text-[#153D3D]">

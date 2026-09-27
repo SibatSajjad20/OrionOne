@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
+import gsap from "gsap";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { scrollToElement } from "@/lib/scrollTo";
 
@@ -36,6 +37,11 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [prevSlide, setPrevSlide] = useState<number | null>(null);
 
+  const containerRef = useRef<HTMLElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+
   const nextSlide = useCallback(() => {
     setCurrentSlide((curr) => {
       setPrevSlide(curr);
@@ -49,6 +55,40 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
     return () => clearInterval(interval);
   }, [nextSlide]);
 
+  // Stately text entrance matching ResidenceHero
+  useEffect(() => {
+    const container = containerRef.current;
+    const headline = headlineRef.current;
+    const subtitle = subtitleRef.current;
+    const actions = actionsRef.current;
+
+    if (!container || !headline || !subtitle || !actions) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.fromTo(
+        headline,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1.2, clearProps: "all" }
+      )
+        .fromTo(
+          subtitle,
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 1.0, clearProps: "all" },
+          "-=0.7"
+        )
+        .fromTo(
+          actions,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.9, clearProps: "all" },
+          "-=0.7"
+        );
+    }, container);
+
+    return () => ctx.revert();
+  }, []);
+
   const scrollToSpaces = (e: React.MouseEvent) => {
     e.preventDefault();
     const element = document.getElementById("spaces");
@@ -59,6 +99,7 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
 
   return (
     <section
+      ref={containerRef}
       className="relative w-full min-h-[92vh] lg:min-h-screen flex flex-col justify-end overflow-hidden bg-[#153D3D]"
       aria-label="Commercial Showcase Visual Hero"
     >
@@ -78,12 +119,10 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
           let animClass = "scale-100";
 
           if (isCurrent) {
-            // Incoming slide dissolves in gracefully with an unhurried 1.8s crossfade
             zIndexClass = "z-20";
             opacityClass = "opacity-100 transition-opacity duration-[1800ms] ease-in-out";
             animClass = "animate-hero-kenburns";
           } else if (isPrev) {
-            // Outgoing slide remains solidly visible at full opacity underneath during dissolve
             zIndexClass = "z-10";
             opacityClass = "opacity-100";
             animClass = "scale-106";
@@ -112,13 +151,11 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
       {/* ========================================================================= */}
       {/* 2. ARCHITECTURAL MULTI-STOP GRADIENT SCRIM (Legibility & Seamless Flow)   */}
       {/* ========================================================================= */}
-      {/* Top Scrim for Fixed Header */}
       <div
         className="absolute top-0 inset-x-0 h-44 sm:h-56 bg-gradient-to-b from-[#081a1a]/90 via-[#081a1a]/40 to-transparent pointer-events-none z-30"
         aria-hidden="true"
       />
 
-      {/* Primary Backdrop Scrim: Lateral & Bottom darkening for crisp typography */}
       <div
         className="absolute inset-0 bg-gradient-to-t from-[#153D3D] via-[#0d2828]/80 via-40% to-transparent pointer-events-none z-30"
         aria-hidden="true"
@@ -140,7 +177,10 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
       <div className="relative z-40 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pt-32 sm:pt-40 lg:pt-44 pb-16 sm:pb-24 lg:pb-28">
         <div className="max-w-4xl">
           {/* Hero Headline */}
-          <h1 className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.98] uppercase">
+          <h1
+            ref={headlineRef}
+            className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.98] uppercase"
+          >
             Where Business <br />
             <span className="italic font-normal text-sand-gradient normal-case">
               Meets Destination Living
@@ -148,12 +188,18 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
           </h1>
 
           {/* Sensory Subtitle */}
-          <p className="font-sans-body text-sm sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl pt-5 sm:pt-6">
+          <p
+            ref={subtitleRef}
+            className="font-sans-body text-sm sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl pt-5 sm:pt-6"
+          >
             Commercial spaces for brands, businesses, and entrepreneurs looking for a distinctive address at Orion One.
           </p>
 
           {/* Action Controls */}
-          <div className="pt-8 sm:pt-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 w-full sm:w-auto">
+          <div
+            ref={actionsRef}
+            className="pt-8 sm:pt-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 w-full sm:w-auto"
+          >
             <a
               href="#spaces"
               onClick={scrollToSpaces}

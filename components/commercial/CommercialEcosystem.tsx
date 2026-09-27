@@ -225,16 +225,16 @@ export default function CommercialEcosystem() {
         transformOrigin: "50% 50%",
       });
 
-      const isDesktop = true;
+      const isDesktop = typeof window !== "undefined" ? window.innerWidth >= 768 : true;
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=550%",
+          end: isDesktop ? "+=550%" : "+=420%",
           pin: true,
           pinSpacing: true,
-          scrub: 0.8,
+          scrub: isDesktop ? 0.8 : 0.45,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
@@ -820,7 +820,7 @@ export default function CommercialEcosystem() {
               </div>
             </div>
 
-            {/* Waypoint Minimalist Cards — absolute overlays on md+; stacked below map via sibling on mobile */}
+            {/* Waypoint Minimalist Cards — responsive overlays on both mobile and desktop */}
             {DESTINATION_AMENITIES.map((amenity, idx) => {
               const isRight = amenity.desktop.cardPlacement === "right";
 
@@ -830,14 +830,17 @@ export default function CommercialEcosystem() {
                   ref={(el) => {
                     cardRefs.current[idx] = el;
                   }}
-                className={`absolute z-30 pointer-events-none opacity-0
-                    hidden md:block
-                    md:bottom-12 md:max-w-md
+                  className={`absolute z-30 pointer-events-none opacity-0
+                    bottom-6 left-4 right-4 sm:bottom-10 sm:left-6 sm:right-6
+                    md:bottom-12 md:left-auto md:right-auto md:max-w-md
                     ${isRight ? "md:right-12 lg:right-16" : "md:left-12 lg:left-16"}
                   `}
                 >
-                  <div className="bg-[#0a2020]/90 backdrop-blur-xl rounded-2xl p-6 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.55)] pointer-events-auto border border-[#EDE5DA]/15">
-                    <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA] font-light leading-snug tracking-tight mb-2.5">
+                  <div className="bg-[#0a2020]/95 backdrop-blur-xl rounded-2xl p-4 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.65)] pointer-events-auto border border-[#EDE5DA]/20">
+                    <div className="inline-flex items-center gap-1.5 mb-1.5 px-2.5 py-0.5 rounded-full bg-[#62AA9E]/15 border border-[#62AA9E]/30 text-[10px] text-[#62AA9E] uppercase font-mono tracking-wider">
+                      <span>{amenity.category}</span>
+                    </div>
+                    <h3 className="font-serif-heading text-lg sm:text-2xl text-[#EDE5DA] font-light leading-snug tracking-tight mb-1.5 sm:mb-2.5">
                       {amenity.title}
                     </h3>
                     <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -849,23 +852,6 @@ export default function CommercialEcosystem() {
             })}
 
           </div>
-        </div>
-
-        {/* Mobile: stacked amenity cards in document flow */}
-        <div className="md:hidden px-4 pb-10 space-y-4 shrink-0">
-          {DESTINATION_AMENITIES.map((amenity) => (
-            <div
-              key={`mobile-${amenity.id}`}
-              className="bg-[#0a2020]/90 rounded-2xl p-5 border border-[#EDE5DA]/15"
-            >
-              <h3 className="font-serif-heading text-xl text-[#EDE5DA] font-light leading-snug tracking-tight mb-2">
-                {amenity.title}
-              </h3>
-              <p className="font-sans-body text-xs text-[#C9BFB1] font-light leading-relaxed">
-                {amenity.description}
-              </p>
-            </div>
-          ))}
         </div>
       </section>
 

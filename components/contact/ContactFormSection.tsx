@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 import {
   Phone,
   Mail,
@@ -51,6 +57,10 @@ const PREFERRED_METHODS = [
 ];
 
 export default function ContactFormSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
+
   const [interest, setInterest] = useState("Residences");
   const [preferredMethod, setPreferredMethod] = useState(
     "In-Person Show Suite Tour"
@@ -65,6 +75,52 @@ export default function ContactFormSection() {
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const leftCol = leftColRef.current;
+    const rightCol = rightColRef.current;
+    if (!section || !leftCol || !rightCol) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        leftCol,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          clearProps: "all",
+          scrollTrigger: {
+            trigger: leftCol,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      gsap.fromTo(
+        rightCol,
+        { opacity: 0, scale: 0.98, y: 40 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          clearProps: "all",
+          scrollTrigger: {
+            trigger: rightCol,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -98,7 +154,10 @@ export default function ContactFormSection() {
   };
 
   return (
-    <section className="relative py-20 sm:py-28 lg:py-36 bg-[#081a1a] border-y border-[#EDE5DA]/15 overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative py-20 sm:py-28 lg:py-36 bg-[#081a1a] border-y border-[#EDE5DA]/15 overflow-hidden"
+    >
       {/* Subtle architectural atmosphere vignette */}
       <div
         className="absolute top-1/3 right-1/4 w-[500px] sm:w-[800px] h-[500px] bg-[#62AA9E]/4 rounded-full blur-[180px] pointer-events-none -z-10"
@@ -113,7 +172,7 @@ export default function ContactFormSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-start">
           
           {/* Left Column (7 cols): Bespoke Architectural Inquiry Salon */}
-          <div className="lg:col-span-7 space-y-10">
+          <div ref={leftColRef} className="lg:col-span-7 space-y-10">
             
             {/* Editorial Header */}
             <div className="space-y-4 border-b border-[#EDE5DA]/15 pb-8">
@@ -341,7 +400,7 @@ export default function ContactFormSection() {
           </div>
 
           {/* Right Column (5 cols): Executive Suite & Architectural Desk Dossier */}
-          <div className="lg:col-span-5 space-y-8">
+          <div ref={rightColRef} className="lg:col-span-5 space-y-8">
             
             {/* Architectural Photo Monograph */}
             <div className="space-y-6">

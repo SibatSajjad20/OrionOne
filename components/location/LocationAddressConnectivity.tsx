@@ -167,69 +167,79 @@ export default function LocationAddressConnectivity() {
 
     const ctx = gsap.context(() => {
       
-      // -------------------------------------------------------------
-      // Initial State Setup
-      // -------------------------------------------------------------
-      gsap.set(blindsLayer, { opacity: 1, pointerEvents: "auto", display: "flex" });
-      gsap.set(leftCol, { xPercent: 0, opacity: 1 });
-      gsap.set(rightCol, { xPercent: 0, opacity: 1 });
+      const mm = gsap.matchMedia();
 
-      gsap.set(centerHeading, {
-        scale: 0.86,
-        opacity: 0,
-        filter: "blur(14px)",
-        y: 30,
-      });
-      gsap.set(centerGlow, { scale: 0.5, opacity: 0 });
-      gsap.set(centerHeadingLayer, { opacity: 1, display: "flex" });
-
-      gsap.set(dhaSlidesLayer, { display: "none" });
-      dhaSlides.forEach((slide) => {
-        gsap.set(slide, { yPercent: 100, scale: 1, opacity: 1 });
-      });
-
-      gsap.set(urbanIntroLayer, { xPercent: -100 });
-
-      urbanSlides.forEach((slide) => {
-        gsap.set(slide, { xPercent: -100 });
-      });
-
-      const masterTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "+=1150%",
-          pin: stage,
-          pinSpacing: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      masterTl.to({}, { duration: 1.0 });
-
-      masterTl.addLabel("splitStart", 1.0);
-
-      masterTl.to(
-        leftCol,
+      mm.add(
         {
-          xPercent: -105,
-          duration: 1.8,
-          ease: "power2.inOut",
+          isDesktop: "(min-width: 1024px)",
+          isMobile: "(max-width: 1023px)",
         },
-        "splitStart"
-      );
+        (context) => {
+          const { isDesktop } = (context.conditions || {}) as { isDesktop?: boolean; isMobile?: boolean };
 
-      masterTl.to(
-        rightCol,
-        {
-          xPercent: 105,
-          duration: 1.8,
-          ease: "power2.inOut",
-        },
-        "splitStart"
-      );
+          gsap.set(blindsLayer, { opacity: 1, pointerEvents: "auto", display: "flex" });
+          gsap.set(leftCol, { xPercent: 0, yPercent: 0, opacity: 1 });
+          gsap.set(rightCol, { xPercent: 0, yPercent: 0, opacity: 1 });
+
+          gsap.set(centerHeading, {
+            scale: 0.86,
+            opacity: 0,
+            filter: "blur(14px)",
+            y: 30,
+          });
+          gsap.set(centerGlow, { scale: 0.5, opacity: 0 });
+          gsap.set(centerHeadingLayer, { opacity: 1, display: "flex" });
+
+          gsap.set(dhaSlidesLayer, { display: "none" });
+          dhaSlides.forEach((slide) => {
+            gsap.set(slide, { yPercent: 100, scale: 1, opacity: 1 });
+          });
+
+          gsap.set(urbanIntroLayer, { xPercent: -100 });
+
+          urbanSlides.forEach((slide) => {
+            gsap.set(slide, { xPercent: -100 });
+          });
+
+          const masterTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: container,
+              start: "top top",
+              end: isDesktop ? "+=1150%" : "+=650%",
+              pin: stage,
+              pinSpacing: true,
+              scrub: isDesktop ? 1 : 0.45,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          masterTl.to({}, { duration: 0.8 });
+          masterTl.addLabel("splitStart", 0.8);
+
+          if (isDesktop) {
+            masterTl.to(
+              leftCol,
+              { xPercent: -105, duration: 1.8, ease: "power2.inOut" },
+              "splitStart"
+            );
+            masterTl.to(
+              rightCol,
+              { xPercent: 105, duration: 1.8, ease: "power2.inOut" },
+              "splitStart"
+            );
+          } else {
+            masterTl.to(
+              leftCol,
+              { yPercent: -105, opacity: 0, duration: 1.6, ease: "power2.inOut" },
+              "splitStart"
+            );
+            masterTl.to(
+              rightCol,
+              { yPercent: 105, opacity: 0, duration: 1.6, ease: "power2.inOut" },
+              "splitStart"
+            );
+          }
 
       masterTl.to(
         centerGlow,
@@ -428,7 +438,8 @@ export default function LocationAddressConnectivity() {
         masterTl.to({}, { duration: 0.6 });
       }
 
-      masterTl.to({}, { duration: 0.8 });
+        masterTl.to({}, { duration: 0.8 });
+      });
     
     }, container);
 
@@ -457,9 +468,9 @@ export default function LocationAddressConnectivity() {
           {/* Left Panel: Photo card resting seamlessly on #081a1a */}
           <div
             ref={leftColRef}
-            className="w-full lg:w-1/2 h-1/2 lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-end p-4 sm:p-10 lg:pr-14 will-change-transform"
+            className="w-full lg:w-1/2 h-[45%] lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-end p-4 sm:p-10 lg:pr-14 will-change-transform"
           >
-            <div className="relative w-full max-w-[560px] aspect-[4/3] sm:aspect-[16/11] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl">
+            <div className="relative w-full max-w-[420px] lg:max-w-[560px] aspect-[16/10] sm:aspect-[16/11] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl">
               <Image
                 src="/images/location/lakefront-shoreline.jpg"
                 alt="Lakefront Shoreline and Natural Waterfront Setting at Orion One"
@@ -474,7 +485,7 @@ export default function LocationAddressConnectivity() {
           {/* Right Panel: Editorial narrative resting seamlessly on #081a1a */}
           <div
             ref={rightColRef}
-            className="w-full lg:w-1/2 h-1/2 lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-start p-4 sm:p-10 lg:pl-14 will-change-transform"
+            className="w-full lg:w-1/2 h-[55%] lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-start px-6 sm:px-10 lg:pl-14 pb-8 sm:pb-0 will-change-transform"
           >
             <div className="max-w-[540px] space-y-3 sm:space-y-6 text-left">
               <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
@@ -560,8 +571,8 @@ export default function LocationAddressConnectivity() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a] via-[#081a1a]/30 to-black/30" />
               </div>
 
-              {/* PURE HEADING ONLY — ZERO EXTRA LABELS, TEXT, OR BUTTONS */}
-              <div className="absolute bottom-12 sm:bottom-24 lg:bottom-28 left-4 sm:left-16 lg:left-24 z-10 max-w-5xl pr-4">
+              {/* HEADING ONLY — WITH SAFE AREA PADDING */}
+              <div className="absolute bottom-20 sm:bottom-24 lg:bottom-28 left-6 sm:left-16 lg:left-24 z-10 max-w-5xl pr-4 pb-[max(5rem,env(safe-area-inset-bottom,20px))]">
                 <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] leading-[1.05] uppercase">
                   {a.name}
                 </h3>
@@ -584,10 +595,18 @@ export default function LocationAddressConnectivity() {
             ref={urbanIntroInnerRef}
             className="relative w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 overflow-hidden will-change-transform"
           >
+            {/* Background texture image for depth */}
+            <Image
+              src="/images/location/urban-growth.jpg"
+              alt="Everything Around Us"
+              fill
+              className="object-cover object-center filter brightness-[0.25]"
+            />
+
             {/* Darkening shade when next slide covers it */}
             <div
               ref={urbanIntroShadeRef}
-              className="absolute inset-0 bg-[#081a1a] opacity-0 pointer-events-none z-[4]"
+              className="absolute inset-0 bg-[#081a1a]/70 pointer-events-none z-[4]"
             />
 
             {/* Ambient center emerald glow */}
@@ -652,7 +671,7 @@ export default function LocationAddressConnectivity() {
               <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
 
               {/* Bottom Content: Headline & Narrative */}
-              <div className="absolute bottom-8 sm:bottom-20 lg:bottom-24 left-4 sm:left-12 lg:left-20 max-w-3xl z-10 space-y-2 sm:space-y-4 pr-4">
+              <div className="absolute bottom-20 sm:bottom-20 lg:bottom-24 left-6 sm:left-12 lg:left-20 max-w-3xl z-10 space-y-2 sm:space-y-3 pr-4 pb-[max(5rem,env(safe-area-inset-bottom,20px))]">
                 <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.02] uppercase">
                   {item.title}
                 </h3>

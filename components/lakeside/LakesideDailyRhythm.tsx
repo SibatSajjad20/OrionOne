@@ -46,14 +46,35 @@ const PHASES: RhythmPhase[] = [
 
 export default function LakesideDailyRhythm() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
+    const header = headerRef.current;
     const cards = cardsRef.current;
     if (!section || !cards) return;
 
     const ctx = gsap.context(() => {
+      if (header) {
+        gsap.fromTo(
+          header,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: header,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
       const cardElements = cards.querySelectorAll(".rhythm-card");
       gsap.fromTo(
         cardElements,
@@ -61,9 +82,10 @@ export default function LakesideDailyRhythm() {
         {
           opacity: 1,
           y: 0,
-          duration: 1,
+          duration: 1.1,
           stagger: 0.18,
           ease: "power3.out",
+          clearProps: "all",
           scrollTrigger: {
             trigger: cards,
             start: "top 85%",
@@ -91,7 +113,7 @@ export default function LakesideDailyRhythm() {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Clean Editorial Section Header */}
-        <div className="max-w-3xl mb-12 sm:mb-16 space-y-4">
+        <div ref={headerRef} className="max-w-3xl mb-12 sm:mb-16 space-y-4">
           <h2 className="font-serif-heading text-4xl sm:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
             The Rhythm of the <br />
             <span className="italic font-normal text-sand-gradient normal-case">

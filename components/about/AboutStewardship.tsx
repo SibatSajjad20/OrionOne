@@ -1,14 +1,101 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
 import { ArrowUpRight } from "lucide-react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface AboutStewardshipProps {
   onOpenInquiry?: () => void;
 }
 
 export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const canopyRef = useRef<HTMLDivElement>(null);
+  const matrixGridRef = useRef<HTMLDivElement>(null);
+  const suiteCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const canopy = canopyRef.current;
+    const matrixGrid = matrixGridRef.current;
+    const suiteCard = suiteCardRef.current;
+
+    if (!section || !canopy || !matrixGrid || !suiteCard) return;
+
+    const ctx = gsap.context(() => {
+      // Canopy entrance
+      gsap.fromTo(
+        canopy,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          clearProps: "all",
+          scrollTrigger: {
+            trigger: canopy,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Standards matrix stagger
+      const matrixItems = matrixGrid.querySelectorAll(".matrix-card");
+      if (matrixItems.length > 0) {
+        gsap.fromTo(
+          matrixItems,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.1,
+            stagger: 0.12,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: matrixGrid,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // Show Suite card entrance
+      gsap.fromTo(
+        suiteCard,
+        { opacity: 0, y: 40, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 1.2,
+          ease: "power3.out",
+          clearProps: "all",
+          scrollTrigger: {
+            trigger: suiteCard,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative py-28 sm:py-40 bg-[#0d2828] border-t border-[#EDE5DA]/15 overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative py-16 sm:py-36 bg-[#0d2828] border-t border-[#EDE5DA]/15 overflow-hidden"
+    >
       {/* Subtle glowing ambient horizon */}
       <div 
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-64 bg-gradient-to-t from-[#62AA9E]/8 to-transparent pointer-events-none -z-10"
@@ -17,8 +104,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Canopy */}
-        {/* Section Canopy */}
-        <div className="max-w-4xl mb-16 sm:mb-24 space-y-4">
+        <div ref={canopyRef} className="max-w-4xl mb-12 sm:mb-20 space-y-4">
           <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
             Built for Today <br />
             <span className="italic font-normal text-sand-gradient normal-case">Designed for Tomorrow</span>
@@ -29,8 +115,11 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
         </div>
 
         {/* Architectural Standards Matrix */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 border-t border-[#EDE5DA]/15 pt-12 mb-20 sm:mb-28">
-          <div className="space-y-3">
+        <div
+          ref={matrixGridRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 border-t border-[#EDE5DA]/15 pt-10 sm:pt-12 mb-12 sm:mb-24"
+        >
+          <div className="matrix-card space-y-3">
             <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
               Geographic Rarity
             </h3>
@@ -39,7 +128,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="matrix-card space-y-3">
             <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
               Kinetic Geometry
             </h3>
@@ -48,7 +137,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="matrix-card space-y-3">
             <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
               Material Honesty
             </h3>
@@ -57,7 +146,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="matrix-card space-y-3">
             <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
               Generational Equity
             </h3>
@@ -68,7 +157,10 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
         </div>
 
         {/* Executive Show Suite Invitation */}
-        <div className="relative rounded-2xl bg-[#081a1a] p-5 sm:p-10 lg:p-16 border border-[#EDE5DA]/15 shadow-2xl">
+        <div
+          ref={suiteCardRef}
+          className="relative rounded-2xl bg-[#081a1a] p-5 sm:p-10 lg:p-16 border border-[#EDE5DA]/15 shadow-2xl"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
             {/* Left: Invitation Headline and Overview */}
             <div className="lg:col-span-7 space-y-6">

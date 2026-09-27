@@ -79,7 +79,7 @@ export default function LakesidePromenade() {
       // Desktop & Tablet: Smooth Pinned Horizontal Scroll
       mm.add("(min-width: 768px)", () => {
         const tween = gsap.to(track, {
-          x: () => getScrollAmount(),
+          x: () => -(track.scrollWidth - window.innerWidth + 80),
           ease: "none",
           scrollTrigger: {
             trigger: container,
@@ -87,6 +87,27 @@ export default function LakesidePromenade() {
             end: () => `+=${track.scrollWidth - window.innerWidth + 300}`,
             pin: true,
             scrub: 0.65,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        return () => {
+          tween.kill();
+        };
+      });
+
+      // Mobile: Cinematic Pinned Horizontal Glide
+      mm.add("(max-width: 767px)", () => {
+        const tween = gsap.to(track, {
+          x: () => -(track.scrollWidth - window.innerWidth + 32),
+          ease: "none",
+          scrollTrigger: {
+            trigger: container,
+            start: "top top",
+            end: () => `+=${(track.scrollWidth - window.innerWidth) * 1.35}`,
+            pin: true,
+            scrub: 0.45,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
@@ -112,7 +133,7 @@ export default function LakesidePromenade() {
     <section
       id="promenade"
       ref={containerRef}
-      className="relative w-full bg-[#081a1a] text-[#EDE5DA] overflow-hidden border-b border-[#EDE5DA]/15"
+      className="relative w-full min-h-[100dvh] flex flex-col justify-center bg-[#081a1a] text-[#EDE5DA] overflow-hidden border-b border-[#EDE5DA]/15 py-12 sm:py-0"
       aria-label="The Lakeside Promenade"
     >
       {/* Ambient background glow vignette */}
@@ -122,37 +143,37 @@ export default function LakesidePromenade() {
       />
 
       {/* Clean Stage Header */}
-      <div className="pt-20 sm:pt-24 pb-4 px-4 sm:px-8 lg:px-16 max-w-[1500px] mx-auto">
+      <div className="pt-16 sm:pt-24 pb-4 px-4 sm:px-8 lg:px-16 max-w-[1500px] mx-auto w-full">
         <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
           The Lakeside <span className="italic font-normal text-sand-gradient normal-case">Promenade</span>
         </h2>
       </div>
 
-      {/* Horizontal Sliding Track (Desktop) / Native Fluid Stack (Mobile) */}
-      <div className="py-8 sm:py-12 md:py-16 overflow-hidden">
+      {/* Horizontal Sliding Track (Desktop & Mobile Synchronized) */}
+      <div className="py-6 sm:py-12 md:py-16 overflow-hidden w-full">
         <div
           ref={trackRef}
-          className="flex flex-col md:flex-row items-stretch gap-6 md:gap-8 px-4 sm:px-8 lg:px-16 w-full md:w-max will-change-transform"
+          className="flex flex-row items-stretch gap-4 md:gap-8 px-4 sm:px-8 lg:px-16 w-max will-change-transform"
         >
           {PROMENADE_ITEMS.map((item) => (
             <article
               key={item.id}
-              className="promenade-card w-full md:w-[540px] lg:w-[600px] shrink-0 rounded-2xl bg-[#0d2828] border border-[#EDE5DA]/15 p-5 sm:p-7 shadow-2xl flex flex-col justify-start group transition-colors duration-500 hover:border-[#62AA9E]/40"
+              className="promenade-card w-[84vw] sm:w-[500px] md:w-[540px] lg:w-[600px] shrink-0 rounded-2xl bg-[#0d2828] border border-[#EDE5DA]/15 p-5 sm:p-7 shadow-2xl flex flex-col justify-start group transition-colors duration-500 hover:border-[#62AA9E]/40"
             >
-              {/* Clean Architectural Photo - Absolutely No Text/Tags on Image */}
+              {/* Clean Architectural Photo */}
               <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-[#081a1a] border border-[#EDE5DA]/10 shrink-0">
                 <Image
                   src={item.image}
                   alt={item.alt}
                   fill
-                  sizes="(max-width: 768px) 100vw, 600px"
+                  sizes="(max-width: 768px) 85vw, 600px"
                   className="object-cover object-center transition-transform duration-[2500ms] group-hover:scale-105"
                 />
               </div>
 
               {/* Clean Editorial Narrative */}
-              <div className="pt-6 space-y-3 flex-1 flex flex-col justify-start">
-                <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light leading-snug">
+              <div className="pt-4 sm:pt-6 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-start">
+                <h3 className="font-serif-heading text-xl sm:text-3xl text-[#EDE5DA] font-light leading-snug">
                   {item.title}
                 </h3>
 

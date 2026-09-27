@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import "lenis/dist/lenis.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import MagneticEffects from "@/components/MagneticEffects";
 import AgentationToolbar from "@/components/AgentationToolbar";

@@ -76,56 +76,68 @@ export default function CommercialOpportunities() {
       const inners = innerRef.current.filter(Boolean) as HTMLDivElement[];
       const shades = shadeRef.current.filter(Boolean) as HTMLDivElement[];
 
-      if (slides.length <= 1) return;
+      const mm = gsap.matchMedia();
 
-      for (let i = 1; i < slides.length; i++) {
-        gsap.set(slides[i], { yPercent: 100 });
-      }
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: trigger,
-          start: "top top",
-          end: `+=${(slides.length - 1) * 100}%`,
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.65,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
+      mm.add(
+        {
+          isDesktop: "(min-width: 768px)",
+          isMobile: "(max-width: 767px)",
         },
-      });
+        (context) => {
+          const { isDesktop } = (context.conditions || {}) as { isDesktop?: boolean; isMobile?: boolean };
 
-      for (let i = 1; i < slides.length; i++) {
-        tl.to(slides[i], {
-          yPercent: 0,
-          ease: "none",
-          duration: 1,
-        });
+          for (let i = 1; i < slides.length; i++) {
+            gsap.set(slides[i], { yPercent: 100 });
+          }
 
-        if (inners[i - 1]) {
-          tl.to(
-            inners[i - 1],
-            {
-              scale: 0.94,
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: trigger,
+              start: "top top",
+              end: isDesktop
+                ? `+=${(slides.length - 1) * 100}%`
+                : `+=${(slides.length - 1) * 75}%`,
+              pin: true,
+              pinSpacing: true,
+              scrub: isDesktop ? 0.65 : 0.4,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          for (let i = 1; i < slides.length; i++) {
+            tl.to(slides[i], {
+              yPercent: 0,
               ease: "none",
               duration: 1,
-            },
-            "<"
-          );
-        }
+            });
 
-        if (shades[i - 1]) {
-          tl.to(
-            shades[i - 1],
-            {
-              opacity: 0.5,
-              ease: "none",
-              duration: 1,
-            },
-            "<"
-          );
+            if (inners[i - 1]) {
+              tl.to(
+                inners[i - 1],
+                {
+                  scale: 0.94,
+                  ease: "none",
+                  duration: 1,
+                },
+                "<"
+              );
+            }
+
+            if (shades[i - 1]) {
+              tl.to(
+                shades[i - 1],
+                {
+                  opacity: 0.5,
+                  ease: "none",
+                  duration: 1,
+                },
+                "<"
+              );
+            }
+          }
         }
-      }
+      );
     
     }, triggerRef);
 
@@ -187,8 +199,8 @@ export default function CommercialOpportunities() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/55 via-45% to-transparent pointer-events-none z-[3]" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/80 via-[#081a1a]/25 to-transparent pointer-events-none z-[3]" />
 
-            {/* Typography Overlay: Heading & Subheading only (No labels on bottom right corner) */}
-            <div className="absolute bottom-8 sm:bottom-20 lg:bottom-24 left-4 sm:left-12 lg:left-20 max-w-3xl z-10 pr-4">
+            {/* Typography Overlay: Heading & Subheading only */}
+            <div className="absolute bottom-20 sm:bottom-20 lg:bottom-24 left-6 sm:left-12 lg:left-20 max-w-3xl z-10 pr-4 pb-[max(5rem,env(safe-area-inset-bottom,20px))]">
               <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] mb-2 sm:mb-4">
                 {item.title}
               </h3>

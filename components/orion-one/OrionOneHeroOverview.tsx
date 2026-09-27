@@ -119,7 +119,11 @@ export default function OrionOneHeroOverview({
       gsap.set(heroLayer, { opacity: 1, display: "block" });
       gsap.set(heroLeftDoor, { xPercent: 0 });
       gsap.set(heroRightDoor, { xPercent: 0 });
-      gsap.set(heroContent, { opacity: 1, y: 0, scale: 1 });
+      gsap.fromTo(
+        heroContent,
+        { opacity: 0, y: 35 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" }
+      );
 
       gsap.set(addressLayer, { opacity: 1, display: "flex" });
       gsap.set(addressStatement, {

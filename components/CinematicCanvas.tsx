@@ -4,13 +4,7 @@ import { useEffect, useRef, useState, useCallback, useMemo, memo } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import {
-  Waves,
-  Trees,
-  Users,
-  ShieldCheck,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import OrionLogoScrollWheel from "./OrionLogoScrollWheel";
 import LoadingScreen from "./LoadingScreen";
 
@@ -89,26 +83,18 @@ function getSafeColFrame(colFrames: HTMLImageElement[], targetIdx: number): HTML
 const BRAND_PILLARS = [
   {
     name: "Lakefront",
-    icon: Waves,
-    subtitle: "Water at the Core",
     desc: "Waterfront masterplanning putting open water and walking edges at the center of everyday life.",
   },
   {
     name: "Wellness",
-    icon: Trees,
-    subtitle: "Movement & Recovery",
     desc: "Spaces built around quiet, nature, landscaped trails, and dedicated restorative wellness facilities.",
   },
   {
     name: "Community",
-    icon: Users,
-    subtitle: "Vibrant Gathering",
     desc: "Dining, hospitality, and shared waterfront amenity designed to bring residents together.",
   },
   {
     name: "Luxury",
-    icon: ShieldCheck,
-    subtitle: "Architectural Restraint",
     desc: "Considered materials and detailing across residences and shared spaces, without excess or noise.",
   },
 ];
@@ -153,6 +139,42 @@ const INVESTMENT_COLUMNS: InvestmentColumnConfig[] = [
     folder: "column-3-frames",
   },
 ];
+
+// ---------------------------------------------------------------------------
+// GLOBAL FRAME CACHE ACROSS NEXT.JS CLIENT-SIDE ROUTE TRANSITIONS
+// When navigating between pages (e.g. Home -> Residences -> Home), Next.js unmounts
+// CinematicCanvasComponent. This persistent cache keeps all decoded Image objects
+// in memory so returning to the home page skips the preloader entirely and renders
+// frame 0 and Section 1 instantly without any loading screen or scroll lock.
+// ---------------------------------------------------------------------------
+interface OrionFramesCache {
+  mainFrames: HTMLImageElement[];
+  col1Frames: HTMLImageElement[];
+  col2Frames: HTMLImageElement[];
+  col3Frames: HTMLImageElement[];
+  isLoaded: boolean;
+}
+
+let moduleFramesCache: OrionFramesCache | null = null;
+
+function getGlobalFramesCache(): OrionFramesCache | null {
+  if (moduleFramesCache?.isLoaded) return moduleFramesCache;
+  if (typeof window !== "undefined") {
+    const win = window as unknown as { __orionFramesCache?: OrionFramesCache };
+    if (win.__orionFramesCache?.isLoaded) {
+      moduleFramesCache = win.__orionFramesCache;
+      return moduleFramesCache;
+    }
+  }
+  return null;
+}
+
+function setGlobalFramesCache(cache: OrionFramesCache): void {
+  moduleFramesCache = cache;
+  if (typeof window !== "undefined") {
+    (window as unknown as { __orionFramesCache?: OrionFramesCache }).__orionFramesCache = cache;
+  }
+}
 
 interface CinematicCanvasProps {
   onOpenInquiry?: () => void;
@@ -216,11 +238,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const col2LastFrameRef = useRef<number>(-1);
   const col3LastFrameRef = useRef<number>(-1);
 
-  // Frame Cache Refs
-  const framesRef = useRef<HTMLImageElement[]>([]);
-  const col1FramesRef = useRef<HTMLImageElement[]>([]);
-  const col2FramesRef = useRef<HTMLImageElement[]>([]);
-  const col3FramesRef = useRef<HTMLImageElement[]>([]);
+  // Frame Cache Refs & Initial Cache Check
+  const initialCache = getGlobalFramesCache();
+  const framesRef = useRef<HTMLImageElement[]>(initialCache?.mainFrames || []);
+  const col1FramesRef = useRef<HTMLImageElement[]>(initialCache?.col1Frames || []);
+  const col2FramesRef = useRef<HTMLImageElement[]>(initialCache?.col2Frames || []);
+  const col3FramesRef = useRef<HTMLImageElement[]>(initialCache?.col3Frames || []);
 
   // Render Target State Refs for Decoupled RAF Engine (with Dual-Frame Hardware Crossfade)
   const targetMainFrameRef = useRef<number>(0);
@@ -234,16 +257,15 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const isSection6ActiveRef = useRef<boolean>(false);
   const isSection6FullyOpaqueRef = useRef<boolean>(false);
 
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isPreloaderDone, setIsPreloaderDone] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(() => (initialCache?.isLoaded ? 100 : 0));
+  const [isLoaded, setIsLoaded] = useState(() => !!initialCache?.isLoaded);
+  const [isPreloaderDone, setIsPreloaderDone] = useState(() => !!initialCache?.isLoaded);
   const [activeMobileCol, setActiveMobileCol] = useState<number>(0);
   const lastMobileColRef = useRef<number>(0);
   const preloaderRef = useRef<HTMLDivElement>(null);
-  const hasAnimatedEntrance = useRef(false);
+  const hasAnimatedEntrance = useRef(!!initialCache?.isLoaded);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const lastFrameIndexRef = useRef<number>(-1);
-  const [activePillar, setActivePillar] = useState<number>(0);
 
   // Lock scroll, hide scrollbar, and prevent all scroll interactions until loading completes
   useEffect(() => {
@@ -427,13 +449,13 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     []
   );
 
-  // High-DPI Canvas Resizing
+  // High-DPI Canvas Resizing with native frame resolution caps
   const updateCanvasSize = useCallback(() => {
     const canvas = canvasRef.current;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     if (canvas) {
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
+      canvas.width = Math.min(Math.round(window.innerWidth * dpr), 1920);
+      canvas.height = Math.min(Math.round(window.innerHeight * dpr), 1080);
       lastFrameIndexRef.current = -1; // Invalidate frame cache to force fresh redraw
       lastBlendFrameRef.current = -1;
       lastBlendAlphaRef.current = 0;
@@ -446,6 +468,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     const isMobile = window.innerWidth < 768;
     const colWidth = isMobile ? window.innerWidth : window.innerWidth / 3;
     const colHeight = window.innerHeight;
+    const colDpr = Math.min(window.devicePixelRatio || 1, 1.25);
     const colCanvases = [
       { canvas: col1CanvasRef.current, ctx: col1CtxRef, lastRef: col1LastFrameRef, framesRef: col1FramesRef },
       { canvas: col2CanvasRef.current, ctx: col2CtxRef, lastRef: col2LastFrameRef, framesRef: col2FramesRef },
@@ -456,8 +479,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       const rect = c.getBoundingClientRect();
       const w = rect.width > 0 ? rect.width : colWidth;
       const h = rect.height > 0 ? rect.height : colHeight;
-      c.width = w * dpr;
-      c.height = h * dpr;
+      c.width = Math.min(Math.round(w * colDpr), 1280);
+      c.height = Math.min(Math.round(h * colDpr), 720);
       lastRef.current = -1;
       if (colFRef.current[0]) {
         renderFrameToColumnCanvas(c, ctx, colFRef.current[0]);
@@ -474,13 +497,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   // 3. Holds preloader until 100% of active frames are in memory, guaranteeing
   //    that the VERY FIRST SCROLL is 100% butter-smooth 60 FPS from top to CTA.
   // 4. Immediately streams column frames in the background via the worker pool.
+  // 5. Caches all frames in global memory so returning to the home page from
+  //    other routes skips preloading entirely and displays immediately.
   // ---------------------------------------------------------------------------
   useEffect(() => {
     let isCancelled = false;
-    const loadedFrames: HTMLImageElement[] = new Array(TOTAL_FRAMES);
-    const col1Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
-    const col2Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
-    const col3Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
 
     const loadImage = (src: string): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
@@ -499,21 +520,6 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         img.onerror = () => resolve(img);
       });
     };
-
-    // Critical sequence indices for immediate interactive entry (Scene 2 Architecture: 0..65)
-    const criticalIndices: number[] = [];
-    for (let i = 0; i <= 65; i++) criticalIndices.push(i);
-
-    // Remaining sequence indices streamed in the background
-    // Scene 3 (Waterfront): 66..155
-    // Scene 5 (Masterplan): 204..275
-    // Scene 4 (Destination): 163..196
-    // Scene 7 (Closing): 329..392
-    const remainingIndices: number[] = [];
-    for (let i = 66; i <= 155; i++) remainingIndices.push(i);
-    for (let i = 204; i <= 275; i++) remainingIndices.push(i);
-    for (let i = 163; i <= 196; i++) remainingIndices.push(i);
-    for (let i = 329; i <= 392; i++) remainingIndices.push(i);
 
     const runWorkerPool = async (
       tasks: (() => Promise<void>)[],
@@ -534,9 +540,118 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       await Promise.all(workers);
     };
 
+    // Column Frames: Fast parallel loading (milestone keyframes first, then remaining infill)
+    const loadColumnFramesBackground = async (
+      c1: HTMLImageElement[],
+      c2: HTMLImageElement[],
+      c3: HTMLImageElement[]
+    ) => {
+      // Phase 1: Milestone keyframes (every 4th frame) across all columns for immediate scrub coverage
+      const milestoneTasks: (() => Promise<void>)[] = [];
+      for (let i = 4; i < COLUMN_FRAMES_COUNT; i += 4) {
+        const idx = i;
+        milestoneTasks.push(async () => {
+          if (isCancelled) return;
+          const frameNum = String(idx + 1).padStart(4, "0");
+          await Promise.all([
+            loadImage(`/column-1-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c1[idx] = img; }),
+            loadImage(`/column-2-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c2[idx] = img; }),
+            loadImage(`/column-3-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c3[idx] = img; }),
+          ]);
+        });
+      }
+      await runWorkerPool(milestoneTasks, 12);
+      if (isCancelled) return;
+      col1FramesRef.current = c1;
+      col2FramesRef.current = c2;
+      col3FramesRef.current = c3;
+
+      // Phase 2: Infill all remaining column frames
+      const infillTasks: (() => Promise<void>)[] = [];
+      for (let i = 1; i < COLUMN_FRAMES_COUNT; i++) {
+        if (i % 4 === 0) continue;
+        const idx = i;
+        infillTasks.push(async () => {
+          if (isCancelled) return;
+          const frameNum = String(idx + 1).padStart(4, "0");
+          await Promise.all([
+            loadImage(`/column-1-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c1[idx] = img; }),
+            loadImage(`/column-2-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c2[idx] = img; }),
+            loadImage(`/column-3-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c3[idx] = img; }),
+          ]);
+        });
+      }
+      await runWorkerPool(infillTasks, 12);
+      if (!isCancelled) {
+        col1FramesRef.current = c1;
+        col2FramesRef.current = c2;
+        col3FramesRef.current = c3;
+        const currentCache = getGlobalFramesCache();
+        if (currentCache) {
+          currentCache.col1Frames = c1;
+          currentCache.col2Frames = c2;
+          currentCache.col3Frames = c3;
+          setGlobalFramesCache(currentCache);
+        }
+      }
+    };
+
+    // If frames were already cached from a prior visit, restore immediately with zero delay
+    const cached = getGlobalFramesCache();
+    if (cached?.isLoaded && cached.mainFrames.length > 0) {
+      framesRef.current = cached.mainFrames;
+      col1FramesRef.current = cached.col1Frames;
+      col2FramesRef.current = cached.col2Frames;
+      col3FramesRef.current = cached.col3Frames;
+
+      if (cached.mainFrames[0]) {
+        renderToCanvas(cached.mainFrames[0]);
+      }
+      if (col1CanvasRef.current && cached.col1Frames[0]) {
+        renderFrameToColumnCanvas(col1CanvasRef.current, col1CtxRef, cached.col1Frames[0]);
+      }
+      if (col2CanvasRef.current && cached.col2Frames[0]) {
+        renderFrameToColumnCanvas(col2CanvasRef.current, col2CtxRef, cached.col2Frames[0]);
+      }
+      if (col3CanvasRef.current && cached.col3Frames[0]) {
+        renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, cached.col3Frames[0]);
+      }
+
+      if (ch2Ref.current) {
+        gsap.set(ch2Ref.current, { opacity: 1, y: 0, pointerEvents: "auto" });
+        hasAnimatedEntrance.current = true;
+      }
+
+      if (!cached.col1Frames[COLUMN_FRAMES_COUNT - 1]) {
+        loadColumnFramesBackground(cached.col1Frames, cached.col2Frames, cached.col3Frames);
+      }
+
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    const loadedFrames: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+    const col1Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
+    const col2Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
+    const col3Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
+
+    // Active sequence indices (326 total frames in narrative order)
+    // Scene 2 (Architecture): 0..65 (66 frames)
+    // Scene 3 (Waterfront): 66..155 (90 frames, pure Waterfront)
+    // Scene 5 (Masterplan): 204..275 (72 frames, pure Masterplan)
+    // Scene 4 (Destination): 163..196 (34 frames, Infinity Pool)
+    // Scene 7 (Closing): 329..392 (64 frames)
+    const activeIndices: number[] = [];
+    for (let i = 0; i <= 65; i++) activeIndices.push(i);
+    for (let i = 66; i <= 155; i++) activeIndices.push(i);
+    for (let i = 204; i <= 275; i++) activeIndices.push(i);
+    for (let i = 163; i <= 196; i++) activeIndices.push(i);
+    for (let i = 329; i <= 392; i++) activeIndices.push(i);
+
     const startPreload = async () => {
       let loadedCount = 0;
-      const totalCritical = criticalIndices.length;
+      const totalCount = activeIndices.length;
 
       // Initial column poster keyframes
       const col1Initial = loadImage("/column-1-frames/frame_0001.webp").then((img) => {
@@ -561,25 +676,25 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, img);
       });
 
-      // Critical starting sequence tasks (Scene 2 Architecture: 0..65)
-      const criticalTasks = criticalIndices.map((idx) => async () => {
+      // Active sequence tasks — loads all 326 narrative frames and pre-decodes them off-thread
+      const mainTasks = activeIndices.map((idx) => async () => {
         const frameNum = String(idx + 1).padStart(4, "0");
         const img = await loadImage(`/video-frames/frame_${frameNum}.webp`);
         if (isCancelled) return;
         loadedFrames[idx] = img;
         loadedCount++;
-        const percent = Math.min(100, Math.floor((loadedCount / totalCritical) * 100));
+        const percent = Math.min(100, Math.floor((loadedCount / totalCount) * 100));
         setLoadingProgress(percent);
       });
 
-      // Fast fallback safety timeout (2.5s maximum) guarantees scroll is never locked
+      // Robust fallback safety timeout (15s maximum) guarantees scroll is never permanently locked
       const timeoutPromise = new Promise<void>((resolve) => {
-        setTimeout(resolve, 2500);
+        setTimeout(resolve, 15000);
       });
 
-      // Run parallel workers for critical starting frames
+      // Run parallel workers for 100% of active narrative frames
       await Promise.race([
-        Promise.all([col1Initial, col2Initial, col3Initial, runWorkerPool(criticalTasks, 16)]),
+        Promise.all([col1Initial, col2Initial, col3Initial, runWorkerPool(mainTasks, 16)]),
         timeoutPromise,
       ]);
 
@@ -588,6 +703,15 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       framesRef.current = loadedFrames;
       setIsLoaded(true);
       setLoadingProgress(100);
+
+      // Save into persistent global cache across page transitions
+      setGlobalFramesCache({
+        mainFrames: loadedFrames,
+        col1Frames,
+        col2Frames,
+        col3Frames,
+        isLoaded: true,
+      });
 
       if (loadedFrames[0]) {
         renderToCanvas(loadedFrames[0]);
@@ -630,54 +754,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         );
       }
 
-      // Stream remaining sequence frames and column frames in the background
-      loadRemainingFramesBackground(loadedFrames, remainingIndices);
+      // Stream column frames in the background via the worker pool (milestones first, then infill)
       loadColumnFramesBackground(col1Frames, col2Frames, col3Frames);
-    };
-
-    // Remaining Sequence Frames: Background streaming via worker pool
-    const loadRemainingFramesBackground = async (
-      targetFrames: HTMLImageElement[],
-      indices: number[]
-    ) => {
-      const remainingTasks = indices.map((idx) => async () => {
-        if (isCancelled) return;
-        const frameNum = String(idx + 1).padStart(4, "0");
-        const img = await loadImage(`/video-frames/frame_${frameNum}.webp`);
-        if (isCancelled) return;
-        targetFrames[idx] = img;
-      });
-      await runWorkerPool(remainingTasks, 16);
-    };
-
-    // Column Frames: Fast parallel loading via 16 workers
-    const loadColumnFramesBackground = async (
-      c1: HTMLImageElement[],
-      c2: HTMLImageElement[],
-      c3: HTMLImageElement[]
-    ) => {
-      const colTasks: (() => Promise<void>)[] = [];
-
-      for (let i = 1; i < COLUMN_FRAMES_COUNT; i++) {
-        const idx = i;
-        colTasks.push(async () => {
-          if (isCancelled) return;
-          const frameNum = String(idx + 1).padStart(4, "0");
-          await Promise.all([
-            loadImage(`/column-1-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c1[idx] = img; }),
-            loadImage(`/column-2-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c2[idx] = img; }),
-            loadImage(`/column-3-frames/frame_${frameNum}.webp`).then((img) => { if (!isCancelled) c3[idx] = img; }),
-          ]);
-        });
-      }
-
-      await runWorkerPool(colTasks, 16);
-
-      if (!isCancelled) {
-        col1FramesRef.current = c1;
-        col2FramesRef.current = c2;
-        col3FramesRef.current = c3;
-      }
     };
 
     startPreload();
@@ -927,14 +1005,14 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           const isCol3Active = investProg > 0.66 && investProg <= 1.0;
           const isAllCompleted = investProg >= 0.98;
 
-          const currentMobileCol = isCol1Active ? 0 : isCol2Active ? 1 : 2;
-          if (lastMobileColRef.current !== currentMobileCol) {
-            lastMobileColRef.current = currentMobileCol;
-            setActiveMobileCol(currentMobileCol);
-          }
-
           const isMobile = window.innerWidth < 768;
           if (isMobile) {
+            const currentMobileCol = isCol1Active ? 0 : isCol2Active ? 1 : 2;
+            if (lastMobileColRef.current !== currentMobileCol) {
+              lastMobileColRef.current = currentMobileCol;
+              setActiveMobileCol(currentMobileCol);
+            }
+
             // Mobile full-width column crossfade
             const mobOp1 = investProg <= 0.33 ? 1 : Math.max(0, 1 - (investProg - 0.33) / 0.04);
             const mobOp2 = investProg > 0.33 && investProg <= 0.66 ? 1 : investProg <= 0.33 ? Math.max(0, (investProg - 0.29) / 0.04) : Math.max(0, 1 - (investProg - 0.66) / 0.04);
@@ -954,10 +1032,13 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             if (col3ScrimRef.current) col3ScrimRef.current.style.opacity = isAllCompleted ? "0.05" : isCol3Active ? "0" : p3 >= 1 ? "0.2" : "0.55";
           }
 
-          // Card content gentle lift
-          if (col1CardRef.current) gsap.set(col1CardRef.current, { y: (1 - p1) * 16 });
-          if (col2CardRef.current) gsap.set(col2CardRef.current, { y: (1 - p2) * 16 });
-          if (col3CardRef.current) gsap.set(col3CardRef.current, { y: (1 - p3) * 16 });
+          // Card content gentle lift via hardware-accelerated transform
+          const y1 = Math.round((1 - p1) * 16 * 10) / 10;
+          const y2 = Math.round((1 - p2) * 16 * 10) / 10;
+          const y3 = Math.round((1 - p3) * 16 * 10) / 10;
+          if (col1CardRef.current) col1CardRef.current.style.transform = `translate3d(0, ${y1}px, 0)`;
+          if (col2CardRef.current) col2CardRef.current.style.transform = `translate3d(0, ${y2}px, 0)`;
+          if (col3CardRef.current) col3CardRef.current.style.transform = `translate3d(0, ${y3}px, 0)`;
 
           // 4. Destination & Brand Pillars (Handover starts right at 0.708 as columns dissolve, no dead delay)
           const op4 = calcOpacity(progress, 0.708, 0.730, 0.825, 0.848);
@@ -1070,26 +1151,26 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       <div
         ref={ch2Ref}
         id="architecture"
-        className="absolute inset-0 flex items-center justify-center sm:justify-end px-4 sm:px-12 lg:px-24 z-20 pointer-events-auto opacity-0"
+        className={`absolute inset-0 flex flex-col justify-end sm:justify-center items-start sm:items-end px-6 sm:px-12 lg:px-24 pb-24 sm:pb-0 z-20 pointer-events-auto ${isPreloaderDone ? "opacity-100" : "opacity-0"}`}
       >
-        {/* Directional Soft Vignette Scrim (Option 1): Gently darkens right side to make text pop against bright sky */}
-        <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-l from-[#0d2828]/90 via-[#0d2828]/45 to-transparent pointer-events-none -z-10" />
+        {/* Directional Soft Vignette Scrim: Darkens bottom on mobile, right on desktop */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/95 via-[#0d2828]/55 via-35% to-transparent sm:bg-gradient-to-l sm:from-[#0d2828]/90 sm:via-[#0d2828]/45 sm:to-transparent pointer-events-none -z-10" />
 
-        <div className="relative max-w-xl text-left sm:text-right space-y-3 sm:space-y-4">
+        <div className="relative max-w-xl text-left sm:text-right space-y-3 sm:space-y-4 pb-[env(safe-area-inset-bottom,0px)]">
           <div
             ref={scene1LogoAnchorRef}
-            className="w-12 h-12 sm:w-14 sm:h-14 ml-auto mb-1 pointer-events-none flex items-center justify-center opacity-0"
+            className="w-12 h-12 sm:w-14 sm:h-14 mr-auto sm:ml-auto mb-1 pointer-events-none flex items-center justify-center opacity-0"
             aria-hidden="true"
           />
-          <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+          <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
             A New Horizon
             <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
               of Luxury.
             </span>
           </h1>
 
-          <p className="font-serif text-base sm:text-2xl font-light text-[#EDE5DA]/90 italic leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
-            “Where architecture flows like water and every view inspires.”
+          <p className="font-serif text-sm sm:text-2xl font-light text-[#EDE5DA]/90 italic leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            &ldquo;Where architecture flows like water and every view inspires.&rdquo;
           </p>
         </div>
       </div>
@@ -1100,32 +1181,26 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       <div
         ref={ch3Ref}
         id="waterfront"
-        className="absolute inset-0 flex items-center justify-center sm:justify-start px-4 sm:px-12 lg:px-24 z-20 opacity-0"
+        className="absolute inset-0 flex flex-col justify-end sm:justify-center items-start px-6 sm:px-12 lg:px-24 pb-24 sm:pb-0 z-20 opacity-0"
       >
-        {/* Directional Soft Vignette Scrim: Gently darkens left side to make text pop against bright background */}
-        <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#0d2828]/90 via-[#0d2828]/45 to-transparent pointer-events-none -z-10" />
+        {/* Directional Soft Vignette Scrim: Darkens bottom on mobile, left on desktop */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/95 via-[#0d2828]/55 via-35% to-transparent sm:bg-gradient-to-r sm:from-[#0d2828]/90 sm:via-[#0d2828]/45 sm:to-transparent pointer-events-none -z-10" />
 
-        <div className="relative max-w-xl text-left space-y-3 sm:space-y-4">
+        <div className="relative max-w-xl text-left space-y-3 sm:space-y-4 pb-[env(safe-area-inset-bottom,0px)]">
           <div
             ref={scene2LogoAnchorRef}
             className="w-12 h-12 sm:w-14 sm:h-14 mb-1 pointer-events-none flex items-center justify-center"
             aria-hidden="true"
           />
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
-              Waterfront
-            </span>
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-          </div>
 
-          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
             Life,
             <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
               By the Water.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-lg font-sans-body text-[#EDE5DA]/90 font-light leading-relaxed max-w-md drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+          <p className="text-xs sm:text-lg font-sans-body text-[#EDE5DA]/90 font-light leading-relaxed max-w-md drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
             A lakefront address shaped around views, movement, nature and everyday living.
           </p>
         </div>
@@ -1140,18 +1215,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         className="absolute inset-0 z-30 opacity-0 pointer-events-none"
       >
         {/* Section Header */}
-        <div className="absolute top-18 sm:top-28 left-4 sm:left-12 lg:left-16 max-w-sm sm:max-w-lg z-30 pointer-events-auto">
+        <div className="absolute top-20 sm:top-28 left-6 sm:left-12 lg:left-16 right-6 sm:right-auto max-w-sm sm:max-w-lg z-30 pointer-events-auto">
           <div
             ref={scene3LogoAnchorRef}
             className="w-10 h-10 sm:w-12 sm:h-12 mb-1.5 pointer-events-none flex items-center justify-center"
             aria-hidden="true"
           />
-          <div className="flex items-center gap-3 mb-1.5 sm:mb-2">
-            <span className="text-[9.5px] sm:text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
-              District Masterplan
-            </span>
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-          </div>
 
           <h2 className="font-serif text-xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
             The Lakefront
@@ -1171,31 +1240,15 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         className="absolute inset-0 w-full h-full z-20 opacity-0 pointer-events-none overflow-hidden bg-[#0d2828]"
       >
         {/* Floating Top Header across the 3 columns */}
-        <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none px-4 sm:px-12 lg:px-16 pt-6 sm:pt-12 pb-12 bg-gradient-to-b from-[#0d2828]/95 via-[#0d2828]/60 to-transparent">
-          <div className="w-full">
-            <h2 className="font-serif text-xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase">
+        <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none pt-24 sm:pt-28 lg:pt-32 pb-10 sm:pb-16 bg-gradient-to-b from-[#081a1a]/95 via-[#081a1a]/70 to-transparent">
+          <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
+            <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)]">
               Where Lifestyle{" "}
               <span className="font-serif italic text-[#62AA9E] font-normal normal-case">
                 Meets Investment.
               </span>
             </h2>
           </div>
-        </div>
-
-        {/* Mobile Pillar Switcher Pills (Active Column Spotlight) */}
-        <div className="md:hidden absolute top-20 left-0 right-0 z-30 px-4 flex items-center justify-center gap-1.5 pointer-events-none">
-          {INVESTMENT_COLUMNS.map((col, idx) => (
-            <div
-              key={col.id}
-              className={`px-2.5 py-1 rounded-full text-[9px] tracking-wider uppercase border transition-all duration-300 ${
-                activeMobileCol === idx
-                  ? "bg-[#62AA9E]/25 border-[#62AA9E] text-[#EDE5DA] font-semibold shadow-sm"
-                  : "bg-[#0d2828]/70 border-[#EDE5DA]/15 text-[#EDE5DA]/50"
-              }`}
-            >
-              {col.number} {col.title.split(" ")[0]}
-            </div>
-          ))}
         </div>
 
         {/* Columns Container: Responsive full-width active cards on mobile, 3 side-by-side columns on desktop */}
@@ -1228,7 +1281,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             {/* Column Bottom Content */}
             <div
               ref={col1CardRef}
-              className="relative z-20 p-4 sm:p-8 lg:p-12 pb-6 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
+              className="relative z-20 p-6 sm:p-8 lg:p-12 pb-24 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4 pb-[max(5.5rem,env(safe-area-inset-bottom,20px))]"
             >
               {/* Column 1 Anchor: Top of heading */}
               <div
@@ -1238,13 +1291,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               />
 
               <div className="space-y-1 sm:space-y-2">
-                <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
-                  {INVESTMENT_COLUMNS[0].subtitle}
-                </span>
                 <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
                   {INVESTMENT_COLUMNS[0].title}
                 </h3>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
+                <p className="text-xs sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
                   {INVESTMENT_COLUMNS[0].detail}
                 </p>
               </div>
@@ -1287,7 +1337,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
 
             <div
               ref={col2CardRef}
-              className="relative z-20 p-4 sm:p-8 lg:p-12 pb-6 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
+              className="relative z-20 p-6 sm:p-8 lg:p-12 pb-24 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4 pb-[max(5.5rem,env(safe-area-inset-bottom,20px))]"
             >
               {/* Column 2 Anchor: Top of heading */}
               <div
@@ -1297,13 +1347,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               />
 
               <div className="space-y-1 sm:space-y-2">
-                <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
-                  {INVESTMENT_COLUMNS[1].subtitle}
-                </span>
                 <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
                   {INVESTMENT_COLUMNS[1].title}
                 </h3>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
+                <p className="text-xs sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
                   {INVESTMENT_COLUMNS[1].detail}
                 </p>
               </div>
@@ -1345,7 +1392,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
 
             <div
               ref={col3CardRef}
-              className="relative z-20 p-4 sm:p-8 lg:p-12 pb-6 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4"
+              className="relative z-20 p-6 sm:p-8 lg:p-12 pb-24 sm:pb-12 lg:pb-16 space-y-2 sm:space-y-4 pb-[max(5.5rem,env(safe-area-inset-bottom,20px))]"
             >
               {/* Column 3 Anchor: Top of heading */}
               <div
@@ -1355,9 +1402,6 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               />
 
               <div className="space-y-1 sm:space-y-2">
-                <span className="text-[10px] sm:text-xs text-[#62AA9E] font-semibold uppercase tracking-wider block">
-                  {INVESTMENT_COLUMNS[2].subtitle}
-                </span>
                 <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
                   {INVESTMENT_COLUMNS[2].title}
                 </h3>
@@ -1386,53 +1430,45 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       <div
         ref={ch4Ref}
         id="destination"
-        className="absolute inset-0 flex flex-col justify-center max-w-6xl mx-auto px-4 sm:px-6 z-20 opacity-0 overflow-hidden"
+        className="absolute inset-0 flex flex-col justify-center px-4 sm:px-8 lg:px-16 z-20 opacity-0 overflow-hidden pointer-events-none"
       >
-        <div className="text-center space-y-2 sm:space-y-3 mb-4 sm:mb-8">
-          {/* Scene 5 Anchor: Top of Destination label */}
-          <div
-            ref={scene5LogoAnchorRef}
-            className="w-11 h-11 sm:w-14 sm:h-14 mx-auto mb-1 pointer-events-none flex items-center justify-center"
-            aria-hidden="true"
-          />
+        {/* Soft atmospheric vignette guaranteeing text legibility against infinity pool canvas */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#0d2828]/55 to-[#0d2828]/20 pointer-events-none -z-10" />
 
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-            <span className="text-[10px] tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
-              Destination
-            </span>
-            <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
+        <div className="relative max-w-6xl mx-auto w-full pointer-events-auto">
+          {/* Section Header */}
+          <div className="text-center space-y-2 sm:space-y-3 mb-6 sm:mb-10 lg:mb-12">
+            {/* Scene 5 Anchor: Top of Destination label */}
+            <div
+              ref={scene5LogoAnchorRef}
+              className="w-11 h-11 sm:w-14 sm:h-14 mx-auto mb-1 pointer-events-none flex items-center justify-center"
+              aria-hidden="true"
+            />
+
+            <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-tight uppercase">
+              <span className="block">A Destination.</span>
+              <span className="!block font-serif italic text-[#62AA9E] font-normal text-xl sm:text-4xl lg:text-5xl mt-1 sm:mt-2 normal-case">
+                More Than an Address.
+              </span>
+            </h2>
           </div>
 
-          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-tight uppercase">
-            A Destination.
-            <span className="block font-serif italic text-[#62AA9E] font-normal text-xl sm:text-4xl lg:text-5xl mt-1 normal-case">
-              More Than an Address.
-            </span>
-          </h2>
-        </div>
-
-        {/* 4 Brand Pillars — editorial border-top style */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 sm:gap-x-10 gap-y-6 sm:gap-y-8 mt-2 sm:mt-0">
-          {BRAND_PILLARS.map((pillar, idx) => (
-            <div
-              key={pillar.name}
-              className="group border-t border-[#EDE5DA]/20 pt-5 sm:pt-7 flex flex-col justify-start transition-colors duration-300"
-            >
-              <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#EDE5DA]/30 font-light mb-3 sm:mb-4 block">
-                0{idx + 1}
-              </span>
-              <h3 className="font-serif text-lg sm:text-2xl font-light text-[#EDE5DA] tracking-tight mb-1.5 sm:mb-2 group-hover:text-[#62AA9E] transition-colors duration-300">
-                {pillar.name}
-              </h3>
-              <span className="text-[9px] sm:text-[10px] tracking-[0.22em] uppercase text-[#62AA9E] font-semibold mb-2 sm:mb-3 block">
-                {pillar.subtitle}
-              </span>
-              <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
-                {pillar.desc}
-              </p>
-            </div>
-          ))}
+          {/* Open Architectural Multi-Column Editorial Grid unified by understated top rule */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10">
+            {BRAND_PILLARS.map((pillar) => (
+              <div
+                key={pillar.name}
+                className="border-t border-[#EDE5DA]/20 pt-4 sm:pt-8 flex flex-col justify-start"
+              >
+                <h3 className="font-serif text-base sm:text-2xl lg:text-3xl font-light text-[#EDE5DA] tracking-tight mb-1 sm:mb-3 drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+                  {pillar.name}
+                </h3>
+                <p className="font-sans-body text-[11px] sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
+                  {pillar.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -1450,14 +1486,6 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-3 pointer-events-none flex items-center justify-center relative"
           aria-hidden="true"
         />
-
-        <div className="flex items-center justify-center gap-3 mb-3 sm:mb-4">
-          <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-          <span className="text-[10px] tracking-[0.35em] sm:tracking-[0.4em] font-semibold text-[#62AA9E] uppercase">
-            The Horizon
-          </span>
-          <div className="w-8 h-[1px] bg-[#62AA9E]/60" />
-        </div>
 
         <h2 className="font-serif text-3xl sm:text-6xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-tight uppercase">
           The Future
@@ -1487,10 +1515,6 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             Explore Orion One
           </a>
         </div>
-
-        <span className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] text-[#808080] uppercase mt-6 sm:mt-8 font-light">
-          Show Suite Open Daily · 10AM – 7PM · DHA Phase III Islamabad
-        </span>
       </div>
 
       {/* 3D Orion Sub Mark Cinematic Companion & Scroll Anchor */}

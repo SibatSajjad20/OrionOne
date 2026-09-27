@@ -1,15 +1,23 @@
 "use client";
 
-import { forwardRef, useState, useEffect } from "react";
+import { forwardRef, useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageCircle, Menu, X, ArrowUpRight } from "lucide-react";
+import { MessageCircle, Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 
 interface HeaderProps {
   className?: string;
   onOpenInquiry?: () => void;
 }
+
+export const RESIDENCE_SUITES_MENU = [
+  { name: "All Residences", href: "/residence" },
+  { name: "1 Bedroom Apartments", href: "/residence/1-bedroom" },
+  { name: "2 Bedroom Apartments", href: "/residence/2-bedroom" },
+  { name: "3 Bedroom Apartments", href: "/residence/3-bedroom" },
+  { name: "Private Pool Residences", href: "/residence/private-pool" },
+];
 
 const NAV_LINKS = [
   { name: "Home", href: "/", subtitle: "Lakefront Living" },
@@ -37,7 +45,27 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
   ({ className = "", onOpenInquiry }, ref) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [residencesDropdownOpen, setResidencesDropdownOpen] = useState(false);
+    const [mobileResidencesOpen, setMobileResidencesOpen] = useState(false);
+    const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const pathname = usePathname();
+
+    const handleMouseEnter = () => {
+      if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+      setResidencesDropdownOpen(true);
+    };
+
+    const handleMouseLeave = () => {
+      dropdownTimeoutRef.current = setTimeout(() => {
+        setResidencesDropdownOpen(false);
+      }, 150);
+    };
+
+    useEffect(() => {
+      return () => {
+        if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+      };
+    }, []);
 
     useEffect(() => {
       const handleScroll = () => {
@@ -48,9 +76,10 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
       return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Close mobile drawer on route change
+    // Close mobile drawer and dropdown on route change
     useEffect(() => {
       setMenuOpen(false);
+      setResidencesDropdownOpen(false);
     }, [pathname]);
 
     // Prevent background scrolling and lock Lenis when mobile drawer is open
@@ -113,11 +142,11 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
             >
               <div className="relative h-8 sm:h-10 w-28 sm:w-32 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
-                  src="/orion-logo-clean.png"
+                  src="/orion-logo-white.png"
                   alt="Orion One by SP Builders"
                   fill
                   sizes="(max-width: 640px) 112px, 128px"
-                  className="object-contain object-left filter brightness-110 drop-shadow-sm"
+                  className="object-contain object-left drop-shadow-sm"
                   priority
                 />
               </div>
@@ -127,6 +156,75 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
             <nav className="hidden lg:flex items-center gap-2 xl:gap-4 2xl:gap-6 text-[11px] xl:text-[11.5px] 2xl:text-[12px] tracking-[0.12em] xl:tracking-[0.16em] 2xl:tracking-[0.2em] uppercase font-sans-body font-medium shrink-0">
               {NAV_LINKS.map((link) => {
                 const active = isLinkActive(link);
+                const isResidences = link.name === "Residences";
+
+                if (isResidences) {
+                  return (
+                    <div
+                      key={link.href}
+                      className="relative group py-2.5 shrink-0"
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={() => setResidencesDropdownOpen(false)}
+                        className={`relative inline-flex items-center gap-1 transition-colors duration-200 whitespace-nowrap cursor-pointer ${
+                          active
+                            ? "text-[#62AA9E] font-semibold"
+                            : "text-[#EDE5DA]/75 hover:text-[#EDE5DA]"
+                        }`}
+                      >
+                        <span>{link.name}</span>
+                        <ChevronDown
+                          className={`w-3 h-3 text-[#EDE5DA]/60 transition-transform duration-200 ${
+                            residencesDropdownOpen ? "rotate-180 text-[#62AA9E]" : "group-hover:rotate-180"
+                          }`}
+                        />
+
+                        {/* Active State Accent Glow */}
+                        {active && (
+                          <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#62AA9E] rounded-full shadow-[0_0_8px_rgba(98,170,158,0.7)]" />
+                        )}
+
+                        {/* Subtle Hover Underline Expand */}
+                        {!active && (
+                          <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#62AA9E]/40 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
+                        )}
+                      </Link>
+
+                      {/* Dropdown Menu */}
+                      <div
+                        className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 w-56 transition-all duration-200 origin-top z-50 ${
+                          residencesDropdownOpen
+                            ? "opacity-100 scale-100 pointer-events-auto visible"
+                            : "opacity-0 scale-95 pointer-events-none invisible"
+                        }`}
+                      >
+                        <div className="bg-[#081a1a]/95 backdrop-blur-xl border border-[#EDE5DA]/15 rounded-xl p-1.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] space-y-0.5">
+                          {RESIDENCE_SUITES_MENU.map((suite) => {
+                            const isSuiteActive = pathname === suite.href;
+                            return (
+                              <Link
+                                key={suite.href}
+                                href={suite.href}
+                                onClick={() => setResidencesDropdownOpen(false)}
+                                className={`block px-3 py-2 rounded-lg text-[13px] font-serif-heading tracking-wide transition-colors duration-150 ${
+                                  isSuiteActive
+                                    ? "text-[#62AA9E] bg-[#153D3D]/50 font-medium"
+                                    : "text-[#EDE5DA]/80 hover:text-[#62AA9E] hover:bg-white/5"
+                                }`}
+                              >
+                                {suite.name}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <Link
                     key={link.href}
@@ -221,11 +319,11 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
             <div className="flex items-center justify-between pb-4 sm:pb-6 border-b border-[#EDE5DA]/10 shrink-0">
               <div className="relative h-8 sm:h-9 w-28 sm:w-32">
                 <Image
-                  src="/orion-logo-clean.png"
+                  src="/orion-logo-white.png"
                   alt="Orion One Logo"
                   fill
                   sizes="128px"
-                  className="object-contain object-left filter brightness-110"
+                  className="object-contain object-left"
                 />
               </div>
               <button
@@ -242,6 +340,68 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               {NAV_LINKS.map((link, idx) => {
                 const active = isLinkActive(link);
                 const ordinal = String(idx + 1).padStart(2, "0");
+                const isResidences = link.name === "Residences";
+
+                if (isResidences) {
+                  return (
+                    <div key={link.href} className="border-b border-[#EDE5DA]/10 py-2 sm:py-2.5">
+                      <div className="flex items-center justify-between min-h-[44px]">
+                        <Link
+                          href={link.href}
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-baseline gap-3 group flex-1"
+                        >
+                          <span className="text-[11px] font-sans-body text-[#62AA9E]/60 tracking-[0.2em] font-semibold">
+                            {ordinal}
+                          </span>
+                          <span
+                            className={`font-serif-heading text-lg sm:text-xl tracking-wide transition-colors ${
+                              active ? "text-[#62AA9E]" : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
+                            }`}
+                          >
+                            {link.name}
+                          </span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => setMobileResidencesOpen((prev) => !prev)}
+                          className="p-2 text-[#EDE5DA]/70 hover:text-[#62AA9E] transition-colors cursor-pointer"
+                          aria-label="Toggle Residences suites list"
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-200 ${
+                              mobileResidencesOpen ? "rotate-180 text-[#62AA9E]" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+
+                      {/* Expandable Mobile Suites List */}
+                      {mobileResidencesOpen && (
+                        <div className="pl-6 pt-1 pb-1 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+                          {RESIDENCE_SUITES_MENU.map((suite) => {
+                            const isSuiteActive = pathname === suite.href;
+                            return (
+                              <Link
+                                key={suite.href}
+                                href={suite.href}
+                                onClick={() => setMenuOpen(false)}
+                                className={`block py-1.5 px-3 rounded-lg text-sm font-serif-heading transition-colors ${
+                                  isSuiteActive
+                                    ? "text-[#62AA9E]"
+                                    : "text-[#EDE5DA]/75 hover:text-[#62AA9E]"
+                                }`}
+                              >
+                                {suite.name}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
                 return (
                   <Link
                     key={link.href}

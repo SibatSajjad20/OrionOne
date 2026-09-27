@@ -20,6 +20,9 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const mediaWrapRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -32,10 +35,37 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
     const section = sectionRef.current;
     const media = mediaWrapRef.current;
     const content = contentRef.current;
+    const headline = headlineRef.current;
+    const subtitle = subtitleRef.current;
+    const actions = actionsRef.current;
 
     if (!section || !media || !content) return;
 
     const ctx = gsap.context(() => {
+      // 1. Initial stately text entrance matching ResidenceHero
+      if (headline && subtitle && actions) {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tl.fromTo(
+          headline,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 1.2, clearProps: "all" }
+        )
+          .fromTo(
+            subtitle,
+            { opacity: 0, y: 25 },
+            { opacity: 1, y: 0, duration: 1.0, clearProps: "all" },
+            "-=0.7"
+          )
+          .fromTo(
+            actions,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.9, clearProps: "all" },
+            "-=0.7"
+          );
+      }
+
+      // 2. Parallax depth on scroll
       gsap.to(media, {
         yPercent: 18,
         scale: 1.08,
@@ -132,7 +162,10 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
       >
         <div className="max-w-3xl space-y-6">
           {/* Display Headline */}
-          <h1 className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] tracking-tight leading-[1.05]">
+          <h1
+            ref={headlineRef}
+            className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] tracking-tight leading-[1.05]"
+          >
             Life, By the{" "}
             <span className="italic font-normal text-sand-gradient block sm:inline">
               Water
@@ -140,12 +173,18 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
           </h1>
 
           {/* Subtitle / Lead */}
-          <p className="font-sans-body text-sm sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl">
+          <p
+            ref={subtitleRef}
+            className="font-sans-body text-sm sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl"
+          >
             A waterfront experience shaped around movement, dining, relaxation, and connection.
           </p>
 
           {/* CTAs */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 w-full sm:w-auto">
+          <div
+            ref={actionsRef}
+            className="pt-4 flex flex-col sm:flex-row items-center gap-3 sm:gap-6 w-full sm:w-auto"
+          >
             <button
               onClick={scrollToExplore}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 shadow-xl cursor-pointer"

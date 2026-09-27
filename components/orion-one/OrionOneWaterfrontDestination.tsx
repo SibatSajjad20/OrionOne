@@ -123,6 +123,7 @@ export default function OrionOneWaterfrontDestination() {
 
   // Connected Destination Section
   const matrixSectionRef = useRef<HTMLDivElement>(null);
+  const matrixHeaderRef = useRef<HTMLDivElement>(null);
   const matrixCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -252,7 +253,7 @@ export default function OrionOneWaterfrontDestination() {
               Math.max(
                 window.innerWidth / (baseW || 1),
                 window.innerHeight / (baseH || 1)
-              ) * 1.05
+              ) * 1.02
             );
           },
           borderRadius: 0,
@@ -267,7 +268,7 @@ export default function OrionOneWaterfrontDestination() {
       tl.to(
         zoomImage,
         {
-          scale: 1.08,
+          scale: () => (window.innerWidth < 768 ? 1.02 : 1.08),
           duration: 1.5,
           ease: "none",
         },
@@ -373,6 +374,25 @@ export default function OrionOneWaterfrontDestination() {
     const cards = matrixCardsRef.current.filter(Boolean) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
+      if (matrixHeaderRef.current) {
+        gsap.fromTo(
+          matrixHeaderRef.current,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: matrixHeaderRef.current,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
       gsap.fromTo(
         cards,
         { opacity: 0, y: 35 },
@@ -487,7 +507,7 @@ export default function OrionOneWaterfrontDestination() {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
             <div
               ref={zoomCardRef}
-              className="relative overflow-hidden will-change-transform bg-[#081a1a] border border-[#EDE5DA]/15 w-[min(920px,78vw)] aspect-[16/10] max-h-[62vh] rounded-[20px]"
+              className="relative overflow-hidden will-change-transform bg-[#081a1a] border border-[#EDE5DA]/15 w-[86vw] max-w-[380px] sm:max-w-none sm:w-[min(920px,78vw)] aspect-[9/15] sm:aspect-[16/10] max-h-[66vh] sm:max-h-[62vh] rounded-[20px]"
             >
               <div
                 ref={zoomImageRef}
@@ -497,7 +517,7 @@ export default function OrionOneWaterfrontDestination() {
                   src={DESTINATION_CARDS[0].image}
                   alt={DESTINATION_CARDS[0].alt}
                   fill
-                  sizes="100vw"
+                  sizes="(max-width: 768px) 90vw, (max-width: 1200px) 78vw, 920px"
                   className="object-cover object-center"
                   priority
                 />
@@ -517,9 +537,9 @@ export default function OrionOneWaterfrontDestination() {
           {/* First Card Text Layer — Outside zoomCardRef so it is NEVER scaled! */}
           <div
             ref={zoomTextRef}
-            className="absolute inset-0 z-15 flex flex-col justify-end px-4 sm:px-12 lg:px-20 pb-16 pointer-events-none will-change-transform"
+            className="absolute inset-0 z-15 flex flex-col justify-end px-6 sm:px-12 lg:px-20 pb-20 sm:pb-16 pointer-events-none will-change-transform"
           >
-            <div className="w-full max-w-[1300px] mx-auto space-y-2 pointer-events-auto">
+            <div className="w-full max-w-[1300px] mx-auto space-y-2 pointer-events-auto pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
               <h3 className="font-serif-heading text-xl sm:text-3xl lg:text-4xl font-light text-[#EDE5DA] tracking-tight">
                 {DESTINATION_CARDS[0].title}
               </h3>
@@ -560,8 +580,8 @@ export default function OrionOneWaterfrontDestination() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/40 to-transparent pointer-events-none" />
 
                 {/* Heading with one small supporting text below */}
-                <div className="absolute inset-0 z-10 flex flex-col justify-end px-4 sm:px-12 lg:px-20 pb-8 sm:pb-16 pointer-events-none">
-                  <div className="w-full max-w-[1300px] mx-auto space-y-2 pointer-events-auto">
+                <div className="absolute inset-0 z-10 flex flex-col justify-end px-6 sm:px-12 lg:px-20 pb-20 sm:pb-16 pointer-events-none">
+                  <div className="w-full max-w-[1300px] mx-auto space-y-2 pointer-events-auto pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
                     <h3 className="font-serif-heading text-xl sm:text-3xl lg:text-4xl font-light text-[#EDE5DA] tracking-tight">
                       {item.title}
                     </h3>
@@ -595,7 +615,7 @@ export default function OrionOneWaterfrontDestination() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20">
           {/* Centered Heading in One Line & Centered Intro */}
-          <div className="max-w-5xl mx-auto text-center mb-16 sm:mb-24">
+          <div ref={matrixHeaderRef} className="max-w-5xl mx-auto text-center mb-16 sm:mb-24">
             <h2 className="font-serif-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-[#EDE5DA] uppercase mb-6 leading-tight max-w-4xl mx-auto">
               Everything Within{" "}
               <span className="italic font-normal text-sand-gradient normal-case">

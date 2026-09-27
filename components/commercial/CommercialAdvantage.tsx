@@ -1,5 +1,13 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 const ADVANTAGES = [
   {
     number: "01",
@@ -32,8 +40,67 @@ const ADVANTAGES = [
 ];
 
 export default function CommercialAdvantage() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const header = headerRef.current;
+    const grid = gridRef.current;
+
+    if (!section || !header || !grid) return;
+
+    const ctx = gsap.context(() => {
+      // Header entrance
+      gsap.fromTo(
+        header,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          clearProps: "all",
+          scrollTrigger: {
+            trigger: header,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Advantage items staggered entrance
+      const items = grid.querySelectorAll(".advantage-card");
+      if (items.length > 0) {
+        gsap.fromTo(
+          items,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.1,
+            stagger: 0.12,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: grid,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative py-16 sm:py-36 bg-[#081a1a] border-y border-[#EDE5DA]/15 overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative py-16 sm:py-36 bg-[#081a1a] border-y border-[#EDE5DA]/15 overflow-hidden"
+    >
       {/* Ambient glow vignette */}
       <div
         className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#62AA9E]/4 rounded-full blur-[200px] pointer-events-none -z-10"
@@ -42,7 +109,7 @@ export default function CommercialAdvantage() {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Header */}
-        <div className="max-w-4xl mb-12 sm:mb-20 space-y-4">
+        <div ref={headerRef} className="max-w-4xl mb-12 sm:mb-20 space-y-4">
           <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
             Designed For <br />
             <span className="italic font-normal text-sand-gradient normal-case">
@@ -55,11 +122,14 @@ export default function CommercialAdvantage() {
         </div>
 
         {/* 4 Architectural Advantage Items */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-12 sm:gap-y-16">
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-12 sm:gap-y-16"
+        >
           {ADVANTAGES.map((adv) => (
             <div
               key={adv.number}
-              className="group border-t border-[#EDE5DA]/20 pt-6 sm:pt-8 flex flex-col justify-start transition-colors duration-300"
+              className="advantage-card group border-t border-[#EDE5DA]/20 pt-6 sm:pt-8 flex flex-col justify-start transition-colors duration-300"
             >
               <h3 className="font-serif-heading text-2xl sm:text-3xl font-light text-[#EDE5DA] tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
                 {adv.headline}

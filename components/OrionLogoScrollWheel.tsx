@@ -494,10 +494,10 @@ export default function OrionLogoScrollWheel({
       }
       const prog = smoothedProgressRef.current;
 
-      // Throttled anchor coordinate refresh on scroll milestones
+      // Only refresh anchor coordinates when user is idle (never during active scroll)
       if (
-        now - lastCoordUpdateTime > 400 ||
-        Math.abs(prog - lastCoordUpdateProg) > 0.06
+        Math.abs(progDiff) < 0.005 &&
+        now - lastCoordUpdateTime > 2000
       ) {
         lastCoordUpdateTime = now;
         lastCoordUpdateProg = prog;

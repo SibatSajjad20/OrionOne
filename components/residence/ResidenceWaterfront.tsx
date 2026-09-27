@@ -36,7 +36,7 @@ export default function ResidenceWaterfront() {
 
         const scaleX = vw / (unscaledWidth || 1);
         const scaleY = vh / (unscaledHeight || 1);
-        const targetScale = Math.max(scaleX, scaleY) * 1.06;
+        const targetScale = Math.max(scaleX, scaleY) * 1.02;
         const targetY = vh / 2 - unscaledCenterY;
 
         return { targetScale, targetY };
@@ -116,7 +116,7 @@ export default function ResidenceWaterfront() {
       {/* Top Left Corner Heading — visible on mobile; transitions in on md+ pin */}
       <div
         ref={headingRef}
-        className="absolute top-28 lg:top-32 left-4 lg:left-20 pr-4 z-20 pointer-events-none max-w-2xl opacity-0"
+        className="absolute top-24 sm:top-28 lg:top-32 left-6 lg:left-20 pr-4 z-20 pointer-events-none max-w-2xl opacity-0"
       >
         <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.12] uppercase">
           EVERY DAY COMES
@@ -128,7 +128,7 @@ export default function ResidenceWaterfront() {
       {/* Centered Image Showcase Frame — Zooms on scroll */}
       <div
         ref={imageFrameRef}
-        className="relative w-[88vw] sm:w-[80vw] max-w-5xl aspect-[16/10] sm:aspect-[21/10] rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-[#EDE5DA]/15 bg-[#153D3D] will-change-transform z-0 origin-center order-2 md:order-none"
+        className="relative w-[86vw] max-w-[380px] sm:max-w-5xl sm:w-[80vw] aspect-[9/14] sm:aspect-[21/10] rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-[#EDE5DA]/15 bg-[#153D3D] will-change-transform z-0 origin-center order-2 md:order-none"
       >
         <Image
           src="/images/residence/pic-1.jpg"

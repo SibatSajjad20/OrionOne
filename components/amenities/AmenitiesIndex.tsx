@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
 import { ArrowUpRight } from "lucide-react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface DirectoryRow {
   category: string;
@@ -79,8 +84,59 @@ const DIRECTORY_DATA: DirectoryRow[] = [
 
 export default function AmenitiesIndex() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const ledgerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll-triggered entrance animations matching residence cadence
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (headerRef.current) {
+        gsap.fromTo(
+          headerRef.current,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            clearProps: "all",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      if (ledgerRef.current) {
+        const rows = ledgerRef.current.children;
+        if (rows.length > 0) {
+          gsap.fromTo(
+            rows,
+            { opacity: 0, y: 25 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1.0,
+              stagger: 0.1,
+              ease: "power3.out",
+              clearProps: "all",
+              scrollTrigger: {
+                trigger: ledgerRef.current,
+                start: "top 85%",
+                once: true,
+              },
+            }
+          );
+        }
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Smooth floating cursor preview tracking
   useEffect(() => {
@@ -143,6 +199,7 @@ export default function AmenitiesIndex() {
 
   return (
     <section
+      ref={sectionRef}
       id="directory-ledger"
       className="relative w-full py-16 sm:py-36 bg-[#153D3D] text-[#EDE5DA] overflow-hidden border-y border-[#EDE5DA]/15"
       aria-label="Amenities at a Glance Directory Ledger"
@@ -172,7 +229,7 @@ export default function AmenitiesIndex() {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Centered Section Header */}
-        <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-24 space-y-4">
+        <div ref={headerRef} className="text-center max-w-4xl mx-auto mb-12 sm:mb-24 space-y-4">
           <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
             Amenities At A{" "}
             <span className="italic font-normal text-sand-gradient normal-case">

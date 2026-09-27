@@ -35,7 +35,7 @@ export default function ResidencePerspective() {
 
         const scaleX = vw / unscaledWidth;
         const scaleY = vh / unscaledHeight;
-        const targetScale = Math.max(scaleX, scaleY) * 1.06;
+        const targetScale = Math.max(scaleX, scaleY) * 1.02;
         const targetY = vh / 2 - unscaledCenterY;
 
         return { targetScale, targetY };
@@ -109,7 +109,7 @@ export default function ResidencePerspective() {
         {/* Pure Architectural Showcase Frame — Same Image Size */}
         <div
           ref={imageFrameRef}
-          className="relative w-full aspect-[16/10] sm:aspect-[21/10] rounded-2xl overflow-hidden shadow-2xl border border-[#EDE5DA]/15 bg-[#153D3D] will-change-transform z-10"
+          className="relative w-[88vw] max-w-[380px] sm:max-w-none sm:w-full aspect-[9/14] sm:aspect-[21/10] rounded-2xl overflow-hidden shadow-2xl border border-[#EDE5DA]/15 bg-[#153D3D] will-change-transform z-10"
         >
           <Image
             src="/images/residence/pic-5.webp"
