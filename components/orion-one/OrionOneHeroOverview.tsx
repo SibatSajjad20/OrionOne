@@ -75,6 +75,7 @@ export default function OrionOneHeroOverview({
   const destinationGlowRef = useRef<HTMLDivElement>(null);
 
   // The 4 Full-Screen Slides (Slide in from right, heading on the right side)
+  const slidesContainerRef = useRef<HTMLDivElement>(null);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
   const slideInnersRef = useRef<(HTMLDivElement | null)[]>([]);
   const slideShadesRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -95,6 +96,8 @@ export default function OrionOneHeroOverview({
     const destinationStatement = destinationStatementRef.current;
     const destinationGlow = destinationGlowRef.current;
 
+    const slidesContainer = slidesContainerRef.current;
+
     if (
       !container ||
       !stage ||
@@ -107,7 +110,8 @@ export default function OrionOneHeroOverview({
       !addressGlow ||
       !destinationLayer ||
       !destinationStatement ||
-      !destinationGlow
+      !destinationGlow ||
+      !slidesContainer
     ) {
       return;
     }
@@ -134,7 +138,7 @@ export default function OrionOneHeroOverview({
 
       gsap.set(destinationLayer, {
         yPercent: 100,
-        autoAlpha: 0,
+        autoAlpha: 1,
         display: "flex",
         pointerEvents: "none",
       });
@@ -146,8 +150,10 @@ export default function OrionOneHeroOverview({
       });
       gsap.set(destinationGlow, { scale: 1.2, opacity: 0.8 });
 
+      // Slides container starts completely hidden so slides can never bleed through
+      gsap.set(slidesContainer, { autoAlpha: 0 });
       slides.forEach((slide) => {
-        gsap.set(slide, { xPercent: 100, autoAlpha: 0 });
+        gsap.set(slide, { xPercent: 100 });
       });
 
       const masterTl = gsap.timeline({
@@ -232,12 +238,10 @@ export default function OrionOneHeroOverview({
         "heroSplit+=1.5"
       );
 
+      // Hold on "More Than An Address" so the user can read it
       masterTl.to({}, { duration: 0.8 });
 
       masterTl.addLabel("toDestination");
-
-      // Reveal destinationLayer as the address statement fades
-      masterTl.set(destinationLayer, { autoAlpha: 1 }, "toDestination");
 
       masterTl.to(
         addressStatement,
@@ -273,24 +277,17 @@ export default function OrionOneHeroOverview({
         "toDestination"
       );
 
-      // Hide addressLayer once destinationLayer fully covers it
-      masterTl.to(
-        addressLayer,
-        {
-          autoAlpha: 0,
-          duration: 0.1,
-        },
-        "toDestination+=1.4"
-      );
-
+      // Hold on "A Destination" so the user can read it
       masterTl.to({}, { duration: 0.8 });
 
       for (let i = 0; i < slides.length; i++) {
         const label = `card_${i}`;
         masterTl.addLabel(label);
 
-        // Make slide visible as it enters
-        masterTl.set(slides[i], { autoAlpha: 1 }, label);
+        if (i === 0) {
+          // Reveal the slides container at card_0
+          masterTl.set(slidesContainer, { autoAlpha: 1, pointerEvents: "auto" }, label);
+        }
 
         masterTl.to(
           slides[i],
@@ -322,14 +319,6 @@ export default function OrionOneHeroOverview({
               ease: "none",
             },
             label
-          );
-          masterTl.to(
-            destinationLayer,
-            {
-              autoAlpha: 0,
-              duration: 0.1,
-            },
-            `${label}+=1.3`
           );
         } else {
           if (slideInners[i - 1]) {
@@ -396,7 +385,7 @@ export default function OrionOneHeroOverview({
           {/* Left Door */}
           <div
             ref={heroLeftDoorRef}
-            className="absolute top-0 bottom-0 left-0 w-[calc(50%+1px)] overflow-hidden will-change-transform z-10"
+            className="absolute top-0 bottom-0 left-0 w-[calc(50%+1px)] overflow-hidden will-change-transform z-10 bg-[#0a2222]"
           >
             <div className="absolute top-0 bottom-0 left-0 w-full h-full md:w-[200%]">
               <Image
@@ -414,7 +403,7 @@ export default function OrionOneHeroOverview({
           {/* Right Door */}
           <div
             ref={heroRightDoorRef}
-            className="absolute top-0 bottom-0 left-[50%] w-1/2 overflow-hidden will-change-transform z-10"
+            className="absolute top-0 bottom-0 left-[50%] w-1/2 overflow-hidden will-change-transform z-10 bg-[#0a2222]"
           >
             <div className="absolute top-0 bottom-0 left-0 md:-left-full w-full h-full md:w-[200%]">
               <Image
@@ -495,7 +484,6 @@ export default function OrionOneHeroOverview({
           <div
             ref={addressStatementRef}
             className="relative z-10 max-w-4xl text-center space-y-4 will-change-transform"
-            style={{ opacity: 0 }}
           >
             <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] leading-[1.06] uppercase">
               More Than An Address
@@ -513,7 +501,6 @@ export default function OrionOneHeroOverview({
         <div
           ref={destinationLayerRef}
           className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-20 select-none bg-[#0a2222] will-change-transform shadow-[0_-25px_60px_rgba(0,0,0,0.6)]"
-          style={{ transform: "translateY(100%)", opacity: 0, visibility: "hidden" }}
         >
           <div
             ref={destinationGlowRef}
@@ -538,56 +525,56 @@ export default function OrionOneHeroOverview({
         </div>
 
         {/* ========================================================= */}
-        {/* THE 4 FULL-SCREEN SLIDES                                  */}
+        {/* THE 4 FULL-SCREEN SLIDES (Wrapped in dedicated container) */}
         {/* ========================================================= */}
-        {DESTINATION_PILLARS.map((pillar, idx) => (
-          <div
-            key={pillar.id}
-            ref={(el) => {
-              slidesRef.current[idx] = el;
-            }}
-            className="absolute inset-0 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
-            style={{
-              zIndex: 30 + idx,
-              transform: "translateX(100%)",
-              visibility: "hidden",
-              opacity: 0,
-            }}
-          >
+        <div
+          ref={slidesContainerRef}
+          className="absolute inset-0 z-30 pointer-events-none"
+        >
+          {DESTINATION_PILLARS.map((pillar, idx) => (
             <div
+              key={pillar.id}
               ref={(el) => {
-                slideInnersRef.current[idx] = el;
+                slidesRef.current[idx] = el;
               }}
-              className="relative w-full h-full will-change-transform"
+              className="absolute inset-0 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
+              style={{ zIndex: 30 + idx }}
             >
-              <Image
-                src={pillar.image}
-                alt={pillar.alt}
-                fill
-                priority={idx === 0}
-                sizes="100vw"
-                className="object-cover object-center"
-              />
-
               <div
                 ref={(el) => {
-                  slideShadesRef.current[idx] = el;
+                  slideInnersRef.current[idx] = el;
                 }}
-                className="absolute inset-0 bg-[#081a1a] opacity-0 pointer-events-none z-[4]"
-              />
+                className="relative w-full h-full will-change-transform"
+              >
+                <Image
+                  src={pillar.image}
+                  alt={pillar.alt}
+                  fill
+                  priority={idx === 0}
+                  sizes="100vw"
+                  className="object-cover object-center"
+                />
 
-              <div className="absolute top-0 inset-x-0 h-40 sm:h-52 bg-gradient-to-b from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/45 via-40% to-transparent pointer-events-none z-[3]" />
-              <div className="absolute inset-0 bg-gradient-to-l from-[#081a1a]/85 via-[#081a1a]/25 to-transparent pointer-events-none z-[3]" />
+                <div
+                  ref={(el) => {
+                    slideShadesRef.current[idx] = el;
+                  }}
+                  className="absolute inset-0 bg-[#081a1a] opacity-0 pointer-events-none z-[4]"
+                />
 
-              <div className="absolute right-6 sm:right-12 lg:right-16 xl:right-24 bottom-10 sm:bottom-16 lg:bottom-20 z-20 pointer-events-none select-none max-w-xl text-right">
-                <h3 className="font-serif-heading text-2xl sm:text-5xl md:text-7xl lg:text-8xl font-light uppercase text-[#EDE5DA] pr-2">
-                  {pillar.title}
-                </h3>
+                <div className="absolute top-0 inset-x-0 h-40 sm:h-52 bg-gradient-to-b from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/45 via-40% to-transparent pointer-events-none z-[3]" />
+                <div className="absolute inset-0 bg-gradient-to-l from-[#081a1a]/85 via-[#081a1a]/25 to-transparent pointer-events-none z-[3]" />
+
+                <div className="absolute right-6 sm:right-12 lg:right-16 xl:right-24 bottom-10 sm:bottom-16 lg:bottom-20 z-20 pointer-events-none select-none max-w-xl text-right">
+                  <h3 className="font-serif-heading text-2xl sm:text-5xl md:text-7xl lg:text-8xl font-light uppercase text-[#EDE5DA] pr-2">
+                    {pillar.title}
+                  </h3>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
