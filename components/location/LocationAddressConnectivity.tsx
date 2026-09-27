@@ -12,6 +12,7 @@ if (typeof window !== "undefined") {
 interface Artery {
   id: string;
   name: string;
+  description: string;
   image: string;
 }
 
@@ -19,26 +20,36 @@ const ARTERIES: Artery[] = [
   {
     id: "dha-boulevards",
     name: "DHA Main Boulevards",
+    description:
+      "Multi-lane landscaped boulevards connecting effortlessly throughout DHA Phase III sectors and commercial avenues.",
     image: "/images/location/dha-community-club.jpg",
   },
   {
     id: "gt-road",
     name: "GT Road (Grand Trunk Road)",
+    description:
+      "Direct artery linking to central Rawalpindi business districts, Saddar, and major northern commercial corridors.",
     image: "/images/location/urban-growth.jpg",
   },
   {
     id: "ring-road",
     name: "Rawalpindi Ring Road",
+    description:
+      "Rapid bypass corridor allowing residents to circumvent urban congestion and connect seamlessly across the region.",
     image: "/images/location/lakeview-commercial-aerial.jpg",
   },
   {
     id: "expressway",
     name: "Islamabad Expressway",
+    description:
+      "Direct, signal-free expressway leading straight into central Islamabad, the Blue Area, and diplomatic quarters.",
     image: "/images/location/urban-business.jpg",
   },
   {
     id: "airport",
     name: "Islamabad International Airport",
+    description:
+      "Smooth, continuous highway connection providing unhurried access for domestic departures and international flights.",
     image: "/images/commercial/slide-aerial.jpg",
   },
 ];
@@ -567,15 +578,23 @@ export default function LocationAddressConnectivity() {
                   className="object-cover object-center"
                 />
 
-                {/* Subtle cinematic gradient vignette for text legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a] via-[#081a1a]/30 to-black/30" />
+                {/* Multi-stop scrim gradients matching Layer 5 */}
+                <div className="absolute top-0 inset-x-0 h-44 sm:h-56 bg-gradient-to-b from-[#081a1a]/90 via-[#081a1a]/40 to-transparent pointer-events-none z-[3]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/60 via-45% to-transparent pointer-events-none z-[3]" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
               </div>
 
-              {/* HEADING ONLY — WITH SAFE AREA PADDING */}
-              <div className="absolute bottom-20 sm:bottom-24 lg:bottom-28 left-6 sm:left-16 lg:left-24 z-10 max-w-5xl pr-4 pb-[max(5rem,env(safe-area-inset-bottom,20px))]">
-                <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] leading-[1.05] uppercase">
-                  {a.name}
-                </h3>
+              {/* Bottom Content: Headline & Narrative grounded at bottom */}
+              <div className="absolute inset-x-0 bottom-0 z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16 pointer-events-none">
+                <div className="max-w-3xl space-y-2 sm:space-y-3 pointer-events-auto">
+                  <h3 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+                    {a.name}
+                  </h3>
+
+                  <p className="font-sans-body text-xs sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl">
+                    {a.description}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
@@ -664,14 +683,16 @@ export default function LocationAddressConnectivity() {
               <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
 
               {/* Bottom Content: Headline & Narrative grounded at bottom */}
-              <div className="absolute bottom-8 sm:bottom-12 lg:bottom-16 left-6 sm:left-12 lg:left-20 max-w-3xl z-10 space-y-2 sm:space-y-3 pr-4 pb-[env(safe-area-inset-bottom,0px)]">
-                <h3 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
-                  {item.title}
-                </h3>
+              <div className="absolute inset-x-0 bottom-0 z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16 pointer-events-none">
+                <div className="max-w-3xl space-y-2 sm:space-y-3 pointer-events-auto">
+                  <h3 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+                    {item.title}
+                  </h3>
 
-                <p className="font-sans-body text-xs sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl">
-                  {item.description}
-                </p>
+                  <p className="font-sans-body text-xs sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl">
+                    {item.description}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
