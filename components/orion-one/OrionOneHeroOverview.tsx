@@ -117,21 +117,16 @@ export default function OrionOneHeroOverview({
     const slideShades = slideShadesRef.current.filter(Boolean) as HTMLDivElement[];
 
     const ctx = gsap.context(() => {
-      
       // 1. Initial State Setup
-      gsap.set(heroLayer, { opacity: 1, display: "block" });
+      gsap.set(heroLayer, { autoAlpha: 1, display: "block" });
       gsap.set(heroLeftDoor, { xPercent: 0 });
       gsap.set(heroRightDoor, { xPercent: 0 });
-      gsap.fromTo(
-        heroContent,
-        { opacity: 0, y: 35 },
-        { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" }
-      );
+      gsap.set(heroContent, { autoAlpha: 1, scale: 1, y: 0 });
 
-      gsap.set(addressLayer, { opacity: 1, display: "flex" });
+      gsap.set(addressLayer, { autoAlpha: 1, display: "flex" });
       gsap.set(addressStatement, {
         scale: 0.9,
-        opacity: 0,
+        autoAlpha: 0,
         filter: "blur(12px)",
         y: 25,
       });
@@ -139,20 +134,20 @@ export default function OrionOneHeroOverview({
 
       gsap.set(destinationLayer, {
         yPercent: 100,
-        opacity: 1,
+        autoAlpha: 0,
         display: "flex",
         pointerEvents: "none",
       });
       gsap.set(destinationStatement, {
         scale: 1,
-        opacity: 1,
+        autoAlpha: 1,
         filter: "blur(0px)",
         y: 0,
       });
       gsap.set(destinationGlow, { scale: 1.2, opacity: 0.8 });
 
       slides.forEach((slide) => {
-        gsap.set(slide, { xPercent: 100 });
+        gsap.set(slide, { xPercent: 100, autoAlpha: 0 });
       });
 
       const masterTl = gsap.timeline({
@@ -175,9 +170,9 @@ export default function OrionOneHeroOverview({
       masterTl.to(
         heroContent,
         {
-          opacity: 0,
+          autoAlpha: 0,
           scale: 0.94,
-          duration: 0.9,
+          duration: 0.8,
           ease: "power2.inOut",
         },
         "heroSplit"
@@ -218,7 +213,7 @@ export default function OrionOneHeroOverview({
         addressStatement,
         {
           scale: 1,
-          opacity: 1,
+          autoAlpha: 1,
           filter: "blur(0px)",
           y: 0,
           duration: 1.3,
@@ -227,15 +222,28 @@ export default function OrionOneHeroOverview({
         "heroSplit+=0.3"
       );
 
+      // Hide heroLayer completely once the doors finish splitting open so it never overlaps lower slides
+      masterTl.to(
+        heroLayer,
+        {
+          autoAlpha: 0,
+          duration: 0.1,
+        },
+        "heroSplit+=1.5"
+      );
+
       masterTl.to({}, { duration: 0.8 });
 
       masterTl.addLabel("toDestination");
+
+      // Reveal destinationLayer as the address statement fades
+      masterTl.set(destinationLayer, { autoAlpha: 1 }, "toDestination");
 
       masterTl.to(
         addressStatement,
         {
           scale: 0.94,
-          opacity: 0,
+          autoAlpha: 0,
           filter: "blur(8px)",
           y: -40,
           duration: 1.2,
@@ -265,11 +273,24 @@ export default function OrionOneHeroOverview({
         "toDestination"
       );
 
+      // Hide addressLayer once destinationLayer fully covers it
+      masterTl.to(
+        addressLayer,
+        {
+          autoAlpha: 0,
+          duration: 0.1,
+        },
+        "toDestination+=1.4"
+      );
+
       masterTl.to({}, { duration: 0.8 });
 
       for (let i = 0; i < slides.length; i++) {
         const label = `card_${i}`;
         masterTl.addLabel(label);
+
+        // Make slide visible as it enters
+        masterTl.set(slides[i], { autoAlpha: 1 }, label);
 
         masterTl.to(
           slides[i],
@@ -286,7 +307,7 @@ export default function OrionOneHeroOverview({
             destinationStatement,
             {
               scale: 0.92,
-              opacity: 0,
+              autoAlpha: 0,
               filter: "blur(8px)",
               duration: 1.2,
               ease: "none",
@@ -301,6 +322,14 @@ export default function OrionOneHeroOverview({
               ease: "none",
             },
             label
+          );
+          masterTl.to(
+            destinationLayer,
+            {
+              autoAlpha: 0,
+              duration: 0.1,
+            },
+            `${label}+=1.3`
           );
         } else {
           if (slideInners[i - 1]) {
@@ -466,6 +495,7 @@ export default function OrionOneHeroOverview({
           <div
             ref={addressStatementRef}
             className="relative z-10 max-w-4xl text-center space-y-4 will-change-transform"
+            style={{ opacity: 0 }}
           >
             <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] leading-[1.06] uppercase">
               More Than An Address
@@ -483,6 +513,7 @@ export default function OrionOneHeroOverview({
         <div
           ref={destinationLayerRef}
           className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-20 select-none bg-[#0a2222] will-change-transform shadow-[0_-25px_60px_rgba(0,0,0,0.6)]"
+          style={{ transform: "translateY(100%)", opacity: 0, visibility: "hidden" }}
         >
           <div
             ref={destinationGlowRef}
@@ -516,7 +547,12 @@ export default function OrionOneHeroOverview({
               slidesRef.current[idx] = el;
             }}
             className="absolute inset-0 w-full h-full overflow-hidden will-change-transform bg-[#081a1a]"
-            style={{ zIndex: 30 + idx }}
+            style={{
+              zIndex: 30 + idx,
+              transform: "translateX(100%)",
+              visibility: "hidden",
+              opacity: 0,
+            }}
           >
             <div
               ref={(el) => {
