@@ -54,23 +54,46 @@ export default function PageTransition({
 
     if (isFirstMount.current && !isNavigating) {
       isFirstMount.current = false;
-      if (curtain) gsap.set(curtain, { autoAlpha: 0 });
+      if (curtain) {
+        gsap.fromTo(
+          curtain,
+          { autoAlpha: 1 },
+          {
+            autoAlpha: 0,
+            duration: 0.7,
+            ease: EASE.inOut,
+            delay: 0.05,
+            onComplete: () => {
+              if (lenis) lenis.start();
+              ScrollTrigger.refresh();
+            },
+          }
+        );
+      }
       gsap.fromTo(
         root,
-        { opacity: 0 },
+        { opacity: 0.25, y: 8 },
         {
           opacity: 1,
-          duration: DUR.m,
-          ease: EASE.inOut,
+          y: 0,
+          duration: 0.7,
+          ease: EASE.out,
           delay: 0.05,
-          clearProps: "opacity",
+          clearProps: "all",
           onComplete: () => {
             if (lenis) lenis.start();
             ScrollTrigger.refresh();
           },
         }
       );
-      return;
+
+      // Safety timer so curtain never stays if animation is disrupted
+      const initialSafetyTimer = setTimeout(() => {
+        if (curtain) gsap.to(curtain, { autoAlpha: 0, duration: 0.2 });
+        if (root) gsap.to(root, { opacity: 1, y: 0, clearProps: "all" });
+      }, 1500);
+
+      return () => clearTimeout(initialSafetyTimer);
     }
 
     isFirstMount.current = false;

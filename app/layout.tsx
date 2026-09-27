@@ -4,6 +4,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import "lenis/dist/lenis.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import PageTransition from "@/components/PageTransition";
 import MagneticEffects from "@/components/MagneticEffects";
 import AgentationToolbar from "@/components/AgentationToolbar";
 
@@ -77,7 +78,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D]">
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <PageTransition>{children}</PageTransition>
+        </SmoothScroll>
         <MagneticEffects />
         {process.env.NODE_ENV === "development" && <AgentationToolbar />}
       </body>

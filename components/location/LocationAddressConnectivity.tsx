@@ -578,10 +578,9 @@ export default function LocationAddressConnectivity() {
                   className="object-cover object-center"
                 />
 
-                {/* Multi-stop scrim gradients matching Layer 5 */}
+                {/* Multi-stop scrim gradients */}
                 <div className="absolute top-0 inset-x-0 h-44 sm:h-56 bg-gradient-to-b from-[#081a1a]/90 via-[#081a1a]/40 to-transparent pointer-events-none z-[3]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/60 via-45% to-transparent pointer-events-none z-[3]" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
               </div>
 
               {/* Bottom Content: Headline & Narrative grounded at bottom */}
@@ -680,7 +679,6 @@ export default function LocationAddressConnectivity() {
 
               {/* Bottom Scrim */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/60 via-45% to-transparent pointer-events-none z-[3]" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
 
               {/* Bottom Content: Headline & Narrative grounded at bottom */}
               <div className="absolute inset-x-0 bottom-0 z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16 pointer-events-none">

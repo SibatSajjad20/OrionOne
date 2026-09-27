@@ -48,25 +48,40 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
+    <div className="fixed inset-0 z-[100] flex justify-end animate-in fade-in duration-200">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#081a1a]/80 backdrop-blur-md transition-opacity duration-300"
+        className="fixed inset-0 bg-[#081a1a]/85 backdrop-blur-md transition-opacity duration-300 cursor-pointer"
         onClick={onClose}
+        aria-label="Close modal overlay"
       />
 
       {/* Drawer Panel */}
       <div
         data-lenis-prevent="true"
-        className="relative w-full max-w-lg bg-[#153D3D] text-[#EDE5DA] border-l border-[#EDE5DA]/15 shadow-2xl p-5 sm:p-8 flex flex-col justify-between overflow-y-auto overscroll-contain z-10"
+        className="relative w-full max-w-lg bg-[#153D3D] text-[#EDE5DA] border-l border-[#EDE5DA]/15 shadow-2xl p-5 sm:p-8 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] flex flex-col justify-between overflow-y-auto overscroll-contain z-10 animate-in slide-in-from-right duration-300"
       >
         <div>
-          {/* Header */}
-          <div className="flex items-center justify-between pb-6 border-b border-[#EDE5DA]/10">
-            <div className="relative h-10 sm:h-12 w-44 sm:w-48">
+          {/* Sticky Header with prominent close button */}
+          <div className="sticky top-0 bg-[#153D3D] pb-4 sm:pb-5 border-b border-[#EDE5DA]/10 flex items-center justify-between z-20 -mx-5 px-5 sm:-mx-8 sm:px-8">
+            <div className="relative h-9 sm:h-11 w-40 sm:w-48">
               <Image
                 src="/new-logo.png"
                 alt="Orion One"
@@ -77,14 +92,14 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
             </div>
             <button
               onClick={onClose}
-              className="p-2.5 text-[#EDE5DA]/70 hover:text-white transition-colors rounded-full hover:bg-white/5 cursor-pointer"
+              className="p-2.5 sm:p-3 text-[#EDE5DA] bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/20 hover:border-[#62AA9E]/60 hover:text-[#62AA9E] transition-all rounded-full cursor-pointer active:scale-95 shadow-md flex items-center justify-center shrink-0"
               aria-label="Close drawer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 stroke-[2.5]" />
             </button>
           </div>
 
-          <div className="mt-6 sm:mt-8 space-y-2">
+          <div className="mt-5 sm:mt-8 space-y-2">
             <span className="text-[10px] uppercase tracking-[0.35em] text-[#62AA9E] font-medium font-sans-body">
               Private Concierge Desk
             </span>

@@ -115,8 +115,9 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
       Boolean
     ) as HTMLDivElement[];
 
-    const ctx = gsap.context(() => {
-      
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 1024px)", () => {
       if (facetCards[0]) {
         gsap.set(facetCards[0], { opacity: 1, y: 0 });
       }
@@ -208,22 +209,104 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
       return () => {
         tlRef.current = null;
       };
-    
-    }, container);
+    });
 
-    return () => ctx.revert();
+    mm.add("(max-width: 1023px)", () => {
+      const cards = container.querySelectorAll(".mobile-arch-card");
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: container,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (
     <section ref={containerRef} className="relative w-full bg-[#081a1a]">
-      {/* Pinned Stage Viewport */}
+      {/* ========================================================= */}
+      {/* MOBILE & TABLET EDITORIAL ARCHITECTURAL CARDS LAYOUT     */}
+      {/* High-end stacked cards with full-width photography       */}
+      {/* ========================================================= */}
+      <div className="lg:hidden px-4 sm:px-8 py-16 sm:py-24 space-y-8 bg-[#081a1a] text-[#EDE5DA]">
+        <div className="space-y-3">
+          <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-[#62AA9E] font-medium font-sans-body">
+            Architectural Form &amp; Rhythm
+          </span>
+          <h2 className="font-serif-heading text-3xl sm:text-4xl font-light text-[#EDE5DA] tracking-tight leading-[1.1] uppercase">
+            Curated <br />
+            <span className="italic font-normal text-sand-gradient normal-case">
+              Perspectives
+            </span>
+          </h2>
+          <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed max-w-xl">
+            Curvilinear lines, cascading podiums, and floor-to-ceiling glass designed in natural harmony with the lake.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {ARCHITECTURAL_FACETS.map((facet, idx) => {
+            const elev = ELEVATION_PERSPECTIVES[idx];
+            return (
+              <div
+                key={facet.id}
+                className="mobile-arch-card rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-xl transition-all duration-300 hover:border-[#62AA9E]/40"
+              >
+                {/* Full-bleed Architectural Image */}
+                <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-[#081a1a]">
+                  <Image
+                    src={elev.image}
+                    alt={elev.alt}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-center"
+                    priority={idx === 0}
+                  />
+                  {/* Subtle top-to-bottom scrim */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828] via-transparent to-black/20 pointer-events-none" />
+
+                  {/* Corner Index Badge */}
+                  <div className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#081a1a]/85 backdrop-blur-md border border-[#EDE5DA]/20 text-[10px] font-sans-body tracking-[0.2em] text-[#62AA9E] uppercase font-semibold">
+                    0{idx + 1} · {facet.title}
+                  </div>
+                </div>
+
+                {/* Narrative Description */}
+                <div className="p-5 sm:p-7 space-y-2">
+                  <h3 className="font-serif-heading text-xl sm:text-2xl font-light text-[#EDE5DA] tracking-tight">
+                    {facet.title}
+                  </h3>
+                  <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
+                    {facet.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* DESKTOP PINNED STAGE VIEWPORT (>= 1024px)                 */}
+      {/* Untouched 50/50 stage with scrubbed elevation crossfades  */}
+      {/* ========================================================= */}
       <div
         ref={stageRef}
-        className="relative w-full h-[100dvh] overflow-hidden bg-[#081a1a] text-[#EDE5DA]"
+        className="hidden lg:block relative w-full h-[100dvh] overflow-hidden bg-[#081a1a] text-[#EDE5DA]"
       >
-        {/* ========================================================= */}
-        {/* 1. LEFT PANEL: FULL 50% WIDTH, FULL HEIGHT, PARTITIONS ONLY*/}
-        {/* ========================================================= */}
+        {/* 1. LEFT PANEL: FULL 50% WIDTH, FULL HEIGHT, PARTITIONS ONLY */}
         <div
           ref={leftPanelRef}
           className="absolute top-0 left-0 w-1/2 h-full z-20 flex flex-col pt-24 pb-0 overflow-hidden bg-[#081a1a]"
@@ -278,10 +361,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
           </div>
         </div>
 
-        {/* ========================================================= */}
         {/* 2. RIGHT PANEL: FULL 50% WIDTH CLEAR ARCHITECTURAL RENDER */}
-        {/* Completely clean image, no text overlays, smooth crossfade*/}
-        {/* ========================================================= */}
         <div
           ref={imagePanelRef}
           className="absolute top-0 right-0 w-1/2 h-full overflow-hidden z-10 border-l border-[#EDE5DA]/10 shadow-[-12px_0_35px_rgba(0,0,0,0.45)]"

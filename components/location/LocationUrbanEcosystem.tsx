@@ -282,7 +282,6 @@ export default function LocationUrbanEcosystem() {
 
             {/* Bottom Scrim */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/60 via-45% to-transparent pointer-events-none z-[3]" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#081a1a]/85 via-[#081a1a]/30 to-transparent pointer-events-none z-[3]" />
 
             {/* Bottom Content: Headline & Narrative */}
             <div className="absolute bottom-12 sm:bottom-20 lg:bottom-24 left-6 sm:left-12 lg:left-20 max-w-3xl z-10 space-y-3 sm:space-y-4">

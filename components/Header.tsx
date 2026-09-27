@@ -313,7 +313,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
         {menuOpen && (
           <div
             data-lenis-prevent="true"
-            className="fixed inset-0 z-50 bg-[#081a1a]/98 backdrop-blur-2xl flex flex-col p-5 sm:p-10 lg:hidden overflow-y-auto overscroll-contain animate-in fade-in duration-300"
+            className="fixed inset-0 z-[80] bg-[#081a1a]/98 backdrop-blur-2xl flex flex-col p-5 sm:p-10 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] lg:hidden overflow-y-auto overscroll-contain animate-in fade-in duration-300"
           >
             {/* Top Bar inside drawer */}
             <div className="flex items-center justify-between pb-4 sm:pb-6 border-b border-[#EDE5DA]/10 shrink-0">
@@ -328,15 +328,15 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               </div>
               <button
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex items-center justify-center p-2.5 text-[#EDE5DA] hover:text-[#62AA9E] border border-[#EDE5DA]/15 hover:border-[#62AA9E]/40 rounded-full transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center p-2.5 text-[#EDE5DA] bg-white/5 hover:bg-white/10 hover:text-[#62AA9E] border border-[#EDE5DA]/15 hover:border-[#62AA9E]/40 rounded-full transition-all duration-200 cursor-pointer active:scale-90"
                 aria-label="Close menu"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 transition-transform duration-200 hover:rotate-90" />
               </button>
             </div>
 
             {/* Editorial Nav Links */}
-            <nav className="flex flex-col space-y-1 sm:space-y-2 py-4 flex-1">
+            <nav className="flex flex-col space-y-1 sm:space-y-1.5 py-4 flex-1">
               {NAV_LINKS.map((link, idx) => {
                 const active = isLinkActive(link);
                 const ordinal = String(idx + 1).padStart(2, "0");
@@ -344,23 +344,39 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
                 if (isResidences) {
                   return (
-                    <div key={link.href} className="border-b border-[#EDE5DA]/10 py-2 sm:py-2.5">
+                    <div
+                      key={link.href}
+                      style={{ animationDelay: `${idx * 40}ms` }}
+                      className={`border-b border-[#EDE5DA]/10 py-1.5 sm:py-2 rounded-xl transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
+                        active ? "bg-[#62AA9E]/[0.07] px-3 sm:px-4 border border-[#62AA9E]/25" : "hover:bg-white/[0.02] px-2 sm:px-3"
+                      }`}
+                    >
                       <div className="flex items-center justify-between min-h-[44px]">
                         <Link
                           href={link.href}
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-baseline gap-3 group flex-1"
+                          className="flex items-center gap-3 group flex-1 transition-transform duration-200 group-hover:translate-x-1"
                         >
-                          <span className="text-[11px] font-sans-body text-[#62AA9E]/60 tracking-[0.2em] font-semibold">
+                          <span
+                            className={`text-[11px] font-sans-body tracking-[0.2em] font-semibold transition-colors ${
+                              active ? "text-[#62AA9E]" : "text-[#62AA9E]/60 group-hover:text-[#62AA9E]"
+                            }`}
+                          >
                             {ordinal}
                           </span>
                           <span
                             className={`font-serif-heading text-lg sm:text-xl tracking-wide transition-colors ${
-                              active ? "text-[#62AA9E]" : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
+                              active ? "text-[#62AA9E] font-medium" : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
                             }`}
                           >
                             {link.name}
                           </span>
+                          {active && (
+                            <span className="inline-flex items-center gap-1.5 text-[8.5px] font-sans-body uppercase tracking-[0.18em] text-[#62AA9E] bg-[#62AA9E]/15 border border-[#62AA9E]/30 px-2 py-0.5 rounded-full font-medium ml-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#62AA9E] animate-pulse" />
+                              Active
+                            </span>
+                          )}
                         </Link>
                         <button
                           type="button"
@@ -378,7 +394,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
                       {/* Expandable Mobile Suites List */}
                       {mobileResidencesOpen && (
-                        <div className="pl-6 pt-1 pb-1 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+                        <div className="pl-6 pt-1 pb-2 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
                           {RESIDENCE_SUITES_MENU.map((suite) => {
                             const isSuiteActive = pathname === suite.href;
                             return (
@@ -386,13 +402,16 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                                 key={suite.href}
                                 href={suite.href}
                                 onClick={() => setMenuOpen(false)}
-                                className={`block py-1.5 px-3 rounded-lg text-sm font-serif-heading transition-colors ${
+                                className={`flex items-center justify-between py-1.5 px-3 rounded-lg text-sm font-serif-heading transition-all duration-200 ${
                                   isSuiteActive
-                                    ? "text-[#62AA9E]"
-                                    : "text-[#EDE5DA]/75 hover:text-[#62AA9E]"
+                                    ? "text-[#62AA9E] bg-[#62AA9E]/10 border-l-2 border-[#62AA9E] pl-3.5 font-medium"
+                                    : "text-[#EDE5DA]/75 hover:text-[#62AA9E] hover:translate-x-1"
                                 }`}
                               >
-                                {suite.name}
+                                <span>{suite.name}</span>
+                                {isSuiteActive && (
+                                  <span className="w-1 h-1 rounded-full bg-[#62AA9E]" />
+                                )}
                               </Link>
                             );
                           })}
@@ -407,21 +426,51 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                     key={link.href}
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
-                    className={`transition-colors border-b border-[#EDE5DA]/10 py-3 sm:py-3.5 flex flex-col items-start sm:flex-row sm:items-center sm:justify-between gap-1 group min-h-[44px] ${
-                      active ? "text-[#62AA9E]" : "hover:text-[#62AA9E]"
+                    style={{ animationDelay: `${idx * 40}ms` }}
+                    className={`transition-all duration-200 border-b border-[#EDE5DA]/10 py-2.5 sm:py-3 px-3 sm:px-4 flex flex-col items-start sm:flex-row sm:items-center sm:justify-between gap-1 group min-h-[44px] rounded-xl animate-in fade-in slide-in-from-bottom-2 fill-mode-both hover:translate-x-1.5 active:scale-[0.99] ${
+                      active
+                        ? "bg-[#62AA9E]/[0.08] border border-[#62AA9E]/30 text-[#62AA9E]"
+                        : "hover:bg-white/[0.03] text-[#EDE5DA] hover:text-[#62AA9E]"
                     }`}
                   >
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-[11px] font-sans-body text-[#62AA9E]/60 tracking-[0.2em] font-semibold">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`text-[11px] font-sans-body tracking-[0.2em] font-semibold transition-colors ${
+                          active ? "text-[#62AA9E]" : "text-[#62AA9E]/60 group-hover:text-[#62AA9E]"
+                        }`}
+                      >
                         {ordinal}
                       </span>
-                      <span className="font-serif-heading text-lg sm:text-xl tracking-wide text-[#EDE5DA] group-hover:text-[#62AA9E] transition-colors">
+                      <span
+                        className={`font-serif-heading text-lg sm:text-xl tracking-wide transition-colors ${
+                          active ? "text-[#62AA9E] font-medium" : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
+                        }`}
+                      >
                         {link.name}
                       </span>
+                      {active && (
+                        <span className="inline-flex items-center gap-1.5 text-[8.5px] font-sans-body uppercase tracking-[0.18em] text-[#62AA9E] bg-[#62AA9E]/15 border border-[#62AA9E]/30 px-2 py-0.5 rounded-full font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#62AA9E] animate-pulse" />
+                          Active
+                        </span>
+                      )}
                     </div>
-                    <span className="text-[10px] sm:text-[11px] font-sans-body text-[#EDE5DA]/50 group-hover:text-[#62AA9E]/80 tracking-widest uppercase font-light pl-8 sm:pl-0">
-                      {link.subtitle}
-                    </span>
+                    <div className="flex items-center gap-2 pl-8 sm:pl-0">
+                      <span
+                        className={`text-[10px] sm:text-[11px] font-sans-body tracking-widest uppercase font-light transition-colors ${
+                          active ? "text-[#62AA9E]/80 font-normal" : "text-[#EDE5DA]/50 group-hover:text-[#62AA9E]/80"
+                        }`}
+                      >
+                        {link.subtitle}
+                      </span>
+                      <ArrowUpRight
+                        className={`w-3.5 h-3.5 transition-all duration-200 ${
+                          active
+                            ? "text-[#62AA9E] opacity-100 translate-x-0"
+                            : "text-[#62AA9E] opacity-0 -translate-x-1.5 group-hover:opacity-100 group-hover:translate-x-0"
+                        }`}
+                      />
+                    </div>
                   </Link>
                 );
               })}
