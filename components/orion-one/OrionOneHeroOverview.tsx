@@ -83,6 +83,15 @@ export default function OrionOneHeroOverview({
     const v1 = leftVideoRef.current;
     const v2 = rightVideoRef.current;
 
+    if (v1) {
+      v1.muted = true;
+      v1.defaultMuted = true;
+    }
+    if (v2) {
+      v2.muted = true;
+      v2.defaultMuted = true;
+    }
+
     const playVideos = () => {
       if (v1 && v1.paused) v1.play().catch(() => {});
       if (v2 && v2.paused) v2.play().catch(() => {});
@@ -421,6 +430,7 @@ export default function OrionOneHeroOverview({
                 src="/scene_5_balcony_backup.mp4"
                 autoPlay
                 muted
+                defaultMuted
                 loop
                 playsInline
                 preload="auto"
@@ -445,6 +455,7 @@ export default function OrionOneHeroOverview({
                 src="/scene_5_balcony_backup.mp4"
                 autoPlay
                 muted
+                defaultMuted
                 loop
                 playsInline
                 preload="auto"

@@ -40,18 +40,20 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Large design binaries and video source files
+# Large design binaries and raw video backups
 /images/
 /images2/
 *.psd
 *.cdr
-*.mp4
 *.pdf
 CLAUDE.md
 /public/video-frames-balcony-backup/
 /public/video-frames-old/
 /public/scene-4-frames/
 /public/scene-7-frames/
+public/master_film*.mp4
+public/*_backup.mp4
+!public/scene_5_balcony_backup.mp4
 
 # Scratch / content-bible files and Word docs — not part of source
 scratch_content_bible.txt

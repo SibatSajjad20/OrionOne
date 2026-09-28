@@ -26,8 +26,12 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.85;
+    const v = videoRef.current;
+    if (v) {
+      v.playbackRate = 0.85;
+      v.muted = true;
+      v.defaultMuted = true;
+      v.play().catch(() => {});
     }
   }, [videoLoaded]);
 
@@ -130,14 +134,21 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
 
         <video
           ref={videoRef}
+          key="/scene_3.mp4"
+          src="/scene_3.mp4"
           autoPlay
           muted
+          defaultMuted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
+          onLoadedData={() => setVideoLoaded(true)}
+          onCanPlay={() => setVideoLoaded(true)}
+          onPlaying={() => setVideoLoaded(true)}
           onCanPlayThrough={() => setVideoLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoLoaded ? "opacity-100" : "opacity-0"
-            }`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            videoLoaded ? "opacity-100" : "opacity-0"
+          }`}
         >
           <source src="/scene_3.mp4" type="video/mp4" />
         </video>
