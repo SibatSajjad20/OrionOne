@@ -145,7 +145,7 @@ export default function LakesidePromenade() {
       {/* Clean Stage Header */}
       <div className="pt-8 sm:pt-12 pb-2 sm:pb-3 px-4 sm:px-8 lg:px-16 max-w-[1500px] mx-auto w-full shrink-0">
         <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
-          The Lakeside <span className="italic font-normal text-sand-gradient normal-case">Promenade</span>
+          The Lakeside <span className="italic font-normal text-sand-gradient normal-case uppercase">Promenade</span>
         </h2>
       </div>
 

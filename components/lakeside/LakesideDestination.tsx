@@ -25,11 +25,11 @@ export default function LakesideDestination() {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         text,
-        { opacity: 0, x: -35 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          x: 0,
-          duration: 1.1,
+          y: 0,
+          duration: 1.0,
           ease: "power3.out",
           scrollTrigger: {
             trigger: text,
@@ -41,12 +41,11 @@ export default function LakesideDestination() {
 
       gsap.fromTo(
         visual,
-        { opacity: 0, x: 35, scale: 0.98 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          x: 0,
-          scale: 1,
-          duration: 1.2,
+          y: 0,
+          duration: 1.0,
           ease: "power3.out",
           scrollTrigger: {
             trigger: visual,

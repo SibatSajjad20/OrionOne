@@ -65,10 +65,12 @@ export default function ContactHero({ onOpenInquiry: _onOpenInquiry }: ContactHe
       <div className="pb-12 sm:pb-20 max-w-5xl">
         <h1
           ref={headlineRef}
-          className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.98] uppercase"
+          className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-light text-[#EDE5DA] tracking-tight leading-[1.12] uppercase transform-gpu backface-hidden"
         >
-          Every Message <br />
-          <span className="italic font-normal text-sand-gradient normal-case">Starts Something Timeless</span>
+          <span className="block">Every Message</span>
+          <span className="block italic font-normal text-sand-gradient normal-case">
+            Starts Something Timeless
+          </span>
         </h1>
         <p
           ref={subtitleRef}
@@ -97,7 +99,7 @@ export default function ContactHero({ onOpenInquiry: _onOpenInquiry }: ContactHe
             Desk Hours
           </span>
           <p className="font-sans-body text-xs sm:text-sm text-[#EDE5DA] font-light leading-relaxed">
-            Monday – Saturday · 10:00 AM – 6:00 PM
+            Open Daily · 10:00 AM – 7:00 PM
           </p>
         </div>
 

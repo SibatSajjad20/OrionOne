@@ -69,8 +69,8 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
 
       tl.fromTo(
         headline,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1.2, clearProps: "all" }
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1.0, clearProps: "all" }
       )
         .fromTo(
           subtitle,
@@ -179,10 +179,10 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
           {/* Hero Headline */}
           <h1
             ref={headlineRef}
-            className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.04] uppercase"
+            className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.12] uppercase transform-gpu backface-hidden"
           >
-            Where Business <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+            <span className="block">Where Business</span>
+            <span className="block italic font-normal text-sand-gradient normal-case">
               Meets Destination Living
             </span>
           </h1>

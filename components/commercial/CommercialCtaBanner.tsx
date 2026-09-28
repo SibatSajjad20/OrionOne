@@ -50,7 +50,7 @@ export default function CommercialCtaBanner({ onOpenInquiry }: CommercialCtaBann
           <span className="hidden sm:inline">·</span>
           <span>District 101, Bahria Phase VIII</span>
           <span className="hidden sm:inline">·</span>
-          <span>0333 6660722</span>
+          <span>+92 300 9079 164</span>
         </div>
       </div>
     </section>

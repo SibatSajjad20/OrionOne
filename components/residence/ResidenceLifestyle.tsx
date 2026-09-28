@@ -15,9 +15,9 @@ const LIFESTYLE_FACILITIES = [
       "A serene resort-style pool setting hovering directly above the lake waters, offering uninterrupted horizon views.",
   },
   {
-    title: "Lakefront Promenade",
+    title: "Shoreline Boardwalk",
     narrative:
-      "A landscaped waterside promenade connecting residents with morning jogs, scenic shoreline strolls, and evening breezes.",
+      "A landscaped waterside walkway connecting residents with morning jogs, scenic shoreline strolls, and evening breezes.",
   },
   {
     title: "Fitness & Elevated Tracks",

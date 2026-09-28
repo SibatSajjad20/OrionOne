@@ -285,7 +285,7 @@ export default function AmenitiesHeroShowcase({
         {/* ========================================================================= */}
         <div
           ref={heroLayerRef}
-          className="absolute inset-0 z-10 w-full h-full flex flex-col justify-center items-center text-center px-4 sm:px-8 lg:px-16 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
+          className="absolute inset-0 z-10 w-full h-full flex flex-col justify-center items-center text-center px-4 sm:px-8 lg:px-16 pt-16 sm:pt-20 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
         >
           {/* Ambient background glow vignette */}
           <div
@@ -295,11 +295,11 @@ export default function AmenitiesHeroShowcase({
 
           <div
             ref={heroContentRef}
-            className="max-w-4xl mx-auto space-y-6 sm:space-y-8 will-change-transform"
+            className="w-full max-w-4xl mx-auto space-y-6 sm:space-y-8 will-change-transform"
           >
-            <h1 className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-light text-[#EDE5DA] leading-[1.02] uppercase">
-              Designed Around <br />
-              <span className="italic font-normal text-sand-gradient normal-case">
+            <h1 className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-light text-[#EDE5DA] leading-[1.12] uppercase transform-gpu backface-hidden">
+              <span className="block">Designed Around</span>
+              <span className="block italic font-normal text-sand-gradient normal-case">
                 How You Live
               </span>
             </h1>

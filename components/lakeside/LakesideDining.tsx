@@ -23,15 +23,14 @@ export default function LakesideDining() {
     if (!section || !visual || !text) return;
 
     const ctx = gsap.context(() => {
-      // Parallax float on the dining visual
+      // Entrance for dining visual
       gsap.fromTo(
         visual,
-        { opacity: 0, y: 50, scale: 0.97 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          scale: 1,
-          duration: 1.2,
+          duration: 1.0,
           ease: "power3.out",
           scrollTrigger: {
             trigger: visual,
@@ -44,11 +43,11 @@ export default function LakesideDining() {
       // Text stagger entrance
       gsap.fromTo(
         text,
-        { opacity: 0, x: 40 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          x: 0,
-          duration: 1.1,
+          y: 0,
+          duration: 1.0,
           ease: "power3.out",
           scrollTrigger: {
             trigger: text,

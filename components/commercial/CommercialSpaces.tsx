@@ -72,12 +72,11 @@ export default function CommercialSpaces({ onOpenInquiry }: CommercialSpacesProp
       // Floor plan frame entrance
       gsap.fromTo(
         floorPlan,
-        { opacity: 0, scale: 0.98, y: 30 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          scale: 1,
           y: 0,
-          duration: 1.2,
+          duration: 1.0,
           ease: "power3.out",
           clearProps: "all",
           scrollTrigger: {

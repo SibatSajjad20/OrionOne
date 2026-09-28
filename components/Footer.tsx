@@ -41,7 +41,7 @@ export default function Footer() {
 
             <div className="flex items-center gap-2.5 text-xs text-[#808080]">
               <Clock className="w-3.5 h-3.5 text-[#62AA9E]" />
-              <span>Show Suite Open Daily · 10AM – 6PM</span>
+              <span>Show Suite Open Daily · 10:00 AM – 7:00 PM</span>
             </div>
           </div>
 
@@ -57,6 +57,9 @@ export default function Footer() {
                 </Link>
                 <Link href="/orion-one" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Orion One
+                </Link>
+                <Link href="/residence" className="hover:text-[#62AA9E] transition-colors py-0.5">
+                  Residences
                 </Link>
                 <Link href="/about" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   About Us

@@ -223,35 +223,53 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
   return (
     <section
       ref={containerRef}
-      className="relative pt-24 sm:pt-32 pb-24 px-4 sm:px-12 lg:px-20 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
+      className="relative pt-28 sm:pt-36 pb-24 px-4 sm:px-12 lg:px-20 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
     >
       {/* Subtle Ambient Radial Lighting */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_0%,rgba(28,78,78,0.4)_0%,rgba(21,61,61,0.2)_50%,transparent_80%)]" />
 
       <div className="relative z-20 max-w-7xl mx-auto w-full">
-        {/* Top Left Rotating Logo Badge — Replicating Reference */}
-        {/* Top Left Rotating Logo Badge */}
-        <div ref={badgeRef} className="flex items-center justify-between pt-2 mb-10 sm:mb-16">
-          <OrionRotatingBadge size={104} />
+        {/* Top Canopy Brand Header & Rotating Badge */}
+        <div ref={badgeRef} className="flex items-center justify-between pt-2 mb-8 sm:mb-14">
+          <div className="flex items-center gap-4">
+            <OrionRotatingBadge size={92} />
+            <div className="flex flex-col">
+              <span className="font-sans-body text-[10px] uppercase tracking-[0.35em] text-[#62AA9E] font-bold">
+                Orion One
+              </span>
+              <span className="font-sans-body text-[10px] uppercase tracking-[0.2em] text-[#EDE5DA]/70">
+                Residential Collection
+              </span>
+            </div>
+          </div>
+          <div className="hidden sm:flex flex-col items-end font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#EDE5DA]/60">
+            <span>DHA Phase III</span>
+            <span className="text-[#62AA9E]">Islamabad</span>
+          </div>
         </div>
 
-        {/* Big Stately RESIDENCES Headline with Gap from Top & Number '04' on Right */}
+        {/* Big Stately RESIDENCES Headline with Gap from Top */}
         <div
           ref={headlineRef}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-8 sm:pb-12 border-b border-[#EDE5DA]/15"
+          className="pb-8 sm:pb-12 border-b border-[#EDE5DA]/15"
         >
-          <div>
-            <h1 className="font-serif-heading text-4xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-light text-[#EDE5DA] leading-[0.9] uppercase select-none">
-              Residences
-            </h1>
-          </div>
-
-          <div className="md:text-right pb-1">
-            <span className="font-serif-heading text-4xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-light text-[#62AA9E]/80 leading-[0.9] select-none">
-              04
-            </span>
-          </div>
+          <h1 className="font-serif-heading text-4xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-light text-[#EDE5DA] leading-[0.96] uppercase select-none transform-gpu backface-hidden">
+            Residences
+          </h1>
         </div>
+
+        {/* Mobile backdrop for dropdown click-outside */}
+        {(isTypologyOpen || isBedroomOpen || isSortOpen) && (
+          <div
+            className="fixed inset-0 z-20 sm:hidden bg-black/40 backdrop-blur-[2px]"
+            onClick={() => {
+              setIsTypologyOpen(false);
+              setIsBedroomOpen(false);
+              setIsSortOpen(false);
+            }}
+            aria-hidden="true"
+          />
+        )}
 
         {/* Architectural Filter Bar matching background aesthetic */}
         <div
@@ -463,7 +481,7 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
                 </div>
 
                 {/* Media Frame — Architectural Floor Plan Layout */}
-                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] p-4 flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.01]">
+                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] border border-[#EDE5DA]/20 p-5 flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.01] shadow-inner">
                   <Image
                     src={unit.floorPlanSrc}
                     alt={`${unit.title} architectural layout at Orion One`}

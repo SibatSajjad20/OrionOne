@@ -115,9 +115,8 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
       >
         {/* Poster / Fallback Image — fades once video is ready */}
         <div
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-            videoLoaded ? "opacity-0" : "opacity-100"
-          }`}
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${videoLoaded ? "opacity-0" : "opacity-100"
+            }`}
         >
           <Image
             src="/images/lakeside/hero-lake.jpg"
@@ -137,9 +136,8 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
           playsInline
           preload="metadata"
           onCanPlayThrough={() => setVideoLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-            videoLoaded ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoLoaded ? "opacity-100" : "opacity-0"
+            }`}
         >
           <source src="/scene_3.mp4" type="video/mp4" />
         </video>
@@ -164,12 +162,9 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
           {/* Display Headline */}
           <h1
             ref={headlineRef}
-            className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] tracking-tight leading-[1.05]"
+            className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.05]"
           >
-            Life, By the{" "}
-            <span className="italic font-normal text-sand-gradient block sm:inline">
-              Water
-            </span>
+            LIFE BY THE WATER
           </h1>
 
           {/* Subtitle / Lead */}

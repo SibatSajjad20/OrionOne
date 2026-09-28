@@ -30,8 +30,8 @@ export default function AboutHero({ onOpenInquiry: _onOpenInquiry }: AboutHeroPr
 
       tl.fromTo(
         canopy,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1.2, clearProps: "all" }
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1.0, clearProps: "all" }
       )
         .fromTo(
           narrative,
@@ -41,9 +41,9 @@ export default function AboutHero({ onOpenInquiry: _onOpenInquiry }: AboutHeroPr
         )
         .fromTo(
           imageFrame,
-          { opacity: 0, scale: 0.96, y: 25 },
-          { opacity: 1, scale: 1, y: 0, duration: 1.2, clearProps: "all" },
-          "-=0.9"
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1.0, clearProps: "all" },
+          "-=0.7"
         );
 
       const ledgerItems = ledger.querySelectorAll(".ledger-row");
@@ -71,91 +71,31 @@ export default function AboutHero({ onOpenInquiry: _onOpenInquiry }: AboutHeroPr
         aria-hidden="true"
       />
 
-      {/* Massive Editorial Display Canopy */}
-      <div ref={canopyRef} className="pb-12 sm:pb-20">
-        <h1 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.98] uppercase">
-          Experience <span className="text-[#EDE5DA]/40 font-normal">Shaped Us</span> <br />
-          <span className="italic font-normal text-sand-gradient normal-case">Execution</span> Defines Us
-        </h1>
-      </div>
+      {/* Hero Architectural Spread: Canopy, Narrative & Signage Image */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center pb-12 sm:pb-16">
+        {/* Left Column: Display Canopy & Lead Narrative */}
+        <div className="lg:col-span-7 space-y-6">
+          <div ref={canopyRef}>
+            <h1 className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-light text-[#EDE5DA] tracking-[0.02em] leading-[1.18] transform-gpu backface-hidden">
+              <span className="block">Experience shaped us.</span>
+              <span className="block">Vision drives us.</span>
+              <span className="block">Execution defines us.</span>
+            </h1>
+          </div>
 
-      {/* Asymmetric Architectural Spread */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start border-t border-[#EDE5DA]/15 pt-12 sm:pt-16">
-        {/* Left Column: Monograph Narrative & Pedigree Ledger */}
-        <div className="lg:col-span-7 space-y-12">
-          {/* Lead Narrative */}
           <div
             ref={narrativeRef}
-            className="space-y-6 text-[#EDE5DA]/85 font-sans-body text-base sm:text-lg font-light leading-relaxed max-w-2xl"
+            className="space-y-4 text-[#EDE5DA]/85 font-sans-body text-base sm:text-lg font-light leading-relaxed max-w-2xl pt-2"
           >
             <p>
               Orion One is a signature lakefront development conceived by <span className="text-[#EDE5DA] font-medium">SP Builders</span>, a multidisciplinary firm specializing in construction, structural consultancy, and landmark real estate.
             </p>
-            <p className="text-[#C9BFB1] text-sm sm:text-base">
-              With comprehensive experience across the complete project lifecycle, SP Builders unites structural honesty, rigorous masterplanning, and a lasting commitment to shaping environments engineered for permanence.
-            </p>
-          </div>
-
-          {/* Architectural Pedigree Ledger */}
-          <div ref={ledgerRef} className="border-t border-[#EDE5DA]/15 divide-y divide-[#EDE5DA]/10">
-            <div className="ledger-row py-5 grid grid-cols-12 gap-4 items-baseline">
-              <span className="col-span-2 sm:col-span-1 font-mono text-[11px] text-[#62AA9E] font-medium">
-                01
-              </span>
-              <div className="col-span-10 sm:col-span-4">
-                <h2 className="font-sans-body text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#EDE5DA]">
-                  Engineering Lifecycle
-                </h2>
-              </div>
-              <p className="col-span-12 sm:col-span-7 font-sans-body text-xs text-[#C9BFB1] font-light leading-relaxed">
-                From subterranean civil works to high rise structural envelope and luxury interior delivery.
-              </p>
-            </div>
-
-            <div className="ledger-row py-5 grid grid-cols-12 gap-4 items-baseline">
-              <span className="col-span-2 sm:col-span-1 font-mono text-[11px] text-[#62AA9E] font-medium">
-                02
-              </span>
-              <div className="col-span-10 sm:col-span-4">
-                <h2 className="font-sans-body text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#EDE5DA]">
-                  Masterplanning Foresight
-                </h2>
-              </div>
-              <p className="col-span-12 sm:col-span-7 font-sans-body text-xs text-[#C9BFB1] font-light leading-relaxed">
-                Precise urban integration balancing privacy, pedestrian promenade flow, and open horizons.
-              </p>
-            </div>
-
-            <div className="ledger-row py-5 grid grid-cols-12 gap-4 items-baseline">
-              <span className="col-span-2 sm:col-span-1 font-mono text-[11px] text-[#62AA9E] font-medium">
-                03
-              </span>
-              <div className="col-span-10 sm:col-span-4">
-                <h2 className="font-sans-body text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#EDE5DA]">
-                  Shoreline Stewardship
-                </h2>
-              </div>
-              <p className="col-span-12 sm:col-span-7 font-sans-body text-xs text-[#C9BFB1] font-light leading-relaxed">
-                A dedication to architectural quality on the most coveted water edge in Islamabad.
-              </p>
-            </div>
-          </div>
-
-          {/* Understated Editorial Anchor */}
-          <div className="pt-2 flex items-center gap-6">
-            <a
-              href="#philosophy"
-              className="group inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-[#EDE5DA] hover:text-[#62AA9E] transition-colors"
-            >
-              <span>Explore The Design Philosophy</span>
-              <ArrowDown className="w-3.5 h-3.5 text-[#62AA9E] transition-transform duration-300 group-hover:translate-y-1" />
-            </a>
           </div>
         </div>
 
-        {/* Right Column: Pure Borderless Architectural Photography */}
+        {/* Right Column: Hero Architectural Signage Image */}
         <div ref={imageFrameRef} className="lg:col-span-5 relative">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-[#0d2828] border border-[#EDE5DA]/10 shadow-2xl">
+          <div className="relative aspect-[4/5] sm:aspect-[4/3] lg:aspect-[4/5] w-full overflow-hidden rounded-xl bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl">
             <Image
               src="/images/about/sp-builders-facade.png"
               alt="SP Builders Architectural Signage and Headquarters"
@@ -165,6 +105,64 @@ export default function AboutHero({ onOpenInquiry: _onOpenInquiry }: AboutHeroPr
               className="object-cover object-center transition-all duration-700 ease-out"
             />
           </div>
+        </div>
+      </div>
+
+      {/* Architectural Pedigree Ledger Spread */}
+      <div className="border-t border-[#EDE5DA]/15 pt-10 sm:pt-14 space-y-8">
+        <div ref={ledgerRef} className="border-t border-[#EDE5DA]/15 divide-y divide-[#EDE5DA]/10">
+          <div className="ledger-row py-6 grid grid-cols-12 gap-4 items-baseline">
+            <span className="col-span-2 sm:col-span-1 font-sans-body text-xs text-[#62AA9E] font-medium tracking-wider">
+              01
+            </span>
+            <div className="col-span-10 sm:col-span-4">
+              <h2 className="font-sans-body text-sm sm:text-[15px] font-semibold uppercase tracking-wider text-[#EDE5DA]">
+                Engineering Lifecycle
+              </h2>
+            </div>
+            <p className="col-span-12 sm:col-span-7 font-sans-body text-sm sm:text-[15px] text-[#C9BFB1] font-light leading-relaxed">
+              From subterranean civil works to high rise structural envelope and luxury interior delivery.
+            </p>
+          </div>
+
+          <div className="ledger-row py-6 grid grid-cols-12 gap-4 items-baseline">
+            <span className="col-span-2 sm:col-span-1 font-sans-body text-xs text-[#62AA9E] font-medium tracking-wider">
+              02
+            </span>
+            <div className="col-span-10 sm:col-span-4">
+              <h2 className="font-sans-body text-sm sm:text-[15px] font-semibold uppercase tracking-wider text-[#EDE5DA]">
+                Masterplanning Foresight
+              </h2>
+            </div>
+            <p className="col-span-12 sm:col-span-7 font-sans-body text-sm sm:text-[15px] text-[#C9BFB1] font-light leading-relaxed">
+              Precise urban integration balancing privacy, pedestrian promenade flow, and open horizons.
+            </p>
+          </div>
+
+          <div className="ledger-row py-6 grid grid-cols-12 gap-4 items-baseline">
+            <span className="col-span-2 sm:col-span-1 font-sans-body text-xs text-[#62AA9E] font-medium tracking-wider">
+              03
+            </span>
+            <div className="col-span-10 sm:col-span-4">
+              <h2 className="font-sans-body text-sm sm:text-[15px] font-semibold uppercase tracking-wider text-[#EDE5DA]">
+                Shoreline Stewardship
+              </h2>
+            </div>
+            <p className="col-span-12 sm:col-span-7 font-sans-body text-sm sm:text-[15px] text-[#C9BFB1] font-light leading-relaxed">
+              A dedication to architectural quality on the most coveted water edge in Islamabad.
+            </p>
+          </div>
+        </div>
+
+        {/* Understated Editorial Anchor */}
+        <div className="pt-2 flex items-center gap-6">
+          <a
+            href="#philosophy"
+            className="group inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-[#EDE5DA] hover:text-[#62AA9E] transition-colors"
+          >
+            <span>Explore The Design Philosophy</span>
+            <ArrowDown className="w-3.5 h-3.5 text-[#62AA9E] transition-transform duration-300 group-hover:translate-y-1" />
+          </a>
         </div>
       </div>
     </section>

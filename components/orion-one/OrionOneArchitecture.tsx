@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import { scrollToY } from "@/lib/scrollTo";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -18,10 +17,10 @@ interface ArchitecturalFacet {
 
 const ARCHITECTURAL_FACETS: ArchitecturalFacet[] = [
   {
-    id: "organic-form",
-    title: "Organic Form",
+    id: "architecture-nature",
+    title: "Architecture & Nature",
     description:
-      "Curvilinear lines and cascading podiums echoing the natural rhythm and movement of the lake.",
+      "Stepped garden terraces connecting the tower directly to the landscaped lakeside promenade.",
   },
   {
     id: "lake-views",
@@ -35,12 +34,6 @@ const ARCHITECTURAL_FACETS: ArchitecturalFacet[] = [
     description:
       "Floor-to-ceiling structural glazing drawing ambient daylight deep into each residence.",
   },
-  {
-    id: "architecture-nature",
-    title: "Architecture & Nature",
-    description:
-      "Stepped garden terraces connecting the tower directly to the landscaped lakeside promenade.",
-  },
 ];
 
 interface ElevationPerspective {
@@ -51,24 +44,19 @@ interface ElevationPerspective {
 
 const ELEVATION_PERSPECTIVES: ElevationPerspective[] = [
   {
-    id: "facade",
-    image: "/images/orion-one/architecture-fluid.jpg",
-    alt: "Fluid waterfront architectural facade of Orion One",
+    id: "architecture-nature",
+    image: "/images/orion-one/terrace-elevations.jpg",
+    alt: "Stepped garden terraces connecting architecture and nature at Orion One",
   },
   {
-    id: "terraces",
-    image: "/images/orion-one/terrace-elevations.jpg",
+    id: "lake-views",
+    image: "/images/orion-one/lakefront-view.jpg",
     alt: "Cascading outdoor terraces overlooking the lake at Orion One",
   },
   {
-    id: "arrival",
-    image: "/images/orion-one/arrival-plaza.jpg",
-    alt: "Arrival court and entry canopy at Orion One",
-  },
-  {
-    id: "night",
-    image: "/images/orion-one/night-reflection.jpg",
-    alt: "Evening architectural illumination and lake reflection of Orion One",
+    id: "natural-light",
+    image: "/images/lakeside/balcony-panoramic.jpg",
+    alt: "Floor-to-ceiling panoramic balcony terrace with ambient sunlight and lake views at Orion One",
   },
 ];
 
@@ -83,7 +71,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
   const leftPanelRef = useRef<HTMLDivElement>(null);
   const facetCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Active elevation perspective state (0 to 3)
+  // Active elevation perspective state (0, 1, 2)
   const [activeElevation, setActiveElevation] = useState<number>(0);
   const activeElevationRef = useRef<number>(0);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -92,13 +80,14 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
     setActiveElevation(idx);
     activeElevationRef.current = idx;
 
-    if (tlRef.current && tlRef.current.scrollTrigger) {
-      const st = tlRef.current.scrollTrigger;
-      const progressTargets = [0, 0.35, 0.68, 1.0];
-      const targetScroll =
-        st.start + (st.end - st.start) * progressTargets[idx];
-      scrollToY(targetScroll);
-    }
+    // Ensure all cards are visible if user interacts via click
+    const cards = facetCardsRef.current.filter(Boolean) as HTMLDivElement[];
+    gsap.to(cards, {
+      opacity: 1,
+      y: 0,
+      duration: 0.35,
+      ease: "power2.out",
+    });
   };
 
   useEffect(() => {
@@ -118,10 +107,12 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 1024px)", () => {
+      // First card starts visible
       if (facetCards[0]) {
         gsap.set(facetCards[0], { opacity: 1, y: 0 });
       }
 
+      // Subsequent cards start translated down and hidden, entering sequentially on scroll
       facetCards.slice(1).forEach((card) => {
         gsap.set(card, { opacity: 0, y: 80 });
       });
@@ -138,17 +129,12 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const p = self.progress;
-            if (p >= 0.72) {
-              if (activeElevationRef.current !== 3) {
-                setActiveElevation(3);
-                activeElevationRef.current = 3;
-              }
-            } else if (p >= 0.44) {
+            if (p >= 0.66) {
               if (activeElevationRef.current !== 2) {
                 setActiveElevation(2);
                 activeElevationRef.current = 2;
               }
-            } else if (p >= 0.16) {
+            } else if (p >= 0.33) {
               if (activeElevationRef.current !== 1) {
                 setActiveElevation(1);
                 activeElevationRef.current = 1;
@@ -165,6 +151,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
 
       tlRef.current = tl;
 
+      // Card 1 animates in smoothly
       if (facetCards[1]) {
         tl.to(
           facetCards[1],
@@ -174,10 +161,11 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
             duration: 0.8,
             ease: "power2.out",
           },
-          0.15
+          0.2
         );
       }
 
+      // Card 2 animates in smoothly
       if (facetCards[2]) {
         tl.to(
           facetCards[2],
@@ -188,19 +176,6 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
             ease: "power2.out",
           },
           0.85
-        );
-      }
-
-      if (facetCards[3]) {
-        tl.to(
-          facetCards[3],
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          1.55
         );
       }
 
@@ -237,8 +212,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
   return (
     <section ref={containerRef} className="relative w-full bg-[#081a1a]">
       {/* ========================================================= */}
-      {/* MOBILE & TABLET EDITORIAL ARCHITECTURAL CARDS LAYOUT     */}
-      {/* High-end stacked cards with full-width photography       */}
+      {/* MOBILE & TABLET STACKED CARDS LAYOUT                      */}
       {/* ========================================================= */}
       <div className="lg:hidden px-4 sm:px-8 py-16 sm:py-24 space-y-8 bg-[#081a1a] text-[#EDE5DA]">
         <div className="space-y-3">
@@ -274,12 +248,11 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
                     className="object-cover object-center"
                     priority={idx === 0}
                   />
-                  {/* Subtle top-to-bottom scrim */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828] via-transparent to-black/20 pointer-events-none" />
 
-                  {/* Corner Index Badge */}
+                  {/* Corner Index Badge without numbering */}
                   <div className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#081a1a]/85 backdrop-blur-md border border-[#EDE5DA]/20 text-[10px] font-sans-body tracking-[0.2em] text-[#62AA9E] uppercase font-semibold">
-                    0{idx + 1} · {facet.title}
+                    {facet.title}
                   </div>
                 </div>
 
@@ -300,16 +273,16 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
 
       {/* ========================================================= */}
       {/* DESKTOP PINNED STAGE VIEWPORT (>= 1024px)                 */}
-      {/* Untouched 50/50 stage with scrubbed elevation crossfades  */}
+      {/* Sequential card entrance on scrub, no numbering           */}
       {/* ========================================================= */}
       <div
         ref={stageRef}
         className="hidden lg:block relative w-full h-[100dvh] overflow-hidden bg-[#081a1a] text-[#EDE5DA]"
       >
-        {/* 1. LEFT PANEL: FULL 50% WIDTH, FULL HEIGHT, PARTITIONS ONLY */}
+        {/* 1. LEFT PANEL: PERSPECTIVE NARRATIVE TABS */}
         <div
           ref={leftPanelRef}
-          className="absolute top-0 left-0 w-1/2 h-full z-20 flex flex-col pt-24 pb-0 overflow-hidden bg-[#081a1a]"
+          className="absolute top-0 left-0 w-[40%] xl:w-[38%] h-full z-20 flex flex-col pt-24 pb-0 overflow-hidden bg-[#081a1a]"
         >
           <div className="flex-1 flex flex-col w-full h-full">
             {ARCHITECTURAL_FACETS.map((facet, idx) => {
@@ -323,7 +296,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
                     facetCardsRef.current[idx] = el;
                   }}
                   onClick={() => handleCardClick(idx)}
-                  className={`flex-1 w-full flex flex-col justify-center px-12 lg:px-14 xl:px-16 transition-all duration-400 cursor-pointer will-change-transform relative opacity-100 ${
+                  className={`flex-1 w-full flex flex-col justify-center px-8 lg:px-12 xl:px-14 transition-all duration-400 cursor-pointer will-change-transform relative opacity-100 ${
                     !isLast ? "border-b border-[#EDE5DA]/15" : ""
                   } ${
                     isCurrent
@@ -340,7 +313,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
 
                   <div className="max-w-xl">
                     <h3
-                      className={`font-serif-heading text-base sm:text-2xl lg:text-[27px] font-light tracking-tight leading-snug transition-colors duration-300 ${
+                      className={`font-serif-heading text-base sm:text-2xl lg:text-[26px] font-light tracking-tight leading-snug transition-colors duration-300 ${
                         isCurrent ? "text-[#EDE5DA]" : "text-[#EDE5DA]/70"
                       }`}
                     >
@@ -348,7 +321,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
                     </h3>
 
                     <p
-                      className={`font-sans-body text-xs sm:text-sm lg:text-[15px] font-light leading-relaxed mt-2 transition-colors duration-300 ${
+                      className={`font-sans-body text-xs sm:text-sm lg:text-[14px] font-light leading-relaxed mt-2 transition-colors duration-300 ${
                         isCurrent ? "text-[#EDE5DA]/90" : "text-[#C9BFB1]/65"
                       }`}
                     >
@@ -361,30 +334,33 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
           </div>
         </div>
 
-        {/* 2. RIGHT PANEL: FULL 50% WIDTH CLEAR ARCHITECTURAL RENDER */}
+        {/* 2. RIGHT PANEL: FULL-BLEED ARCHITECTURAL VIEWPORT */}
         <div
           ref={imagePanelRef}
-          className="absolute top-0 right-0 w-1/2 h-full overflow-hidden z-10 border-l border-[#EDE5DA]/10 shadow-[-12px_0_35px_rgba(0,0,0,0.45)]"
+          className="absolute top-0 right-0 w-[60%] xl:w-[62%] h-full overflow-hidden z-10 border-l border-[#EDE5DA]/10 bg-[#081a1a]"
         >
-          {ELEVATION_PERSPECTIVES.map((elev, idx) => (
-            <div
-              key={elev.id}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${
-                activeElevation === idx
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0 pointer-events-none"
-              }`}
-            >
-              <Image
-                src={elev.image}
-                alt={elev.alt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center"
-                priority={idx === 0}
-              />
-            </div>
-          ))}
+          <div className="relative w-full h-full">
+            {ELEVATION_PERSPECTIVES.map((elev, idx) => (
+              <div
+                key={elev.id}
+                className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${
+                  activeElevation === idx
+                    ? "opacity-100 z-10"
+                    : "opacity-0 z-0 pointer-events-none"
+                }`}
+              >
+                <Image
+                  src={elev.image}
+                  alt={elev.alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 65vw"
+                  className="object-cover object-center"
+                  priority={idx === 0}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/60 via-transparent to-transparent pointer-events-none" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

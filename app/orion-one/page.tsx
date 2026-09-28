@@ -8,7 +8,6 @@ import Footer from "@/components/Footer";
 import InquiryDrawer from "@/components/InquiryDrawer";
 import OrionOneHeroOverview from "@/components/orion-one/OrionOneHeroOverview";
 import OrionOneArchitecture from "@/components/orion-one/OrionOneArchitecture";
-import OrionOneWaterfrontDestination from "@/components/orion-one/OrionOneWaterfrontDestination";
 import OrionOneMasterplan from "@/components/orion-one/OrionOneMasterplan";
 
 if (typeof window !== "undefined") {
@@ -44,16 +43,13 @@ export default function OrionOnePage() {
 
       {/* Main Orion One Narrative Journey */}
       <main className="relative">
-        {/* Sections 01 & 02: Hero -> Split-Door Curtain Transition ("A Destination") -> Overview & 4 Pillars Deck */}
+        {/* Hero Section: "Life, By The Water" Video Hero -> "A Destination" Transition -> 3 Destination Pillars (Residences, Commercial, Wellness) */}
         <OrionOneHeroOverview onOpenInquiry={() => setIsInquiryOpen(true)} />
 
-        {/* Section 03: Architecture Transition ("Flows Like Water") -> Aperture Scale Reveal -> 4 Facets & Interactive Elevation */}
+        {/* Section 02: Architecture ("Curated Perspectives" - 3 Facets & Interactive Elevation) */}
         <OrionOneArchitecture onOpenInquiry={() => setIsInquiryOpen(true)} />
 
-        {/* Sections 04 & 06: Destination Transition ("Life, By The Water") -> Horizontal Waterfront Slide Deck -> Connected Matrix */}
-        <OrionOneWaterfrontDestination />
-
-        {/* Section 05: Cinematic Lakefront Split -> Merge -> Full-Bleed Destination CTA */}
+        {/* Section 03: Cinematic Lakefront Split -> Merge -> Full-Bleed Destination CTA */}
         <OrionOneMasterplan onOpenInquiry={() => setIsInquiryOpen(true)} />
       </main>
 

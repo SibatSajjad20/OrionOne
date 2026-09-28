@@ -211,7 +211,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
                 className="w-full flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[#EDE5DA]/90 hover:text-[#62AA9E] px-5 sm:px-8 py-3.5 sm:py-4 border border-[#EDE5DA]/20 hover:border-[#62AA9E]/40 rounded-full transition-all duration-300 text-center sm:text-left"
               >
                 <span>WhatsApp Private Desk</span>
-                <span className="font-mono text-[11px] text-[#62AA9E] font-normal">+92 300 9079 164</span>
+                <span className="font-sans-body text-[11px] text-[#62AA9E] font-medium tracking-wider">+92 300 9079 164</span>
               </a>
             </div>
           </div>

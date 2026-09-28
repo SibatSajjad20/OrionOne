@@ -25,11 +25,11 @@ export default function LakesideHeart() {
       // Header smooth fade and lift
       gsap.fromTo(
         header,
-        { opacity: 0, y: 35 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          duration: 1,
+          duration: 1.0,
           ease: "power3.out",
           scrollTrigger: {
             trigger: header,
@@ -39,15 +39,14 @@ export default function LakesideHeart() {
         }
       );
 
-      // Frame smooth scale & entrance reveal
+      // Frame entrance reveal
       gsap.fromTo(
         frame,
-        { opacity: 0, scale: 0.96, y: 40 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          scale: 1,
           y: 0,
-          duration: 1.2,
+          duration: 1.0,
           ease: "power3.out",
           scrollTrigger: {
             trigger: frame,
@@ -77,7 +76,7 @@ export default function LakesideHeart() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Header */}
         <div ref={headerRef} className="max-w-4xl mb-10 sm:mb-14 space-y-4 sm:space-y-5">
-          <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+          <h2 className="font-serif-heading text-xl sm:text-4xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
             The Lake at the Heart of <br />
             <span className="italic font-normal text-sand-gradient normal-case">
               Orion One

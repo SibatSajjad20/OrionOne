@@ -51,8 +51,8 @@ export default function MagneticEffects() {
         gsap.to([el, inner], {
           x: 0,
           y: 0,
-          duration: 1.2,
-          ease: "elastic.out(1, 0.35)",
+          duration: 0.8,
+          ease: "power3.out",
           overwrite: "auto",
         });
       };

@@ -103,7 +103,7 @@ export default function LocationConnects() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 space-y-10 sm:space-y-20">
         
         {/* Section Header */}
-        <div ref={headerRef} className="max-w-3xl space-y-4 will-change-transform">
+        <div ref={headerRef} className="max-w-3xl mx-auto text-center space-y-4 will-change-transform">
           <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
             Location That <br />
             <span className="italic font-normal text-sand-gradient normal-case">
@@ -115,7 +115,7 @@ export default function LocationConnects() {
             Residential · Commercial · Lifestyle
           </p>
 
-          <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed">
+          <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl mx-auto">
             Orion One&apos;s location supports more than residential living. It weaves together home, business, leisure, and regional access into an enduring waterfront address.
           </p>
         </div>

@@ -42,8 +42,19 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
   const quoteRef = useRef<HTMLDivElement>(null);
   const similarRef = useRef<HTMLDivElement>(null);
   const perspectiveRef = useRef<HTMLDivElement>(null);
+  const tabContentRef = useRef<HTMLDivElement>(null);
 
   const similarSuites = getSimilarSuites(suite.slug);
+
+  useEffect(() => {
+    if (tabContentRef.current) {
+      gsap.fromTo(
+        tabContentRef.current,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      );
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -58,11 +69,11 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
       if (heroRef.current) {
         gsap.fromTo(
           heroRef.current,
-          { opacity: 0, y: 35 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
+            duration: 1.0,
             ease: "power3.out",
           }
         );
@@ -73,11 +84,11 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
         const images = galleryRef.current.querySelectorAll(".gallery-frame");
         gsap.fromTo(
           images,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.1,
+            duration: 1.0,
             stagger: 0.2,
             ease: "power3.out",
             scrollTrigger: {
@@ -135,11 +146,11 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
           className="max-w-[1520px] mx-auto px-4 sm:px-10 lg:px-16 pt-8 sm:pt-12 pb-16 sm:pb-24 border-b border-[#EDE5DA]/15"
         >
           {/* Top Bar: Rotating Seal Badge (Left) + Unit Number (Center) + Quick Actions (Right) */}
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-12 sm:pb-16 border-b border-[#EDE5DA]/15">
+          <div className="grid grid-cols-1 lg:grid-cols-3 items-center gap-6 pb-12 sm:pb-16 border-b border-[#EDE5DA]/15">
             {/* Top-Left: Brand Rotating Badge */}
-            <div className="flex items-center gap-4">
-              <OrionRotatingBadge size={92} />
-              <div className="flex flex-col">
+            <div className="flex items-center gap-4 justify-center lg:justify-start">
+              <OrionRotatingBadge size={88} />
+              <div className="flex flex-col text-left">
                 <span className="font-sans-body text-[10px] uppercase tracking-[0.35em] text-[#62AA9E] font-bold">
                   Orion One
                 </span>
@@ -150,7 +161,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
             </div>
 
             {/* Center: Unit Number & Level Meta */}
-            <div className="text-center">
+            <div className="text-center justify-self-center">
               <h1 className="font-serif-heading text-4xl sm:text-7xl md:text-8xl lg:text-[7rem] font-light text-[#EDE5DA] tracking-tight leading-none uppercase select-none">
                 {suite.unitCode}
               </h1>
@@ -160,7 +171,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
             </div>
 
             {/* Top-Right: Editorial Navigation Links */}
-            <div className="flex flex-col items-center lg:items-end text-center lg:text-right gap-1 font-sans-body text-[11px] uppercase tracking-[0.22em]">
+            <div className="flex flex-col items-center lg:items-end text-center lg:text-right justify-self-center lg:justify-self-end gap-1 font-sans-body text-[11px] uppercase tracking-[0.22em]">
               <Link
                 href="/residence"
                 className="font-bold text-[#62AA9E] hover:text-[#EDE5DA] transition-colors py-1 flex items-center gap-1.5"
@@ -190,21 +201,19 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
             <div className="lg:col-span-7 flex flex-col">
               <div
                 onClick={() => setIsLightboxOpen(true)}
-                className="group relative w-full aspect-[4/3] rounded-2xl bg-[#0d2828]/70 border border-[#EDE5DA]/15 p-4 sm:p-6 flex items-center justify-center cursor-zoom-in shadow-2xl hover:border-[#62AA9E]/40 transition-all duration-300"
+                className="group relative w-full aspect-[16/11] rounded-2xl bg-[#EDE5DA] border border-[#EDE5DA]/20 p-3 sm:p-4 flex items-center justify-center cursor-zoom-in shadow-2xl transition-all duration-300 overflow-hidden"
               >
-                <div className="relative w-full h-full rounded-xl bg-[#EDE5DA] p-4 flex items-center justify-center overflow-hidden">
-                  <Image
-                    src={suite.floorPlanSrc}
-                    alt={`${suite.title} architectural floor plan layout`}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                    className="object-contain p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-                </div>
+                <Image
+                  src={suite.floorPlanSrc}
+                  alt={`${suite.title} architectural floor plan layout`}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  className="object-contain p-1 sm:p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
+                />
 
                 {/* Subtle Enlarge Hint */}
-                <div className="absolute bottom-6 right-6 bg-[#081a1a]/85 border border-[#EDE5DA]/20 text-[#EDE5DA] text-[10px] font-sans-body uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
+                <div className="absolute bottom-4 right-4 bg-[#081a1a]/85 border border-[#EDE5DA]/20 text-[#EDE5DA] text-[10px] font-sans-body uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
                   <Maximize2 className="w-3 h-3 text-[#62AA9E]" />
                   <span>Enlarge Layout</span>
                 </div>
@@ -322,7 +331,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
               </div>
 
               {/* Dynamic Tab Body */}
-              <div className="py-6 min-h-[220px]">
+              <div ref={tabContentRef} className="py-6 min-h-[220px]">
                 {/* Tab 1: INFO */}
                 {activeTab === "info" && (
                   <div className="space-y-4">
@@ -494,12 +503,10 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
               <button
                 type="button"
                 onClick={() => setIsInquiryOpen(true)}
-                className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border border-[#EDE5DA]/30 hover:border-[#62AA9E] hover:bg-[#62AA9E]/10 transition-all duration-500 flex flex-col items-center justify-center p-3 text-center cursor-pointer group"
+                className="inline-flex items-center justify-center gap-2.5 rounded-full bg-[#62AA9E] text-[#0d2828] hover:bg-[#7ec1b6] px-8 sm:px-10 py-3.5 sm:py-4 text-xs font-sans-body font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-xl hover:shadow-[#62AA9E]/25 hover:-translate-y-0.5 cursor-pointer group"
               >
-                <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#EDE5DA] group-hover:text-[#62AA9E] font-medium leading-tight">
-                  Book A Call Now
-                </span>
-                <ArrowRight className="w-4 h-4 text-[#62AA9E] mt-2 group-hover:translate-x-1 transition-transform" />
+                <span>Book a Private Tour</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
           </div>
@@ -541,7 +548,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                 </div>
 
                 {/* Floor Plan Image Frame */}
-                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] p-4 flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.01]">
+                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] border border-[#EDE5DA]/20 p-5 flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.01] shadow-inner">
                   <Image
                     src={other.floorPlanSrc}
                     alt={`${other.title} layout`}
@@ -612,16 +619,16 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
               {suite.lakeViewPerspective.subtitle}
             </p>
 
-            <button
-              type="button"
-              onClick={() => setIsInquiryOpen(true)}
-              className="w-32 h-32 rounded-full border border-white/40 hover:border-[#62AA9E] hover:bg-[#62AA9E]/10 transition-all duration-500 mx-auto flex flex-col items-center justify-center p-3 text-center cursor-pointer group"
-            >
-              <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-white group-hover:text-[#62AA9E] font-medium leading-tight">
-                Enquire Now
-              </span>
-              <ArrowRight className="w-4 h-4 text-[#62AA9E] mt-2 group-hover:translate-x-1 transition-transform" />
-            </button>
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsInquiryOpen(true)}
+                className="inline-flex items-center justify-center gap-2.5 rounded-full bg-[#62AA9E] text-[#0d2828] hover:bg-[#7ec1b6] px-9 py-4 text-xs font-sans-body font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-xl hover:shadow-[#62AA9E]/25 hover:-translate-y-0.5 cursor-pointer group"
+              >
+                <span>Book a Private Tour</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
           </div>
         </section>
 

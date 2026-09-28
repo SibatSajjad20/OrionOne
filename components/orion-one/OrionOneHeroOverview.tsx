@@ -23,12 +23,6 @@ interface DestinationPillar {
 
 const DESTINATION_PILLARS: DestinationPillar[] = [
   {
-    id: "lakefront",
-    title: "Lakefront",
-    image: "/images/orion-one/masterplan-lake.jpg",
-    alt: "Lakefront setting shaped by water and open spaces at Orion One",
-  },
-  {
     id: "residences",
     title: "Residences",
     image: "/images/orion-one/lakefront-view.jpg",
@@ -37,13 +31,13 @@ const DESTINATION_PILLARS: DestinationPillar[] = [
   {
     id: "commercial",
     title: "Commercial",
-    image: "/images/orion-one/podium-promenade.jpg",
+    image: "/images/commercial.png",
     alt: "Curated commercial terraces and retail at Orion One",
   },
   {
     id: "wellness",
     title: "Wellness",
-    image: "/images/amenities/infinity-pool.jpg",
+    image: "/images/gym.png",
     alt: "Wellness and recreation facilities at Orion One",
   },
 ];
@@ -79,6 +73,39 @@ export default function OrionOneHeroOverview({
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
   const slideInnersRef = useRef<(HTMLDivElement | null)[]>([]);
   const slideShadesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Split door video playback & sync refs
+  const leftVideoRef = useRef<HTMLVideoElement>(null);
+  const rightVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Auto-play and frame-sync the video across both doors
+  useEffect(() => {
+    const v1 = leftVideoRef.current;
+    const v2 = rightVideoRef.current;
+
+    const playVideos = () => {
+      if (v1 && v1.paused) v1.play().catch(() => {});
+      if (v2 && v2.paused) v2.play().catch(() => {});
+    };
+
+    playVideos();
+
+    const syncVideos = () => {
+      if (v1 && v2 && Math.abs(v1.currentTime - v2.currentTime) > 0.08) {
+        v2.currentTime = v1.currentTime;
+      }
+    };
+
+    if (v1) {
+      v1.addEventListener("timeupdate", syncVideos);
+    }
+
+    return () => {
+      if (v1) {
+        v1.removeEventListener("timeupdate", syncVideos);
+      }
+    };
+  }, []);
 
   useIsomorphicLayoutEffect(() => {
     const container = containerRef.current;
@@ -160,7 +187,7 @@ export default function OrionOneHeroOverview({
         scrollTrigger: {
           trigger: container,
           start: "top top",
-          end: "+=650%",
+          end: "+=520%",
           pin: stage,
           pinSpacing: true,
           scrub: 0.8,
@@ -387,15 +414,21 @@ export default function OrionOneHeroOverview({
             ref={heroLeftDoorRef}
             className="absolute top-0 bottom-0 left-0 w-[calc(50%+1px)] overflow-hidden will-change-transform z-10 bg-[#0a2222]"
           >
-            <div className="absolute top-0 bottom-0 left-0 w-full h-full md:w-[200%]">
-              <Image
-                src="/images/orion-one/hero-lakefront.jpg"
-                alt="Orion One Lakefront Horizon"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover object-center filter brightness-[0.88]"
-              />
+            <div className="absolute top-0 bottom-0 left-0 w-[200%] h-full">
+              <video
+                ref={leftVideoRef}
+                key="/scene_5_balcony_backup.mp4"
+                src="/scene_5_balcony_backup.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                poster="/images/orion-one/hero-balcony.jpg"
+                className="w-full h-full object-cover object-center filter brightness-[0.88]"
+              >
+                <source src="/scene_5_balcony_backup.mp4" type="video/mp4" />
+              </video>
               <div className="absolute inset-0 bg-[#0a2222]/45" />
             </div>
           </div>
@@ -405,15 +438,21 @@ export default function OrionOneHeroOverview({
             ref={heroRightDoorRef}
             className="absolute top-0 bottom-0 left-[50%] w-1/2 overflow-hidden will-change-transform z-10 bg-[#0a2222]"
           >
-            <div className="absolute top-0 bottom-0 left-0 md:-left-full w-full h-full md:w-[200%]">
-              <Image
-                src="/images/orion-one/hero-lakefront.jpg"
-                alt="Orion One Lakefront Horizon"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover object-left md:object-center filter brightness-[0.88]"
-              />
+            <div className="absolute top-0 bottom-0 -left-full w-[200%] h-full">
+              <video
+                ref={rightVideoRef}
+                key="/scene_5_balcony_backup.mp4"
+                src="/scene_5_balcony_backup.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                poster="/images/orion-one/hero-balcony.jpg"
+                className="w-full h-full object-cover object-center filter brightness-[0.88]"
+              >
+                <source src="/scene_5_balcony_backup.mp4" type="video/mp4" />
+              </video>
               <div className="absolute inset-0 bg-[#0a2222]/45" />
             </div>
           </div>
@@ -433,12 +472,6 @@ export default function OrionOneHeroOverview({
 
               <p className="font-serif-heading text-base sm:text-xl md:text-2xl text-[#EDE5DA] font-light italic max-w-2xl mx-auto">
                 Where architecture flows like water and every view inspires
-              </p>
-
-              <p className="font-sans-body text-xs sm:text-sm md:text-base text-[#EDE5DA]/85 font-light max-w-2xl mx-auto leading-relaxed">
-                Orion One brings contemporary architecture, lakefront living,
-                curated commercial spaces, wellness, and community together in
-                DHA Phase III, Islamabad.
               </p>
 
               <div className="pt-2">
@@ -500,8 +533,20 @@ export default function OrionOneHeroOverview({
         {/* ========================================================= */}
         <div
           ref={destinationLayerRef}
-          className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-20 select-none bg-[#0a2222] will-change-transform shadow-[0_-25px_60px_rgba(0,0,0,0.6)]"
+          className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8 z-20 select-none bg-[#0a2222] will-change-transform shadow-[0_-25px_60px_rgba(0,0,0,0.6)] overflow-hidden"
         >
+          {/* Background Image */}
+          <Image
+            src="/images/lakeview-commercial.jpg"
+            alt="Lakeview Commercial"
+            fill
+            sizes="100vw"
+            className="object-cover object-[50%_65%] pointer-events-none"
+          />
+
+          {/* Atmospheric Dark Overlay to ensure readability and match aesthetic */}
+          <div className="absolute inset-0 bg-[#0a2222]/70 pointer-events-none" />
+
           <div
             ref={destinationGlowRef}
             className="absolute w-[600px] sm:w-[900px] h-[350px] sm:h-[450px] bg-[#62AA9E]/15 rounded-full blur-[140px] pointer-events-none"
@@ -513,7 +558,7 @@ export default function OrionOneHeroOverview({
             className="relative z-10 max-w-4xl text-center space-y-4 will-change-transform"
           >
             <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-8xl font-light leading-[1.06] uppercase">
-              <span className="italic font-normal text-sand-gradient normal-case">
+              <span className="italic font-normal text-sand-gradient uppercase">
                 A Destination
               </span>
             </h2>

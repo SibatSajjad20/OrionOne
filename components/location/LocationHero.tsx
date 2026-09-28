@@ -26,23 +26,22 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
       // Smooth initial mount entrance
       gsap.fromTo(
         leftCol,
-        { opacity: 0, x: -35 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          x: 0,
-          duration: 1.1,
+          y: 0,
+          duration: 1.0,
           ease: "power3.out",
         }
       );
 
       gsap.fromTo(
         imgContainer,
-        { opacity: 0, scale: 0.98 },
+        { opacity: 0 },
         {
           opacity: 1,
-          scale: 1,
-          duration: 1.2,
-          ease: "power2.out",
+          duration: 1.0,
+          ease: "power3.out",
         }
       );
     }, container);
@@ -134,9 +133,9 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
         className="relative z-20 max-w-[1400px] w-full mx-auto px-4 sm:px-8 lg:px-16 py-12 lg:py-20"
       >
         <div className="max-w-2xl lg:max-w-3xl space-y-7 sm:space-y-8">
-          <h1 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] font-light text-[#EDE5DA] tracking-tight leading-[0.94] uppercase">
-            At the Heart <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+          <h1 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] font-light text-[#EDE5DA] tracking-tight leading-[1.12] uppercase transform-gpu backface-hidden">
+            <span className="block">At the Heart</span>
+            <span className="block italic font-normal text-sand-gradient normal-case">
               of DHA Phase III
             </span>
           </h1>

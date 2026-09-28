@@ -85,11 +85,11 @@ export default function ContactFormSection() {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         leftCol,
-        { opacity: 0, y: 35 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          duration: 1.2,
+          duration: 1.0,
           ease: "power3.out",
           clearProps: "all",
           scrollTrigger: {
@@ -102,12 +102,11 @@ export default function ContactFormSection() {
 
       gsap.fromTo(
         rightCol,
-        { opacity: 0, scale: 0.98, y: 40 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          scale: 1,
           y: 0,
-          duration: 1.2,
+          duration: 1.0,
           ease: "power3.out",
           clearProps: "all",
           scrollTrigger: {

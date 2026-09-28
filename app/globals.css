@@ -20,8 +20,8 @@
   --color-stone: #808080;
   --color-martian: #B2CE93;
 
-  --font-luxia: var(--font-luxia), "Luxia", "Didot", "Bodoni MT", serif;
-  --font-serif: var(--font-luxia), "Luxia", "Didot", "Bodoni MT", serif;
+  --font-luxia: var(--font-luxia), "Luxia", var(--font-bodoni), "Didot", "Bodoni MT", serif;
+  --font-serif: var(--font-luxia), "Luxia", var(--font-bodoni), "Didot", "Bodoni MT", serif;
   --font-sans: var(--font-montserrat), "Montserrat", system-ui, sans-serif;
 }
 
@@ -143,30 +143,52 @@ body.loading-lock::-webkit-scrollbar {
 /* Luxury typography & subtle glow utility classes */
 h1, h2, h3, h4, h5, h6 {
   overflow: visible;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1;
+  font-synthesis: none;
+  -webkit-font-synthesis: none;
+}
+
+.optimize-legibility {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
 
 .font-serif-heading,
 .font-serif {
   font-family: var(--font-serif);
   letter-spacing: 0.005em;
-  text-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern" 1, "liga" 1;
+  font-synthesis: none;
+  -webkit-font-synthesis: none;
   overflow: visible;
-  transform: translateZ(0);
 }
 
 /* Ensure all italic spans inside serif headings have room to breathe and never clip */
 .font-serif-heading i,
 .font-serif-heading em,
-.font-serif-heading .italic:not(.block):not(\!block),
+.font-serif-heading .italic,
 .font-serif i,
 .font-serif em,
-.font-serif .italic:not(.block):not(\!block) {
+.font-serif .italic {
   display: inline-block;
-  padding-right: 0.22em;
-  margin-right: -0.18em;
+  padding-top: 0.1em;
+  margin-top: -0.1em;
+  padding-bottom: 0.35em;
+  margin-bottom: -0.35em;
+  padding-right: 0.25em;
+  margin-right: -0.22em;
   overflow: visible;
   vertical-align: baseline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .font-sans-body {
@@ -186,11 +208,15 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+  padding-top: 0.1em;
+  margin-top: -0.1em;
+  padding-bottom: 0.35em;
+  margin-bottom: -0.35em;
   padding-right: 0.25em;
   margin-right: -0.22em;
-  padding-bottom: 0.08em;
   overflow: visible;
-  transform: translateZ(0);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .text-mint-gradient {
@@ -199,11 +225,15 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+  padding-top: 0.1em;
+  margin-top: -0.1em;
+  padding-bottom: 0.35em;
+  margin-bottom: -0.35em;
   padding-right: 0.25em;
   margin-right: -0.22em;
-  padding-bottom: 0.08em;
   overflow: visible;
-  transform: translateZ(0);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .border-mint-glow {

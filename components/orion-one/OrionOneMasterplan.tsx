@@ -63,7 +63,7 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
     if (!el || !pinContainer) return;
 
     const ctx = gsap.context(() => {
-      
+
       const applySplitMerge = (p: number) => {
         const isMobile = window.innerWidth < 768;
 
@@ -133,7 +133,7 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
       if (trigger.progress > 0) {
         applySplitMerge(trigger.progress);
       }
-    
+
     }, el);
 
     return () => ctx.revert();
@@ -141,9 +141,6 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
 
   return (
     <div ref={sectionRef} className="relative bg-[#0d2828] text-[#EDE5DA]">
-      {/* ============================================================= */}
-      {/* CINEMATIC PINNED SECTION: SPLIT -> MERGE -> FULL-BLEED CTA */}
-      {/* ============================================================= */}
       <section
         ref={pinContainerRef}
         className="relative w-full h-[100dvh] overflow-hidden bg-[#0d2828] select-none"
@@ -151,69 +148,59 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
         {/* Layer 1: Full-Bleed Photograph with subtle atmospheric gradient */}
         <div className="absolute inset-0 w-full h-full min-h-[100dvh] overflow-hidden select-none">
           <Image
-            src="/images/commercial/lakeview-aerial.jpg"
+            src="/images/lakeview-commercial.jpg"
             alt="The Lakefront at the Heart of DHA Phase III"
             fill
             priority
             sizes="100vw"
             className="object-cover object-center select-none"
           />
-          {/* Subtle cinematic gradient to ensure crisp editorial text contrast */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/85 via-[#0d2828]/25 to-[#0d2828]/70 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/85 via-[#0d2828]/35 to-[#0d2828]/70 pointer-events-none" />
         </div>
-
-        {/* Layer 2: Mask — desktop pin only; hidden on mobile so image stays full-bleed */}
         <div
           ref={maskContainerRef}
           className="absolute inset-0 w-full h-full pointer-events-none will-change-transform origin-center"
           style={{ transform: "scale(1)" }}
         >
-          {/* Left Mask: Covers left half of screen with dynamic clip-path cutout */}
           <div
             ref={maskLeftRef}
             className="absolute inset-[-2px] right-[50%] bg-[#0d2828] will-change-[clip-path]"
           />
-          {/* Right Mask: Covers right half of screen with dynamic clip-path cutout */}
           <div
             ref={maskRightRef}
             className="absolute inset-[-2px] left-[50%] bg-[#0d2828] will-change-[clip-path]"
           />
         </div>
-
-        {/* Layer 3: Initial Clean Heading (Comfortably placed above cards, zero clutter) */}
         <div
           ref={initialHeaderRef}
           className="absolute top-28 left-0 right-0 z-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none transition-opacity duration-150"
         >
           <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] uppercase max-w-5xl">
-            The Lakefront at the Heart of{" "}
+            The Pinnacle of Lakefront Living in{" "}
             <span className="italic font-normal text-sand-gradient normal-case">
               DHA Phase III
             </span>
           </h2>
         </div>
-
-        {/* Layer 4: Grand CTA — always visible on mobile; scrubbed in on md+ */}
         <div
           ref={grandCtaRef}
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-8 lg:px-16 z-20 pointer-events-none opacity-0 will-change-transform space-y-6 sm:space-y-8"
         >
           <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] leading-[1.08] uppercase max-w-5xl mx-auto">
-            More Than An Address <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
-              A Destination
+            Claim Your Place <br />
+            <span className="font-light text-sand-gradient uppercase">
+              On The Waterfront
             </span>
           </h2>
 
           <p className="font-sans-body text-xs sm:text-base lg:text-lg text-[#EDE5DA]/90 font-light max-w-2xl mx-auto leading-relaxed">
-            Discover the architecture, explore the waterfront, and experience the
-            vision behind Orion One.
+            Private residences, premier commercial terraces, and resort-style amenities come together in Islamabad’s premier lakeside masterplan.
           </p>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 w-full sm:w-auto">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 w-full sm:w-auto mx-auto">
             <Link
-              href="/lakeside"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 shadow-xl hover:shadow-[#62AA9E]/20 hover:-translate-y-0.5 cursor-pointer"
+              href="/residence"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 shadow-xl hover:shadow-[#62AA9E]/20 hover:-translate-y-0.5 cursor-pointer text-center"
             >
               <span>Explore Residences</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -221,22 +208,11 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
 
             <Link
               href="/commercial"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#EDE5DA] bg-[#0d2828]/80 hover:bg-[#0d2828] hover:border-[#62AA9E]/50 border border-[#EDE5DA]/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 backdrop-blur-md shadow-md cursor-pointer hover:-translate-y-0.5"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#EDE5DA] bg-[#0d2828]/80 hover:bg-[#0d2828] hover:border-[#62AA9E]/50 border border-[#EDE5DA]/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 backdrop-blur-md shadow-md cursor-pointer hover:-translate-y-0.5 text-center"
             >
               <span>Explore Commercial</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-[#62AA9E]" />
             </Link>
-
-            {onOpenInquiry && (
-              <button
-                type="button"
-                onClick={onOpenInquiry}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#EDE5DA] bg-[#0d2828]/80 hover:bg-[#0d2828] hover:border-[#62AA9E]/50 border border-[#EDE5DA]/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 backdrop-blur-md shadow-md cursor-pointer hover:-translate-y-0.5"
-              >
-                <span>Book a Private Tour</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#62AA9E]" />
-              </button>
-            )}
           </div>
         </div>
       </section>

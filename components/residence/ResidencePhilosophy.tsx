@@ -151,7 +151,7 @@ export default function ResidencePhilosophy() {
         ref={headerRef}
         className="w-full max-w-4xl mx-auto px-4 sm:px-12 py-16 sm:py-32 text-center flex flex-col items-center"
       >
-        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.08] mb-4 sm:mb-6">
+        <h2 className="font-serif-heading text-2xl uppercase sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.08] mb-4 sm:mb-6">
           Designed around the way you live
         </h2>
         <p className="font-sans-body text-xs sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl">
@@ -176,11 +176,10 @@ export default function ResidencePhilosophy() {
               ref={(el) => {
                 imagesRef.current[idx] = el;
               }}
-              className={`absolute -top-[10%] -bottom-[10%] -left-[20%] w-[140%] h-[120%] pointer-events-none will-change-transform transition-transform duration-700 ease-out ${
-                idx % 2 === 0
+              className={`absolute -top-[10%] -bottom-[10%] -left-[20%] w-[140%] h-[120%] pointer-events-none will-change-transform transition-transform duration-700 ease-out ${idx % 2 === 0
                   ? "group-hover:translate-x-3"
                   : "group-hover:-translate-x-3"
-              }`}
+                }`}
             >
               <Image
                 src={pillar.imageSrc}

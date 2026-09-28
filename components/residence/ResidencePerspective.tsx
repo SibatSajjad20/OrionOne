@@ -15,73 +15,43 @@ export default function ResidencePerspective() {
   const imageFrameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const section = sectionRef.current;
+    const narrative = narrativeRef.current;
+    const imageFrame = imageFrameRef.current;
+    if (!section || !narrative || !imageFrame) return;
+
     const ctx = gsap.context(() => {
-      
-      const getTargetTransform = () => {
-        const el = imageFrameRef.current;
-        if (!el) return { targetScale: 1.8, targetY: 0 };
-
-        const currentScale = (gsap.getProperty(el, "scale") as number) || 1;
-        const currentY = (gsap.getProperty(el, "y") as number) || 0;
-
-        const rect = el.getBoundingClientRect();
-        const unscaledWidth = rect.width / currentScale;
-        const unscaledHeight = rect.height / currentScale;
-        const unscaledTop = rect.top - currentY;
-        const unscaledCenterY = unscaledTop + unscaledHeight / 2;
-
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-
-        const scaleX = vw / unscaledWidth;
-        const scaleY = vh / unscaledHeight;
-        const targetScale = Math.max(scaleX, scaleY) * 1.02;
-        const targetY = vh / 2 - unscaledCenterY;
-
-        return { targetScale, targetY };
-      };
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=120%",
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.8,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      tl.to(
-        narrativeRef.current,
+      gsap.fromTo(
+        narrative,
+        { opacity: 0, y: 30 },
         {
-          opacity: 0,
-          y: -35,
-          ease: "power1.out",
-          duration: 0.28,
-        },
-        0
+          opacity: 1,
+          y: 0,
+          duration: 1.0,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: narrative,
+            start: "top 85%",
+            once: true,
+          },
+        }
       );
 
-      tl.to(
-        imageFrameRef.current,
+      gsap.fromTo(
+        imageFrame,
+        { opacity: 0, y: 30 },
         {
-          scale: () => getTargetTransform().targetScale,
-          y: () => getTargetTransform().targetY,
-          borderRadius: 0,
-          borderWidth: 0,
-          borderColor: "transparent",
-          boxShadow: "none",
-          ease: "power2.inOut",
-          duration: 0.85,
-        },
-        0
+          opacity: 1,
+          y: 0,
+          duration: 1.0,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: imageFrame,
+            start: "top 80%",
+            once: true,
+          },
+        }
       );
-
-      tl.to({}, { duration: 0.15 });
-    
     }, sectionRef);
 
     return () => ctx.revert();
@@ -90,33 +60,31 @@ export default function ResidencePerspective() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen min-h-[640px] bg-[#153D3D] text-[#EDE5DA] overflow-hidden flex flex-col justify-center items-center"
+      className="relative w-full py-24 sm:py-36 bg-[#153D3D] text-[#EDE5DA] overflow-hidden border-t border-[#EDE5DA]/10"
+      aria-label="A Home with a Different Perspective"
     >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-12 lg:px-20 flex flex-col items-center justify-center">
         {/* Centered Heading in one line & Paragraph below */}
-        <div ref={narrativeRef} className="w-full text-center mb-6 sm:mb-12">
-          <h2 className="font-serif-heading text-xl sm:text-3xl md:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase max-w-5xl mx-auto">
-            A HOME WITH <span className="text-[#62AA9E]">A DIFFERENT PERSPECTIVE</span>
+        <div ref={narrativeRef} className="w-full text-center mb-10 sm:mb-16">
+          <h2 className="font-serif-heading text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase max-w-5xl mx-auto">
+            A Home with a<span className="italic font-normal text-sand-gradient normal-case uppercase"> Different Perspective</span>
           </h2>
-          <p className="font-sans-body text-xs sm:text-base md:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-3xl mx-auto mt-3 sm:mt-6">
-            Living at Orion One means more than having a well-designed apartment.
-            It means waking up beside the lake, moving through spaces shaped by
-            natural light, and having seamless access to wellness, recreation,
-            dining, and community within the same tranquil destination.
+          <p className="font-sans-body text-xs sm:text-base md:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-3xl mx-auto mt-4 sm:mt-6">
+            Living at Orion One offers a lakeside home shaped by natural light and premium amenities. This tranquil destination seamlessly blends wellness, recreation, dining, and community into your daily life
           </p>
         </div>
 
-        {/* Pure Architectural Showcase Frame — Same Image Size */}
+        {/* Pure Architectural Showcase Frame */}
         <div
           ref={imageFrameRef}
-          className="relative w-[88vw] max-w-[380px] sm:max-w-none sm:w-full aspect-[9/14] sm:aspect-[21/10] rounded-2xl overflow-hidden shadow-2xl border border-[#EDE5DA]/15 bg-[#153D3D] will-change-transform z-10"
+          className="relative w-full aspect-[16/10] sm:aspect-[21/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-[#EDE5DA]/15 bg-[#0d2828]"
         >
           <Image
             src="/images/residence/pic-5.webp"
             alt="Sunlit double-height residence living room looking toward the terrace at Orion One"
             fill
-            sizes="100vw"
-            className="object-cover object-center filter brightness-[1.03] contrast-[1.02]"
+            sizes="(max-width: 1400px) 100vw, 1400px"
+            className="object-cover object-center filter brightness-[1.02] contrast-[1.02]"
             priority
           />
         </div>

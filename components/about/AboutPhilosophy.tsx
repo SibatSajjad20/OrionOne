@@ -45,12 +45,11 @@ export default function AboutPhilosophy() {
       // Panoramic image frame entrance
       gsap.fromTo(
         imageFrame,
-        { opacity: 0, scale: 0.97, y: 30 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
-          scale: 1,
           y: 0,
-          duration: 1.2,
+          duration: 1.0,
           ease: "power3.out",
           clearProps: "all",
           scrollTrigger: {
@@ -91,7 +90,7 @@ export default function AboutPhilosophy() {
     <section
       id="philosophy"
       ref={sectionRef}
-      className="relative py-16 sm:py-36 bg-[#081a1a] border-y border-[#EDE5DA]/15 overflow-hidden"
+      className="relative py-16 sm:py-24 bg-[#081a1a] border-y border-[#EDE5DA]/15 overflow-hidden"
     >
       {/* Subtle ambient lighting vignette */}
       <div
@@ -101,10 +100,10 @@ export default function AboutPhilosophy() {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* The Central Manifesto Spread */}
-        <div ref={quoteRef} className="max-w-5xl mb-10 sm:mb-20">
-          <blockquote className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-[5rem] font-light text-[#EDE5DA] tracking-tight leading-[1.08]">
-            &ldquo;We don&apos;t just build projects <br />
-            <span className="italic font-normal text-sand-gradient">We create destinations&rdquo;</span>
+        <div ref={quoteRef} className="max-w-4xl mx-auto text-center mb-8 sm:mb-14">
+          <blockquote className="font-serif-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.25rem] font-light text-[#EDE5DA] tracking-tight leading-[1.18] uppercase max-w-4xl mx-auto">
+            &ldquo;We don&apos;t just build projects, <br />
+            <span className="italic font-normal text-sand-gradient uppercase">we create destinations.&rdquo;</span>
           </blockquote>
         </div>
 

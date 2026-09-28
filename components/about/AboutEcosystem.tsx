@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import gsap from "gsap";
 
 interface Realm {
   id: string;
@@ -100,14 +101,25 @@ const realms: Realm[] = [
 
 export default function AboutEcosystem() {
   const [activeRealm, setActiveRealm] = useState<Realm>(realms[0]);
+  const tabContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (tabContentRef.current) {
+      gsap.fromTo(
+        tabContentRef.current,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      );
+    }
+  }, [activeRealm.id]);
 
   return (
     <section id="ecosystem" className="relative py-28 sm:py-40 max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 overflow-hidden">
       {/* Section Canopy - Centered */}
-      <div className="max-w-4xl mx-auto text-center mb-12 sm:mb-16 space-y-4">
-        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
-          Prestige Lakefront Living <br />
-          <span className="italic font-normal text-sand-gradient normal-case">Five Connected Realms</span>
+      <div className="max-w-5xl mx-auto text-center mb-12 sm:mb-16 space-y-4">
+        <h2 className="font-serif-heading text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+          Prestige Lakefront Living <br className="lg:hidden" />
+          <span className=" font-normal text-sand-gradient uppercase lg:ml-3">Five Connected Realms</span>
         </h2>
         <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl mx-auto">
           Designed around the lake, shaped by contemporary architecture, and created for a more considered way of living. At Orion One, every dimension of daily life exists in natural balance.
@@ -123,9 +135,8 @@ export default function AboutEcosystem() {
               <button
                 key={realm.id}
                 onClick={() => setActiveRealm(realm)}
-                className={`group flex items-baseline gap-3 text-left transition-all duration-300 cursor-pointer pb-2 relative ${
-                  isActive ? "text-[#EDE5DA]" : "text-[#EDE5DA]/40 hover:text-[#EDE5DA]/70"
-                }`}
+                className={`group flex items-baseline gap-3 text-left transition-all duration-300 cursor-pointer pb-2 relative ${isActive ? "text-[#EDE5DA]" : "text-[#EDE5DA]/40 hover:text-[#EDE5DA]/70"
+                  }`}
               >
                 <span className="font-serif-heading text-base sm:text-xl font-light tracking-wide uppercase">
                   {realm.name}
@@ -142,7 +153,7 @@ export default function AboutEcosystem() {
       </div>
 
       {/* Architectural Exhibition Viewport Spread */}
-      <div className="space-y-10">
+      <div ref={tabContentRef} className="space-y-10">
         {/* Pure Borderless Panoramic Visual Frame */}
         <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden rounded-xl bg-[#0d2828]">
           <Image

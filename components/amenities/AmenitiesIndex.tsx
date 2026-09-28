@@ -53,7 +53,7 @@ const DIRECTORY_DATA: DirectoryRow[] = [
     category: "Community",
     items: [
       "Lakeside Social Terraces",
-      "Kids' Play Area",
+      "Open-Air Amphitheater & Event Lawns",
       "Mosque & Prayer Area",
     ],
     image: "/images/amenities/mosque.jpg",
