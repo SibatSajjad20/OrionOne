@@ -430,7 +430,6 @@ export default function OrionOneHeroOverview({
                 src="/scene_5_balcony_backup.mp4"
                 autoPlay
                 muted
-                defaultMuted
                 loop
                 playsInline
                 preload="auto"
@@ -455,7 +454,6 @@ export default function OrionOneHeroOverview({
                 src="/scene_5_balcony_backup.mp4"
                 autoPlay
                 muted
-                defaultMuted
                 loop
                 playsInline
                 preload="auto"

@@ -138,7 +138,6 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
           src="/scene_3.mp4"
           autoPlay
           muted
-          defaultMuted
           loop
           playsInline
           preload="auto"
