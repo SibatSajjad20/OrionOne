@@ -49,8 +49,8 @@ export default function ResidenceCtaBanner({
         ref={containerRef}
         className="relative max-w-5xl mx-auto px-4 sm:px-12 text-center"
       >
-        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] leading-[1.08] mb-6 uppercase">
-          Come home to the lake
+        <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] leading-[1.08] mb-6">
+          Come Home to the Lake
         </h2>
 
         <p className="font-sans-body text-xs sm:text-base md:text-lg text-[#C9BFB1] font-light max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10">

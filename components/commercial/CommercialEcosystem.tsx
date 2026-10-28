@@ -729,9 +729,9 @@ export default function CommercialEcosystem() {
           ref={headerRef}
           className="w-full max-w-5xl mx-auto px-4 sm:px-8 pt-20 sm:pt-24 lg:pt-12 pb-3 shrink-0 z-20 overflow-hidden"
         >
-          <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Business Doesn&apos;t <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+            <span className="type-display-accent italic font-normal text-sand-gradient">
               Operate in Isolation
             </span>
           </h2>
@@ -848,7 +848,7 @@ export default function CommercialEcosystem() {
                   `}
                 >
                   <div className="bg-[#0a2020]/95 backdrop-blur-xl rounded-2xl p-4 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.65)] pointer-events-auto border border-[#EDE5DA]/20">
-                    <h3 className="font-serif-heading text-lg sm:text-2xl text-[#EDE5DA] font-light leading-snug tracking-tight mb-1.5 sm:mb-2.5">
+                    <h3 className="font-serif-heading text-lg sm:text-2xl text-[#EDE5DA] leading-snug tracking-tight mb-1.5 sm:mb-2.5">
                       {amenity.title}
                     </h3>
                     <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -867,8 +867,8 @@ export default function CommercialEcosystem() {
       <section className="relative py-24 sm:py-32 bg-[#153D3D] text-[#EDE5DA] border-t border-[#EDE5DA]/10">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 space-y-12">
           <div className="max-w-3xl space-y-3">
-            <h3 className="font-serif-heading text-3xl sm:text-4xl lg:text-5xl text-[#EDE5DA] font-light">
-              Connected To The City
+            <h3 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-4xl lg:text-5xl text-[#EDE5DA]">
+              Connected to the City
             </h3>
             <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed">
               Rapid multilane highway access linking Orion One directly with DHA, Islamabad,
@@ -880,7 +880,7 @@ export default function CommercialEcosystem() {
             {/* Column 1: Primary Arteries Ledger */}
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-[#EDE5DA]/20">
-                <h4 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA] font-light">
+                <h4 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]">
                   Primary Arteries
                 </h4>
                 <span className="font-mono text-[10px] text-[#62AA9E] uppercase tracking-widest">
@@ -905,7 +905,7 @@ export default function CommercialEcosystem() {
             {/* Column 2: Surrounding Strategic Nodes Ledger */}
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-[#EDE5DA]/20">
-                <h4 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA] font-light">
+                <h4 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]">
                   Surrounding Strategic Nodes
                 </h4>
                 <span className="font-mono text-[10px] text-[#EDE5DA]/50 uppercase tracking-widest">

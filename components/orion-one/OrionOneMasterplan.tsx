@@ -175,9 +175,9 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
           ref={initialHeaderRef}
           className="absolute top-28 left-0 right-0 z-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none transition-opacity duration-150"
         >
-          <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] uppercase max-w-5xl">
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] max-w-5xl">
             The Pinnacle of Lakefront Living in{" "}
-            <span className="italic font-normal text-sand-gradient normal-case">
+            <span className="type-display-accent italic font-normal text-sand-gradient">
               DHA Phase III
             </span>
           </h2>
@@ -186,10 +186,10 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
           ref={grandCtaRef}
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-8 lg:px-16 z-20 pointer-events-none opacity-0 will-change-transform space-y-6 sm:space-y-8"
         >
-          <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] leading-[1.08] uppercase max-w-5xl mx-auto">
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] leading-[1.08] max-w-5xl mx-auto">
             Claim Your Place <br />
-            <span className="font-light text-sand-gradient uppercase">
-              On The Waterfront
+            <span className="type-display-accent italic font-normal text-sand-gradient">
+              on the Waterfront
             </span>
           </h2>
 

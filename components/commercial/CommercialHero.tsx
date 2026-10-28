@@ -179,10 +179,10 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
           {/* Hero Headline */}
           <h1
             ref={headlineRef}
-            className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.12] uppercase transform-gpu backface-hidden"
+            className="type-display font-serif-heading font-luxia-display text-3xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl text-[#EDE5DA] tracking-tight leading-[1.12]"
           >
             <span className="block">Where Business</span>
-            <span className="block italic font-normal text-sand-gradient normal-case">
+            <span className="type-display-accent block italic font-normal text-sand-gradient">
               Meets Destination Living
             </span>
           </h1>

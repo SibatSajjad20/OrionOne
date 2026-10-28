@@ -175,7 +175,7 @@ export default function ContactFormSection() {
             
             {/* Editorial Header */}
             <div className="space-y-4 border-b border-[#EDE5DA]/15 pb-8">
-              <h2 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.12]">
+              <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] tracking-tight leading-[1.12]">
                 Initiate an Architectural Dialogue
               </h2>
               <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed max-w-xl">
@@ -416,7 +416,7 @@ export default function ContactFormSection() {
               {/* Architectural Ledger Details */}
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA] font-light">
+                  <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]">
                     SP Builders Corporate Desk
                   </h3>
                   <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light mt-1.5 leading-relaxed">

@@ -201,7 +201,7 @@ export default function CommercialOpportunities() {
 
             {/* Typography Overlay: Heading & Subheading only */}
             <div className="absolute bottom-20 sm:bottom-20 lg:bottom-24 left-6 sm:left-12 lg:left-20 max-w-3xl z-10 pr-4 pb-[max(5rem,env(safe-area-inset-bottom,20px))]">
-              <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] mb-2 sm:mb-4">
+              <h3 className="font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08] mb-2 sm:mb-4">
                 {item.title}
               </h3>
               <p className="font-sans-body text-xs sm:text-base lg:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-2xl">

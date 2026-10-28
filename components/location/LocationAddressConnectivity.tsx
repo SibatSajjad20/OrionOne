@@ -499,14 +499,14 @@ export default function LocationAddressConnectivity() {
             className="w-full lg:w-1/2 h-[55%] lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-start px-6 sm:px-10 lg:pl-14 pb-8 sm:pb-0 will-change-transform"
           >
             <div className="max-w-[540px] space-y-3 sm:space-y-6 text-left">
-              <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+              <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
                 A Lakefront <br />
-                <span className="italic font-normal text-sand-gradient normal-case">
+                <span className="type-display-accent italic font-normal text-sand-gradient">
                   Address
                 </span>
               </h2>
 
-              <p className="font-serif-heading text-sm sm:text-xl lg:text-2xl text-[#EDE5DA]/90 font-light leading-snug">
+              <p className="font-serif-heading text-sm sm:text-xl lg:text-2xl text-[#EDE5DA]/90 leading-snug">
                 Positioned Beside the Lakeview Commercial Area
               </p>
 
@@ -541,9 +541,9 @@ export default function LocationAddressConnectivity() {
             ref={centerHeadingRef}
             className="relative z-10 max-w-5xl space-y-4 will-change-transform"
           >
-            <h2 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light text-[#EDE5DA] leading-[1.02] uppercase">
+            <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-[#EDE5DA] leading-[1.02]">
               Connected to <br />
-              <span className="italic font-normal text-sand-gradient normal-case">
+              <span className="type-display-accent italic font-normal text-sand-gradient">
                 DHA &amp; Beyond
               </span>
             </h2>
@@ -586,7 +586,7 @@ export default function LocationAddressConnectivity() {
               {/* Bottom Content: Headline & Narrative grounded at bottom */}
               <div className="absolute inset-x-0 bottom-0 z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16 pointer-events-none">
                 <div className="max-w-3xl space-y-2 sm:space-y-3 pointer-events-auto">
-                  <h3 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+                  <h3 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
                     {a.name}
                   </h3>
 
@@ -627,9 +627,9 @@ export default function LocationAddressConnectivity() {
             />
 
             <div className="relative z-10 max-w-5xl space-y-4 will-change-transform">
-              <h2 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light text-[#EDE5DA] leading-[1.02] uppercase">
+              <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-[#EDE5DA] leading-[1.02]">
                 Everything <br />
-                <span className="italic font-normal text-sand-gradient normal-case">
+                <span className="type-display-accent italic font-normal text-sand-gradient">
                   Around Us
                 </span>
               </h2>
@@ -683,7 +683,7 @@ export default function LocationAddressConnectivity() {
               {/* Bottom Content: Headline & Narrative grounded at bottom */}
               <div className="absolute inset-x-0 bottom-0 z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16 pointer-events-none">
                 <div className="max-w-3xl space-y-2 sm:space-y-3 pointer-events-auto">
-                  <h3 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+                  <h3 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
                     {item.title}
                   </h3>
 

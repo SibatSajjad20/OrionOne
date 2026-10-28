@@ -63,6 +63,7 @@ export default function AboutHero({ onOpenInquiry: _onOpenInquiry }: AboutHeroPr
   return (
     <section
       ref={containerRef}
+      data-bg="moss"
       className="relative pt-28 sm:pt-36 pb-20 sm:pb-32 px-4 sm:px-8 lg:px-16 max-w-[1400px] mx-auto overflow-hidden"
     >
       {/* Subtle ambient lighting vignette */}
@@ -76,7 +77,7 @@ export default function AboutHero({ onOpenInquiry: _onOpenInquiry }: AboutHeroPr
         {/* Left Column: Display Canopy & Lead Narrative */}
         <div className="lg:col-span-7 space-y-6">
           <div ref={canopyRef}>
-            <h1 className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-light text-[#EDE5DA] tracking-[0.02em] leading-[1.18] transform-gpu backface-hidden">
+            <h1 className="type-display font-serif-heading font-luxia-display text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] text-[#EDE5DA] tracking-[0.02em] leading-[1.18]">
               <span className="block">Experience shaped us.</span>
               <span className="block">Vision drives us.</span>
               <span className="block">Execution defines us.</span>

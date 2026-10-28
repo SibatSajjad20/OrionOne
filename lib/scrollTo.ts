@@ -11,14 +11,17 @@ export function getLenis(): Lenis | undefined {
 }
 
 function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return document.documentElement.dataset.reducedMotion === "true";
 }
 
 /** Absolute page position. Header offset is not applied. */
 export function scrollToY(top: number) {
   const lenis = getLenis();
   if (lenis) {
-    lenis.scrollTo(top, prefersReducedMotion() ? { immediate: true } : undefined);
+    lenis.scrollTo(
+      top,
+      prefersReducedMotion() ? { immediate: true } : { duration: DUR.m }
+    );
     return;
   }
   window.scrollTo({ top, behavior: "auto" });
@@ -31,7 +34,10 @@ export function scrollToY(top: number) {
 export function scrollToElement(element: Element) {
   const lenis = getLenis();
   if (lenis) {
-    lenis.scrollTo(element as HTMLElement, prefersReducedMotion() ? { immediate: true } : { duration: DUR.m });
+    lenis.scrollTo(
+      element as HTMLElement,
+      prefersReducedMotion() ? { immediate: true } : { duration: DUR.m }
+    );
     return;
   }
   element.scrollIntoView({ block: "start" });

@@ -75,9 +75,9 @@ export default function LakesideDestination() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Narrative Copy */}
           <div ref={textRef} className="lg:col-span-6 space-y-6 will-change-transform">
-            <h2 className="font-serif-heading text-4xl sm:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+            <h2 className="type-section font-serif-heading font-luxia-display text-4xl sm:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
               A Destination Within <br />
-              <span className="italic font-normal text-sand-gradient normal-case">
+              <span className="type-display-accent italic font-normal text-sand-gradient">
                 DHA Phase III
               </span>
             </h2>

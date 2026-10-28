@@ -11,50 +11,38 @@ if (typeof window !== "undefined") {
 
 interface ArchitecturalFacet {
   id: string;
+  number: string;
   title: string;
   description: string;
+  image: string;
+  alt: string;
 }
 
 const ARCHITECTURAL_FACETS: ArchitecturalFacet[] = [
   {
     id: "architecture-nature",
+    number: "01",
     title: "Architecture & Nature",
     description:
       "Stepped garden terraces connecting the tower directly to the landscaped lakeside promenade.",
-  },
-  {
-    id: "lake-views",
-    title: "Lake Views",
-    description:
-      "Oriented toward the waterfront to capture panoramic horizons from every private terrace.",
-  },
-  {
-    id: "natural-light",
-    title: "Natural Light",
-    description:
-      "Floor-to-ceiling structural glazing drawing ambient daylight deep into each residence.",
-  },
-];
-
-interface ElevationPerspective {
-  id: string;
-  image: string;
-  alt: string;
-}
-
-const ELEVATION_PERSPECTIVES: ElevationPerspective[] = [
-  {
-    id: "architecture-nature",
     image: "/images/orion-one/terrace-elevations.jpg",
     alt: "Stepped garden terraces connecting architecture and nature at Orion One",
   },
   {
     id: "lake-views",
+    number: "02",
+    title: "Lake Views",
+    description:
+      "Oriented toward the waterfront to capture panoramic horizons from every private terrace.",
     image: "/images/orion-one/lakefront-view.jpg",
     alt: "Cascading outdoor terraces overlooking the lake at Orion One",
   },
   {
     id: "natural-light",
+    number: "03",
+    title: "Natural Light",
+    description:
+      "Floor-to-ceiling structural glazing drawing ambient daylight deep into each residence.",
     image: "/images/lakeside/balcony-panoramic.jpg",
     alt: "Floor-to-ceiling panoramic balcony terrace with ambient sunlight and lake views at Orion One",
   },
@@ -65,302 +53,478 @@ interface OrionOneArchitectureProps {
 }
 
 export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const imagePanelRef = useRef<HTMLDivElement>(null);
-  const leftPanelRef = useRef<HTMLDivElement>(null);
-  const facetCardsRef = useRef<(HTMLDivElement | null)[]>([]);
-
-  // Active elevation perspective state (0, 1, 2)
-  const [activeElevation, setActiveElevation] = useState<number>(0);
-  const activeElevationRef = useRef<number>(0);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
-
-  const handleCardClick = (idx: number) => {
-    setActiveElevation(idx);
-    activeElevationRef.current = idx;
-
-    // Ensure all cards are visible if user interacts via click
-    const cards = facetCardsRef.current.filter(Boolean) as HTMLDivElement[];
-    gsap.to(cards, {
-      opacity: 1,
-      y: 0,
-      duration: 0.35,
-      ease: "power2.out",
-    });
-  };
+  const sectionRef = useRef<HTMLElement>(null);
+  const stickyTrackRef = useRef<HTMLDivElement>(null);
+  const shutterLeftMossRef = useRef<HTMLDivElement>(null);
+  const shutterRightMossRef = useRef<HTMLDivElement>(null);
+  const shutterLeftSandRef = useRef<HTMLDivElement>(null);
+  const shutterRightSandRef = useRef<HTMLDivElement>(null);
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const imageWrapRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const copyRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const mobileCardsRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const stage = stageRef.current;
-    const imagePanel = imagePanelRef.current;
-    const leftPanel = leftPanelRef.current;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    if (!container || !stage || !imagePanel || !leftPanel) {
-      return;
-    }
-
-    const facetCards = facetCardsRef.current.filter(
-      Boolean
-    ) as HTMLDivElement[];
+    const explicitReduced =
+      document.documentElement.dataset.reducedMotion === "true";
 
     const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 1024px)", () => {
-      // First card starts visible
-      if (facetCards[0]) {
-        gsap.set(facetCards[0], { opacity: 1, y: 0 });
-      }
+    mm.add(
+      {
+        isDesktop: "(min-width: 1024px)",
+        isMobile: "(max-width: 1023px)",
+      },
+      (context) => {
+        const { isDesktop, isMobile } = context.conditions as {
+          isDesktop: boolean;
+          isMobile: boolean;
+        };
 
-      // Subsequent cards start translated down and hidden, entering sequentially on scroll
-      facetCards.slice(1).forEach((card) => {
-        gsap.set(card, { opacity: 0, y: 80 });
-      });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "+=180%",
-          pin: stage,
-          pinSpacing: true,
-          scrub: 0.5,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const p = self.progress;
-            if (p >= 0.66) {
-              if (activeElevationRef.current !== 2) {
-                setActiveElevation(2);
-                activeElevationRef.current = 2;
-              }
-            } else if (p >= 0.33) {
-              if (activeElevationRef.current !== 1) {
-                setActiveElevation(1);
-                activeElevationRef.current = 1;
-              }
-            } else {
-              if (activeElevationRef.current !== 0) {
-                setActiveElevation(0);
-                activeElevationRef.current = 0;
-              }
-            }
-          },
-        },
-      });
-
-      tlRef.current = tl;
-
-      // Card 1 animates in smoothly
-      if (facetCards[1]) {
-        tl.to(
-          facetCards[1],
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          0.2
-        );
-      }
-
-      // Card 2 animates in smoothly
-      if (facetCards[2]) {
-        tl.to(
-          facetCards[2],
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          0.85
-        );
-      }
-
-      tl.to({}, { duration: 0.4 });
-
-      return () => {
-        tlRef.current = null;
-      };
-    });
-
-    mm.add("(max-width: 1023px)", () => {
-      const cards = container.querySelectorAll(".mobile-arch-card");
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.12,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: container,
-            start: "top 85%",
-            once: true,
-          },
+        if (explicitReduced) {
+          gsap.set(
+            [
+              shutterLeftMossRef.current,
+              shutterRightMossRef.current,
+              shutterLeftSandRef.current,
+              shutterRightSandRef.current,
+            ],
+            { autoAlpha: 0 }
+          );
+          return;
         }
-      );
-    });
+
+        if (isDesktop && stickyTrackRef.current) {
+          const panel0 = panelRefs.current[0];
+          const panel1 = panelRefs.current[1];
+          const image0 = imageWrapRefs.current[0];
+          const image1 = imageWrapRefs.current[1];
+          const image2 = imageWrapRefs.current[2];
+          const copy0 = copyRefs.current[0];
+          const copy1 = copyRefs.current[1];
+          const copy2 = copyRefs.current[2];
+
+          gsap.set(shutterLeftMossRef.current, {
+            clipPath: "inset(0% 0% 0% 0%)",
+          });
+          gsap.set(shutterRightMossRef.current, {
+            clipPath: "inset(0% 0% 0% 0%)",
+          });
+          gsap.set(shutterLeftSandRef.current, {
+            clipPath: "inset(0% 0% 0% 0%)",
+          });
+          gsap.set(shutterRightSandRef.current, {
+            clipPath: "inset(0% 0% 0% 0%)",
+          });
+
+          gsap.set([panel0, panel1], { yPercent: 0 });
+          gsap.set(image0, { scale: 1.08 });
+          gsap.set([image1, image2], { scale: 1 });
+          gsap.set(copy0, { opacity: 0, y: 24 });
+          gsap.set([copy1, copy2], { opacity: 0, y: 28 });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: stickyTrackRef.current,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 0.4,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => {
+                const p = self.progress;
+                if (p < 0.42) {
+                  setActiveIndex(0);
+                } else if (p < 0.74) {
+                  setActiveIndex(1);
+                } else {
+                  setActiveIndex(2);
+                }
+              },
+            },
+          });
+
+          // Phase 1 (0 -> 0.26): Two Sand/Moss curtain layers peel open left/right over the first terrace image
+          tl.to(
+            shutterLeftMossRef.current,
+            {
+              clipPath: "inset(0% 100% 0% 0%)",
+              ease: "power2.inOut",
+              duration: 0.22,
+            },
+            0
+          )
+            .to(
+              shutterRightMossRef.current,
+              {
+                clipPath: "inset(0% 0% 0% 100%)",
+                ease: "power2.inOut",
+                duration: 0.22,
+              },
+              0
+            )
+            .to(
+              shutterLeftSandRef.current,
+              {
+                clipPath: "inset(0% 100% 0% 0%)",
+                ease: "power2.inOut",
+                duration: 0.26,
+              },
+              0.04
+            )
+            .to(
+              shutterRightSandRef.current,
+              {
+                clipPath: "inset(0% 0% 0% 100%)",
+                ease: "power2.inOut",
+                duration: 0.26,
+              },
+              0.04
+            )
+            .to(
+              image0,
+              {
+                scale: 1.04,
+                ease: "power2.out",
+                duration: 0.28,
+              },
+              0
+            )
+            .to(
+              copy0,
+              {
+                opacity: 1,
+                y: 0,
+                ease: "power2.out",
+                duration: 0.16,
+              },
+              0.12
+            );
+
+          // Phase 2 (0.30 -> 0.64): First panel peels upward revealing second terrace facet underneath
+          tl.to(
+            panel0,
+            {
+              yPercent: -100,
+              ease: "power2.inOut",
+              duration: 0.34,
+            },
+            0.3
+          )
+            .to(
+              image0,
+              {
+                scale: 1,
+                ease: "none",
+                duration: 0.34,
+              },
+              0.3
+            )
+            .fromTo(
+              image1,
+              { scale: 1 },
+              {
+                scale: 1.04,
+                ease: "power2.out",
+                duration: 0.34,
+              },
+              0.3
+            )
+            .to(
+              copy1,
+              {
+                opacity: 1,
+                y: 0,
+                ease: "power2.out",
+                duration: 0.18,
+              },
+              0.44
+            );
+
+          // Phase 3 (0.66 -> 1.0): Second panel peels upward revealing third terrace facet, settling right at 1.0 (no dead scroll)
+          tl.to(
+            panel1,
+            {
+              yPercent: -100,
+              ease: "power2.inOut",
+              duration: 0.34,
+            },
+            0.66
+          )
+            .to(
+              image1,
+              {
+                scale: 1,
+                ease: "none",
+                duration: 0.34,
+              },
+              0.66
+            )
+            .fromTo(
+              image2,
+              { scale: 1 },
+              {
+                scale: 1.04,
+                ease: "power2.out",
+                duration: 0.34,
+              },
+              0.66
+            )
+            .to(
+              copy2,
+              {
+                opacity: 1,
+                y: 0,
+                ease: "power2.out",
+                duration: 0.18,
+              },
+              0.8
+            );
+        }
+
+        if (isMobile && mobileCardsRef.current) {
+          const cards =
+            mobileCardsRef.current.querySelectorAll(".mobile-terrace-card");
+          cards.forEach((card) => {
+            gsap.fromTo(
+              card,
+              {
+                clipPath: "inset(12% 4% 12% 4% round 16px)",
+                opacity: 0.4,
+              },
+              {
+                clipPath: "inset(0% 0% 0% 0% round 16px)",
+                opacity: 1,
+                duration: 0.9,
+                ease: "power3.out",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse",
+                },
+              }
+            );
+          });
+        }
+      },
+      section
+    );
 
     return () => mm.revert();
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-[#081a1a]">
-      {/* ========================================================= */}
-      {/* MOBILE & TABLET STACKED CARDS LAYOUT                      */}
-      {/* ========================================================= */}
-      <div className="lg:hidden px-4 sm:px-8 py-16 sm:py-24 space-y-8 bg-[#081a1a] text-[#EDE5DA]">
-        <div className="space-y-3">
-          <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-[#62AA9E] font-medium font-sans-body">
-            Architectural Form &amp; Rhythm
-          </span>
-          <h2 className="font-serif-heading text-3xl sm:text-4xl font-light text-[#EDE5DA] tracking-tight leading-[1.1] uppercase">
-            Curated <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
-              Perspectives
-            </span>
-          </h2>
-          <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed max-w-xl">
-            Curvilinear lines, cascading podiums, and floor-to-ceiling glass designed in natural harmony with the lake.
-          </p>
-        </div>
+    <section
+      id="architecture-perspectives"
+      ref={sectionRef}
+      data-bg="moss"
+      className="relative bg-[#081a1a] text-[#EDE5DA] border-t border-[#EDE5DA]/10"
+      aria-label="Architectural Perspectives"
+    >
+      {/* =================================================================== */}
+      {/* DESKTOP: Sticky Full-Bleed Shutter + Stepped Terrace Peel (~240vh)  */}
+      {/* =================================================================== */}
+      <div
+        ref={stickyTrackRef}
+        className="hidden lg:block relative h-[240vh] w-full"
+      >
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#081a1a]">
+          {/* Editorial Section Header Overlay (Top-Left) */}
+          <div className="absolute top-24 left-8 xl:left-16 z-50 max-w-xl pointer-events-none">
+            <h2 className="font-serif-heading font-luxia-display text-4xl xl:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08] drop-shadow-md">
+              Curated{" "}
+              <span className="italic font-normal text-sand-gradient normal-case">
+                Perspectives
+              </span>
+            </h2>
+            <p className="mt-2 font-sans-body text-sm text-[#EDE5DA]/85 font-light leading-relaxed max-w-md drop-shadow">
+              Curvilinear lines, cascading podiums, and floor-to-ceiling glass
+              designed in natural harmony with the lake.
+            </p>
+          </div>
 
-        <div className="space-y-6">
-          {ARCHITECTURAL_FACETS.map((facet, idx) => {
-            const elev = ELEVATION_PERSPECTIVES[idx];
+          {/* 3 Full-Bleed Terrace Panels (Stacked z-30, z-20, z-10) */}
+          {ARCHITECTURAL_FACETS.map((facet, index) => {
+            const zIndexClass =
+              index === 0 ? "z-30" : index === 1 ? "z-20" : "z-10";
             return (
-              <div
+              <article
                 key={facet.id}
-                className="mobile-arch-card rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-xl transition-all duration-300 hover:border-[#62AA9E]/40"
+                ref={(el) => {
+                  panelRefs.current[index] = el as HTMLDivElement | null;
+                }}
+                className={`absolute inset-0 w-full h-full overflow-hidden bg-[#081a1a] will-change-transform ${zIndexClass} ${
+                  index < 2
+                    ? "border-b-2 border-[#62AA9E]/45 shadow-[0_24px_64px_rgba(0,0,0,0.85)]"
+                    : ""
+                }`}
               >
-                {/* Full-bleed Architectural Image */}
-                <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-[#081a1a]">
+                {/* Full-bleed Image with subtle scrubbed scale */}
+                <div
+                  ref={(el) => {
+                    imageWrapRefs.current[index] = el;
+                  }}
+                  className="relative w-full h-full will-change-transform"
+                >
                   <Image
-                    src={elev.image}
-                    alt={elev.alt}
+                    src={facet.image}
+                    alt={facet.alt}
                     fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority={index === 0}
+                    sizes="100vw"
                     className="object-cover object-center"
-                    priority={idx === 0}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828] via-transparent to-black/20 pointer-events-none" />
-
-                  {/* Corner Index Badge without numbering */}
-                  <div className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#081a1a]/85 backdrop-blur-md border border-[#EDE5DA]/20 text-[10px] font-sans-body tracking-[0.2em] text-[#62AA9E] uppercase font-semibold">
-                    {facet.title}
-                  </div>
+                  {/* Directional atmospheric gradients for editorial legibility */}
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/90 via-[#081a1a]/25 to-[#081a1a]/65 pointer-events-none"
+                    aria-hidden="true"
+                  />
                 </div>
 
-                {/* Narrative Description */}
-                <div className="p-5 sm:p-7 space-y-2">
-                  <h3 className="font-serif-heading text-xl sm:text-2xl font-light text-[#EDE5DA] tracking-tight">
+                {/* Overlaid Facet Title + Description (Bottom-Left) */}
+                <div
+                  ref={(el) => {
+                    copyRefs.current[index] = el;
+                  }}
+                  className="absolute bottom-12 xl:bottom-16 left-8 xl:left-16 z-20 max-w-xl space-y-3 will-change-transform"
+                >
+                  <span className="font-sans-body text-xs uppercase tracking-[0.28em] text-[#62AA9E] font-semibold block">
+                    Terrace Facet {facet.number}
+                  </span>
+                  <h3 className="font-serif-heading font-luxia-display text-4xl xl:text-5xl text-[#EDE5DA] leading-[1.08]">
                     {facet.title}
                   </h3>
-                  <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
+                  <p className="font-sans-body text-base text-[#EDE5DA]/90 font-light leading-relaxed">
                     {facet.description}
                   </p>
                 </div>
-              </div>
+              </article>
             );
           })}
-        </div>
-      </div>
 
-      {/* ========================================================= */}
-      {/* DESKTOP PINNED STAGE VIEWPORT (>= 1024px)                 */}
-      {/* Sequential card entrance on scrub, no numbering           */}
-      {/* ========================================================= */}
-      <div
-        ref={stageRef}
-        className="hidden lg:block relative w-full h-[100dvh] overflow-hidden bg-[#081a1a] text-[#EDE5DA]"
-      >
-        {/* 1. LEFT PANEL: PERSPECTIVE NARRATIVE TABS */}
-        <div
-          ref={leftPanelRef}
-          className="absolute top-0 left-0 w-[40%] xl:w-[38%] h-full z-20 flex flex-col pt-24 pb-0 overflow-hidden bg-[#081a1a]"
-        >
-          <div className="flex-1 flex flex-col w-full h-full">
+          {/* Clip-Path Shutter Curtain Layers (Sand inner layer + Moss outer layer) */}
+          {/* Sand Curtain Left & Right */}
+          <div
+            ref={shutterLeftSandRef}
+            aria-hidden="true"
+            className="
+              pointer-events-none absolute inset-y-0 left-0 w-1/2 z-40
+              bg-[#EDE5DA]/20 backdrop-blur-[2px] border-r border-[#EDE5DA]/40
+              will-change-[clip-path]
+            "
+          />
+          <div
+            ref={shutterRightSandRef}
+            aria-hidden="true"
+            className="
+              pointer-events-none absolute inset-y-0 right-0 w-1/2 z-40
+              bg-[#EDE5DA]/20 backdrop-blur-[2px] border-l border-[#EDE5DA]/40
+              will-change-[clip-path]
+            "
+          />
+
+          {/* Moss Curtain Left & Right */}
+          <div
+            ref={shutterLeftMossRef}
+            aria-hidden="true"
+            className="
+              pointer-events-none absolute inset-y-0 left-0 w-1/2 z-40
+              bg-[#153D3D] border-r border-[#62AA9E]/45
+              will-change-[clip-path]
+            "
+          />
+          <div
+            ref={shutterRightMossRef}
+            aria-hidden="true"
+            className="
+              pointer-events-none absolute inset-y-0 right-0 w-1/2 z-40
+              bg-[#153D3D] border-l border-[#62AA9E]/45
+              will-change-[clip-path]
+            "
+          />
+
+          {/* Mint 01 / 02 / 03 Ticks Bottom-Right */}
+          <div
+            className="absolute bottom-12 xl:bottom-16 right-8 xl:right-16 z-50 flex items-center gap-4 bg-[#081a1a]/75 backdrop-blur-md border border-[#EDE5DA]/15 px-5 py-3 rounded-full"
+            aria-label="Terrace perspective indicator"
+          >
             {ARCHITECTURAL_FACETS.map((facet, idx) => {
-              const isCurrent = activeElevation === idx;
-              const isLast = idx === ARCHITECTURAL_FACETS.length - 1;
-
+              const isActive = activeIndex === idx;
               return (
-                <div
-                  key={facet.id}
-                  ref={(el) => {
-                    facetCardsRef.current[idx] = el;
-                  }}
-                  onClick={() => handleCardClick(idx)}
-                  className={`flex-1 w-full flex flex-col justify-center px-8 lg:px-12 xl:px-14 transition-all duration-400 cursor-pointer will-change-transform relative opacity-100 ${
-                    !isLast ? "border-b border-[#EDE5DA]/15" : ""
-                  } ${
-                    isCurrent
-                      ? "bg-[#0b2424]/90"
-                      : "bg-transparent hover:bg-[#0b2424]/40"
-                  }`}
-                >
-                  {/* Subtle Active Accent on Left Edge */}
-                  <div
-                    className={`absolute left-0 top-0 bottom-0 w-1 transition-all duration-400 ${
-                      isCurrent ? "bg-[#62AA9E] opacity-100" : "bg-transparent opacity-0"
+                <div key={facet.id} className="flex items-center gap-2">
+                  <span
+                    className={`font-sans-body text-xs tracking-[0.22em] transition-colors duration-300 ${
+                      isActive
+                        ? "text-[#62AA9E] font-bold"
+                        : "text-[#EDE5DA]/45 font-light"
+                    }`}
+                  >
+                    {facet.number}
+                  </span>
+                  <span
+                    className={`h-[2px] rounded-full transition-all duration-300 ${
+                      isActive ? "w-7 bg-[#62AA9E]" : "w-2 bg-[#EDE5DA]/20"
                     }`}
                   />
-
-                  <div className="max-w-xl">
-                    <h3
-                      className={`font-serif-heading text-base sm:text-2xl lg:text-[26px] font-light tracking-tight leading-snug transition-colors duration-300 ${
-                        isCurrent ? "text-[#EDE5DA]" : "text-[#EDE5DA]/70"
-                      }`}
-                    >
-                      {facet.title}
-                    </h3>
-
-                    <p
-                      className={`font-sans-body text-xs sm:text-sm lg:text-[14px] font-light leading-relaxed mt-2 transition-colors duration-300 ${
-                        isCurrent ? "text-[#EDE5DA]/90" : "text-[#C9BFB1]/65"
-                      }`}
-                    >
-                      {facet.description}
-                    </p>
-                  </div>
                 </div>
               );
             })}
           </div>
         </div>
+      </div>
 
-        {/* 2. RIGHT PANEL: FULL-BLEED ARCHITECTURAL VIEWPORT */}
-        <div
-          ref={imagePanelRef}
-          className="absolute top-0 right-0 w-[60%] xl:w-[62%] h-full overflow-hidden z-10 border-l border-[#EDE5DA]/10 bg-[#081a1a]"
-        >
-          <div className="relative w-full h-full">
-            {ELEVATION_PERSPECTIVES.map((elev, idx) => (
+      {/* =================================================================== */}
+      {/* MOBILE (<1024px): Stacked Full-Bleed Cards with Clip-Path Reveal    */}
+      {/* =================================================================== */}
+      <div className="lg:hidden py-20 px-4 sm:px-8 space-y-10">
+        <div className="max-w-2xl space-y-3">
+          <h2 className="font-serif-heading font-luxia-display text-3xl sm:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
+            Curated <br />
+            <span className="italic font-normal text-sand-gradient normal-case">
+              Perspectives
+            </span>
+          </h2>
+          <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed">
+            Curvilinear lines, cascading podiums, and floor-to-ceiling glass
+            designed in natural harmony with the lake.
+          </p>
+        </div>
+
+        <div ref={mobileCardsRef} className="space-y-6">
+          {ARCHITECTURAL_FACETS.map((facet) => (
+            <article
+              key={facet.id}
+              className="mobile-terrace-card relative aspect-[4/5] sm:aspect-[16/10] w-full rounded-2xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15"
+            >
+              <Image
+                src={facet.image}
+                alt={facet.alt}
+                fill
+                sizes="100vw"
+                className="object-cover object-center"
+              />
               <div
-                key={elev.id}
-                className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${
-                  activeElevation === idx
-                    ? "opacity-100 z-10"
-                    : "opacity-0 z-0 pointer-events-none"
-                }`}
-              >
-                <Image
-                  src={elev.image}
-                  alt={elev.alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 65vw"
-                  className="object-cover object-center"
-                  priority={idx === 0}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/60 via-transparent to-transparent pointer-events-none" />
+                className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#081a1a]/35 to-transparent pointer-events-none"
+                aria-hidden="true"
+              />
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex items-end justify-between gap-4">
+                <div className="space-y-2 max-w-lg">
+                  <span className="font-sans-body text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold block">
+                    {facet.number}
+                  </span>
+                  <h3 className="font-serif-heading font-luxia-display text-2xl sm:text-3xl text-[#EDE5DA] leading-snug">
+                    {facet.title}
+                  </h3>
+                  <p className="font-sans-body text-xs sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
+                    {facet.description}
+                  </p>
+                </div>
               </div>
-            ))}
-          </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

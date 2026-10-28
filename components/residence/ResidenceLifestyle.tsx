@@ -93,8 +93,8 @@ export default function ResidenceLifestyle() {
       <div className="max-w-7xl mx-auto px-4 sm:px-12 lg:px-20">
         {/* Centered Heading in One Line & Centered Intro */}
         <div ref={headerRef} className="max-w-5xl mx-auto text-center mb-16 sm:mb-24">
-          <h2 className="font-serif-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-[#EDE5DA] uppercase mb-6 leading-tight max-w-4xl mx-auto">
-            Your home is part of something larger
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#EDE5DA] mb-6 leading-tight max-w-4xl mx-auto">
+            Your Home Is Part of Something Larger
           </h2>
           <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl mx-auto">
             At Orion One, residential living extends naturally into an
@@ -113,7 +113,7 @@ export default function ResidenceLifestyle() {
               key={index}
               className="lifestyle-item group border-t border-[#EDE5DA]/20 pt-6 sm:pt-8 flex flex-col justify-start transition-colors duration-300"
             >
-              <h3 className="font-serif-heading text-2xl sm:text-3xl font-light text-[#EDE5DA] tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
+              <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
                 {facility.title}
               </h3>
 

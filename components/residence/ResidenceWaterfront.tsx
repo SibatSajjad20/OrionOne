@@ -66,9 +66,9 @@ export default function ResidenceWaterfront() {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-12 lg:px-20">
         {/* Section Header */}
         <div ref={headingRef} className="max-w-4xl mx-auto text-center mb-12 sm:mb-20 space-y-4">
-          <h2 className="font-serif-heading text-3xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.08] uppercase">
-            Every Day Comes With a <br />
-            <span className="italic font-normal uppercase text-sand-gradient normal-case">
+          <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-[1.08]">
+            Every Day Comes with a <br />
+            <span className="type-display-accent italic font-normal text-sand-gradient">
               View
             </span>
           </h2>

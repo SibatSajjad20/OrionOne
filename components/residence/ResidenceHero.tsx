@@ -5,8 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import { ChevronDown, ArrowUpRight } from "lucide-react";
+import { ChevronDown, ArrowUpRight, X } from "lucide-react";
 import OrionRotatingBadge from "./OrionRotatingBadge";
+import FloorPlan3DViewer from "./FloorPlan3DViewer";
+import oneBedroomPlanJson from "@/app/residence/plans/1-bedroom.json";
+import type { FloorPlanData } from "@/app/residence/plans/types";
+
+const ONE_BEDROOM_PLAN = oneBedroomPlanJson as unknown as FloorPlanData;
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -31,7 +36,7 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-1-bed",
     category: "1-bedroom",
     title: "One Bedroom",
-    headline: "1 BED / 85 M²",
+    headline: "1 Bed / 85 m²",
     bedCount: "1",
     areaSpec: "85 M²",
     terraceSpec: "+ 18 M² Terrace",
@@ -45,7 +50,7 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-2-bed",
     category: "2-bedroom",
     title: "Two Bedroom",
-    headline: "2 BED / 135 M²",
+    headline: "2 Bed / 135 m²",
     bedCount: "2",
     areaSpec: "135 M²",
     terraceSpec: "+ 28 M² Terrace",
@@ -59,7 +64,7 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-3-bed",
     category: "3-bedroom",
     title: "Three Bedroom",
-    headline: "3 BED / 195 M²",
+    headline: "3 Bed / 195 m²",
     bedCount: "3",
     areaSpec: "195 M²",
     terraceSpec: "+ 42 M² Terrace",
@@ -73,7 +78,7 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-private-pool",
     category: "private-pool",
     title: "Private Pool Residence",
-    headline: "POOL SUITE / 240 M²",
+    headline: "Pool Suite / 240 m²",
     bedCount: "Multi",
     areaSpec: "240 M²",
     terraceSpec: "+ 65 M² Pool Terrace",
@@ -98,6 +103,7 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
   const [isTypologyOpen, setIsTypologyOpen] = useState(false);
   const [isBedroomOpen, setIsBedroomOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [is3DModalOpen, setIs3DModalOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -131,6 +137,7 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
         setIsTypologyOpen(false);
         setIsBedroomOpen(false);
         setIsSortOpen(false);
+        setIs3DModalOpen(false);
       }
     };
 
@@ -223,6 +230,7 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
   return (
     <section
       ref={containerRef}
+      data-bg="moss"
       className="relative pt-28 sm:pt-36 pb-24 px-4 sm:px-12 lg:px-20 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
     >
       {/* Subtle Ambient Radial Lighting */}
@@ -253,7 +261,7 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
           ref={headlineRef}
           className="pb-8 sm:pb-12 border-b border-[#EDE5DA]/15"
         >
-          <h1 className="font-serif-heading text-4xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-light text-[#EDE5DA] leading-[0.96] uppercase select-none transform-gpu backface-hidden">
+          <h1 className="type-display font-serif-heading font-luxia-display text-4xl sm:text-7xl md:text-8xl lg:text-[9.5rem] text-[#EDE5DA] leading-[0.96] select-none">
             Residences
           </h1>
         </div>
@@ -430,7 +438,13 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
                         key={opt.id}
                         type="button"
                         onClick={() => {
-                          setSortBy(opt.id as any);
+                          setSortBy(
+                            opt.id as
+                              | "relevant"
+                              | "size-asc"
+                              | "size-desc"
+                              | "bedrooms"
+                          );
                           setIsSortOpen(false);
                         }}
                         className={`text-left text-[11px] font-sans-body uppercase tracking-[0.18em] px-4 py-2.5 hover:bg-[#153D3D] transition-colors cursor-pointer ${
@@ -464,6 +478,52 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch pt-2"
         >
           {filteredUnits.map((unit) => {
+            if (unit.category === "1-bedroom") {
+              return (
+                <div
+                  key={unit.id}
+                  className="residence-card flex flex-col p-6 sm:p-7 rounded-2xl bg-[#0d2828]/60 border border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/90 transition-all duration-500 group shadow-xl"
+                >
+                  {/* Top Architectural Typology Title & Arrow Indicator */}
+                  <Link
+                    href={`/residence/${unit.category}`}
+                    className="flex items-center justify-between mb-5 sm:mb-6 cursor-pointer"
+                  >
+                    <span className="font-sans-body text-xs sm:text-sm uppercase tracking-[0.25em] text-[#EDE5DA] font-medium">
+                      {unit.title}
+                    </span>
+                    <span className="text-[#62AA9E] opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
+                      <ArrowUpRight className="w-4 h-4" />
+                    </span>
+                  </Link>
+
+                  {/* Interactive 3D Floor Plan Frame (1-Bedroom Only) */}
+                  <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] border border-[#EDE5DA]/20 shadow-inner">
+                    <FloorPlan3DViewer
+                      plan={ONE_BEDROOM_PLAN}
+                      fallbackImageSrc={unit.floorPlanSrc}
+                      fallbackAlt={`${unit.title} architectural layout at Orion One`}
+                      compact
+                      onExpand={() => setIs3DModalOpen(true)}
+                    />
+                  </div>
+
+                  {/* Headline & Specs in the Center with Padding from Top */}
+                  <Link
+                    href={`/residence/${unit.category}`}
+                    className="text-center pt-6 sm:pt-7 pb-2 mt-auto cursor-pointer"
+                  >
+                    <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-2 group-hover:text-[#62AA9E] transition-colors">
+                      {unit.headline}
+                    </h3>
+                    <p className="font-sans-body text-xs uppercase tracking-[0.25em] text-[#62AA9E] font-medium">
+                      {unit.terraceSpec}
+                    </p>
+                  </Link>
+                </div>
+              );
+            }
+
             return (
               <Link
                 key={unit.id}
@@ -493,7 +553,7 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
 
                 {/* Headline & Specs in the Center with Padding from Top */}
                 <div className="text-center pt-6 sm:pt-7 pb-2 mt-auto">
-                  <h3 className="font-serif-heading text-2xl sm:text-3xl font-light text-[#EDE5DA] tracking-tight mb-2 group-hover:text-[#62AA9E] transition-colors">
+                  <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-2 group-hover:text-[#62AA9E] transition-colors">
                     {unit.headline}
                   </h3>
                   <p className="font-sans-body text-xs uppercase tracking-[0.25em] text-[#62AA9E] font-medium">
@@ -505,6 +565,50 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
           })}
         </div>
       </div>
+
+      {/* Expanded 3D Floor Plan Lightbox for 1-Bedroom on Residence Page */}
+      {is3DModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[90] bg-[#081a1a]/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
+          onClick={() => setIs3DModalOpen(false)}
+        >
+          <div
+            data-lenis-prevent="true"
+            className="relative w-full max-w-6xl max-h-[90vh] bg-[#0d2828] border border-[#EDE5DA]/20 rounded-2xl p-4 sm:p-8 flex flex-col shadow-2xl text-[#EDE5DA]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-[#EDE5DA]/15">
+              <div>
+                <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#62AA9E] font-bold">
+                  1 BEDROOM · Interactive 3D Floor Plan
+                </span>
+                <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]">
+                  1 Bed / 85 m² (+ 18 m² Terrace)
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIs3DModalOpen(false)}
+                className="inline-flex items-center justify-center p-2.5 rounded-full border border-[#EDE5DA]/20 hover:bg-[#EDE5DA]/10 hover:text-white transition-colors cursor-pointer"
+                aria-label="Close 3D layout"
+              >
+                <X className="w-5 h-5 text-[#EDE5DA]" />
+              </button>
+            </div>
+
+            <div className="relative w-full h-[65vh] sm:h-[72vh] mt-4 rounded-xl bg-[#EDE5DA] overflow-hidden">
+              <FloorPlan3DViewer
+                plan={ONE_BEDROOM_PLAN}
+                fallbackImageSrc="/images/residence/1-bedroom.webp"
+                fallbackAlt="One Bedroom architectural layout at Orion One"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

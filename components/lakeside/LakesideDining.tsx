@@ -93,14 +93,14 @@ export default function LakesideDining() {
           {/* Right Column: Narrative Copy */}
           <div ref={textRef} className="lg:col-span-5 order-1 lg:order-2 space-y-6 will-change-transform">
 
-            <h2 className="font-serif-heading text-4xl sm:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+            <h2 className="type-section font-serif-heading font-luxia-display text-4xl sm:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
               Dining by the <br />
-              <span className="italic font-normal text-sand-gradient normal-case">
+              <span className="type-display-accent italic font-normal text-sand-gradient">
                 Lake
               </span>
             </h2>
 
-            <p className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]/90 font-light leading-snug">
+            <p className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]/90 leading-snug">
               The waterfront brings dining into the everyday Orion One experience
             </p>
 

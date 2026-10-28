@@ -18,10 +18,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InquiryDrawer from "@/components/InquiryDrawer";
 import OrionRotatingBadge from "@/components/residence/OrionRotatingBadge";
+import FloorPlan3DViewer from "@/components/residence/FloorPlan3DViewer";
+import oneBedroomPlanJson from "@/app/residence/plans/1-bedroom.json";
+import type { FloorPlanData } from "@/app/residence/plans/types";
 import {
   ResidenceSuiteData,
   getSimilarSuites,
 } from "@/app/residence/data";
+
+const ONE_BEDROOM_PLAN = oneBedroomPlanJson as unknown as FloorPlanData;
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -162,7 +167,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
 
             {/* Center: Unit Number & Level Meta */}
             <div className="text-center justify-self-center">
-              <h1 className="font-serif-heading text-4xl sm:text-7xl md:text-8xl lg:text-[7rem] font-light text-[#EDE5DA] tracking-tight leading-none uppercase select-none">
+              <h1 className="type-display font-serif-heading font-luxia-display text-4xl sm:text-7xl md:text-8xl lg:text-[7rem] text-[#EDE5DA] tracking-tight leading-none select-none">
                 {suite.unitCode}
               </h1>
               <p className="font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#62AA9E] font-semibold mt-3">
@@ -199,25 +204,36 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pt-12 sm:pt-16 items-start">
             {/* Left Column (7 Cols): Architectural Floor Plan Frame */}
             <div className="lg:col-span-7 flex flex-col">
-              <div
-                onClick={() => setIsLightboxOpen(true)}
-                className="group relative w-full aspect-[16/11] rounded-2xl bg-[#EDE5DA] border border-[#EDE5DA]/20 p-3 sm:p-4 flex items-center justify-center cursor-zoom-in shadow-2xl transition-all duration-300 overflow-hidden"
-              >
-                <Image
-                  src={suite.floorPlanSrc}
-                  alt={`${suite.title} architectural floor plan layout`}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 58vw"
-                  className="object-contain p-1 sm:p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
-                />
-
-                {/* Subtle Enlarge Hint */}
-                <div className="absolute bottom-4 right-4 bg-[#081a1a]/85 border border-[#EDE5DA]/20 text-[#EDE5DA] text-[10px] font-sans-body uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
-                  <Maximize2 className="w-3 h-3 text-[#62AA9E]" />
-                  <span>Enlarge Layout</span>
+              {suite.slug === "1-bedroom" ? (
+                <div className="relative w-full aspect-[16/11] rounded-2xl bg-[#EDE5DA] border border-[#EDE5DA]/20 shadow-2xl overflow-hidden">
+                  <FloorPlan3DViewer
+                    plan={ONE_BEDROOM_PLAN}
+                    fallbackImageSrc={suite.floorPlanSrc}
+                    fallbackAlt={`${suite.title} architectural floor plan layout`}
+                    onExpand={() => setIsLightboxOpen(true)}
+                  />
                 </div>
-              </div>
+              ) : (
+                <div
+                  onClick={() => setIsLightboxOpen(true)}
+                  className="group relative w-full aspect-[16/11] rounded-2xl bg-[#EDE5DA] border border-[#EDE5DA]/20 p-3 sm:p-4 flex items-center justify-center cursor-zoom-in shadow-2xl transition-all duration-300 overflow-hidden"
+                >
+                  <Image
+                    src={suite.floorPlanSrc}
+                    alt={`${suite.title} architectural floor plan layout`}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 58vw"
+                    className="object-contain p-1 sm:p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+
+                  {/* Subtle Enlarge Hint */}
+                  <div className="absolute bottom-4 right-4 bg-[#081a1a]/85 border border-[#EDE5DA]/20 text-[#EDE5DA] text-[10px] font-sans-body uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
+                    <Maximize2 className="w-3 h-3 text-[#62AA9E]" />
+                    <span>Enlarge Layout</span>
+                  </div>
+                </div>
+              )}
 
               {/* Floor Plan Sub-Label & Status */}
               <div className="flex items-center justify-between pt-4 px-2 text-[10px] sm:text-xs font-sans-body text-[#EDE5DA]/60 uppercase tracking-[0.2em]">
@@ -234,7 +250,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                   <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
                     Bedrooms
                   </span>
-                  <span className="font-serif-heading text-4xl sm:text-5xl text-[#EDE5DA] font-light leading-none">
+                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
                     {suite.specs.bedrooms}
                   </span>
                 </div>
@@ -243,7 +259,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                   <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
                     Interior Area
                   </span>
-                  <span className="font-serif-heading text-4xl sm:text-5xl text-[#EDE5DA] font-light leading-none">
+                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
                     {suite.specs.interiorArea}
                   </span>
                 </div>
@@ -252,7 +268,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                   <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
                     Terrace
                   </span>
-                  <span className="font-serif-heading text-4xl sm:text-5xl text-[#EDE5DA] font-light leading-none">
+                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
                     {suite.specs.terrace}
                   </span>
                 </div>
@@ -261,7 +277,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                   <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
                     Total Area
                   </span>
-                  <span className="font-serif-heading text-4xl sm:text-5xl text-[#EDE5DA] font-light leading-none">
+                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
                     {suite.specs.totalArea}
                   </span>
                 </div>
@@ -495,8 +511,8 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
               {suite.quoteBanner.tag}
             </span>
 
-            <blockquote className="font-serif-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight tracking-tight uppercase max-w-4xl mx-auto mb-10">
-              "{suite.quoteBanner.quote}"
+            <blockquote className="type-section font-serif-heading font-luxia-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#EDE5DA] leading-tight tracking-tight max-w-4xl mx-auto mb-10">
+              &ldquo;{suite.quoteBanner.quote}&rdquo;
             </blockquote>
 
             <div className="flex justify-center">
@@ -524,7 +540,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
 
           {/* Section Heading & Subtitle */}
           <div className="text-center mb-14 sm:mb-20">
-            <h2 className="font-serif-heading text-3xl sm:text-5xl md:text-7xl font-light text-[#EDE5DA] tracking-tight uppercase">
+            <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-5xl md:text-7xl text-[#EDE5DA] tracking-tight">
               Similar Options
             </h2>
             <p className="font-sans-body text-[11px] sm:text-xs uppercase tracking-[0.28em] text-[#62AA9E] font-semibold mt-3">
@@ -563,7 +579,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                   <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#EDE5DA]/60 block mb-1">
                     {other.unitCode} · {other.shortTitle}
                   </span>
-                  <h3 className="font-serif-heading text-2xl sm:text-3xl font-light text-[#EDE5DA] tracking-tight uppercase mb-1 group-hover:text-[#62AA9E] transition-colors">
+                  <h3 className="type-section font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-1 group-hover:text-[#62AA9E] transition-colors">
                     {other.headline}
                   </h3>
                   <p className="font-sans-body text-xs uppercase tracking-[0.22em] text-[#62AA9E] font-medium">
@@ -611,7 +627,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
               lakefront home, or a finite investment.
             </p>
 
-            <h2 className="font-serif-heading text-3xl sm:text-5xl md:text-7xl font-light text-white tracking-tight uppercase leading-none mb-3">
+            <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-5xl md:text-7xl text-white tracking-tight leading-none mb-3">
               {suite.lakeViewPerspective.title}
             </h2>
 
@@ -657,7 +673,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
             {/* Monumental Phone Number in Luxia Serif */}
             <a
               href="tel:+923009079164"
-              className="font-serif-heading text-4xl sm:text-6xl md:text-7xl font-light text-[#EDE5DA] hover:text-[#62AA9E] tracking-tight transition-colors inline-block select-none"
+              className="font-serif-heading font-luxia-display text-4xl sm:text-6xl md:text-7xl text-[#EDE5DA] hover:text-[#62AA9E] tracking-tight transition-colors inline-block select-none"
             >
               +92 300 9079 164
             </a>
@@ -696,7 +712,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                 <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#62AA9E] font-bold">
                   {suite.unitCode} · Architectural Floor Plan
                 </span>
-                <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA] font-light">
+                <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]">
                   {suite.headline}
                 </h3>
               </div>
@@ -712,13 +728,21 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
             </div>
 
             <div className="relative w-full h-[65vh] sm:h-[70vh] my-4 rounded-xl bg-[#EDE5DA] p-3 sm:p-4 flex items-center justify-center overflow-hidden">
-              <Image
-                src={suite.floorPlanSrc}
-                alt={`${suite.title} full layout`}
-                fill
-                sizes="90vw"
-                className="object-contain filter contrast-[1.05]"
-              />
+              {suite.slug === "1-bedroom" ? (
+                <FloorPlan3DViewer
+                  plan={ONE_BEDROOM_PLAN}
+                  fallbackImageSrc={suite.floorPlanSrc}
+                  fallbackAlt={`${suite.title} full layout`}
+                />
+              ) : (
+                <Image
+                  src={suite.floorPlanSrc}
+                  alt={`${suite.title} full layout`}
+                  fill
+                  sizes="90vw"
+                  className="object-contain filter contrast-[1.05]"
+                />
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-3 border-t border-[#EDE5DA]/10 text-xs font-sans-body text-[#EDE5DA]/70 uppercase tracking-[0.2em]">

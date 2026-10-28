@@ -26,12 +26,12 @@ const LoadingScreen = forwardRef<HTMLDivElement, LoadingScreenProps>(
 
         {/* Understated Quiet Luxury Typography */}
         <div className="flex flex-col items-center text-center mt-3 sm:mt-4 space-y-2">
-          <span className="font-serif text-base sm:text-lg tracking-[0.28em] text-[#EDE5DA] font-light uppercase">
+          <span className="font-serif text-base sm:text-lg tracking-[0.28em] text-[#EDE5DA] uppercase">
             Orion One
           </span>
 
           {/* Minimal Loading Indicator */}
-          <div className="flex items-center gap-2.5 text-[10px] sm:text-[11px] tracking-[0.35em] text-[#62AA9E] uppercase font-sans-body font-medium">
+          <div className="type-ui flex items-center gap-2.5 text-[10px] sm:text-[11px] tracking-[0.35em] text-[#62AA9E] uppercase font-sans-body font-medium">
             <span>Loading</span>
             <span className="text-[#EDE5DA]/30 text-[8px]">•</span>
             <span className="tabular-nums text-[#EDE5DA]/85">{progress}%</span>

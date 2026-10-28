@@ -85,9 +85,9 @@ export default function LakesideWellness({ onOpenInquiry }: LakesideWellnessProp
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Header */}
         <div ref={headerRef} className="max-w-4xl mb-12 sm:mb-16 space-y-4">
-          <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Wellness by the <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+            <span className="type-display-accent italic font-normal text-sand-gradient">
               Water
             </span>
           </h2>
@@ -117,7 +117,7 @@ export default function LakesideWellness({ onOpenInquiry }: LakesideWellnessProp
 
             {/* Typography */}
             <div className="pt-6 space-y-3 flex-1 flex flex-col justify-start border-t border-[#EDE5DA]/15 mt-6">
-              <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light leading-snug group-hover:text-[#62AA9E] transition-colors">
+              <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] leading-snug group-hover:text-[#62AA9E] transition-colors">
                 Lake-Facing Infinity Pool
               </h3>
               <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -141,7 +141,7 @@ export default function LakesideWellness({ onOpenInquiry }: LakesideWellnessProp
 
             {/* Typography */}
             <div className="pt-6 space-y-3 flex-1 flex flex-col justify-start border-t border-[#EDE5DA]/15 mt-6">
-              <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light leading-snug group-hover:text-[#62AA9E] transition-colors">
+              <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] leading-snug group-hover:text-[#62AA9E] transition-colors">
                 Double-Height Fitness Center
               </h3>
               <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">

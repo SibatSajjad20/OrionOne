@@ -230,9 +230,9 @@ export default function AmenitiesIndex() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Centered Section Header */}
         <div ref={headerRef} className="text-center max-w-4xl mx-auto mb-12 sm:mb-24 space-y-4">
-          <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
-            Amenities At A{" "}
-            <span className="italic font-normal text-sand-gradient normal-case">
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
+            Amenities at a{" "}
+            <span className="type-display-accent italic font-normal text-sand-gradient">
               Glance
             </span>
           </h2>
@@ -262,7 +262,7 @@ export default function AmenitiesIndex() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
                   {/* Category Title Column */}
                   <div className="lg:col-span-5 flex items-center">
-                    <h3 className="font-serif-heading text-2xl sm:text-3xl lg:text-4xl text-[#EDE5DA] font-light tracking-tight transition-all duration-300 group-hover:translate-x-2 group-hover:text-sand-gradient">
+                    <h3 className="font-serif-heading text-2xl sm:text-3xl lg:text-4xl text-[#EDE5DA] tracking-tight transition-all duration-300 group-hover:translate-x-2 group-hover:text-sand-gradient">
                       {row.category}
                     </h3>
                   </div>

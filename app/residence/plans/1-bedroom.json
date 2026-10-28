@@ -1,0 +1,305 @@
+{
+  "slug": "1-bedroom",
+  "title": "One Bedroom Apartment — Ground Floor (Planta Baja)",
+  "wallHeight": 2.8,
+  "walkthroughStart": {
+    "position": [2.8, 1.6, 5.8],
+    "yaw": 0.45
+  },
+  "walls": [
+    [0.0, 0.0, 9.87, 0.0, 0.24],
+    [9.87, 0.0, 9.87, 7.90, 0.24],
+    [0.0, 7.90, 9.87, 7.90, 0.24],
+    [0.0, 0.0, 0.0, 7.90, 0.24],
+    [0.0, 3.40, 5.65, 3.40, 0.14],
+    [3.35, 0.0, 3.35, 3.40, 0.12],
+    [3.95, 0.0, 3.95, 2.15, 0.12],
+    [6.23, 0.0, 6.23, 2.15, 0.12],
+    [6.85, 0.0, 6.85, 4.00, 0.12],
+    [3.35, 2.15, 6.85, 2.15, 0.12],
+    [5.65, 3.40, 5.65, 4.15, 0.14],
+    [6.85, 3.40, 9.87, 3.40, 0.12],
+    [6.85, 4.00, 9.87, 4.00, 0.12],
+    [7.25, 5.20, 7.25, 7.90, 0.14],
+    [8.65, 5.20, 8.65, 7.90, 0.14],
+    [8.65, 5.75, 9.87, 5.75, 0.12],
+    [-1.50, 0.0, 0.0, 0.0, 0.18],
+    [-1.50, 0.0, -1.50, 2.15, 0.18]
+  ],
+  "openings": [
+    {
+      "wallIndex": 1,
+      "type": "window",
+      "offset": 0.65,
+      "width": 2.0,
+      "sillHeight": 0.85,
+      "height": 1.35
+    },
+    {
+      "wallIndex": 1,
+      "type": "door",
+      "offset": 4.25,
+      "width": 1.0,
+      "sillHeight": 0.0,
+      "height": 2.15
+    },
+    {
+      "wallIndex": 1,
+      "type": "window",
+      "offset": 7.05,
+      "width": 0.55,
+      "sillHeight": 1.4,
+      "height": 0.8
+    },
+    {
+      "wallIndex": 3,
+      "type": "window",
+      "offset": 0.45,
+      "width": 1.65,
+      "sillHeight": 0.85,
+      "height": 1.35
+    },
+    {
+      "wallIndex": 3,
+      "type": "door",
+      "offset": 3.75,
+      "width": 3.1,
+      "sillHeight": 0.0,
+      "height": 2.25
+    },
+    {
+      "wallIndex": 5,
+      "type": "door",
+      "offset": 2.25,
+      "width": 0.88,
+      "sillHeight": 0.0,
+      "height": 2.1
+    },
+    {
+      "wallIndex": 8,
+      "type": "door",
+      "offset": 2.25,
+      "width": 0.88,
+      "sillHeight": 0.0,
+      "height": 2.1
+    },
+    {
+      "wallIndex": 9,
+      "type": "door",
+      "offset": 1.55,
+      "width": 0.82,
+      "sillHeight": 0.0,
+      "height": 2.1
+    },
+    {
+      "wallIndex": 15,
+      "type": "door",
+      "offset": 0.18,
+      "width": 0.78,
+      "sillHeight": 0.0,
+      "height": 2.1
+    }
+  ],
+  "rooms": [
+    {
+      "id": "jardin",
+      "name": "Jardín",
+      "area": 28.68,
+      "areaLabel": "28.68 m²",
+      "kind": "exterior",
+      "polygon": [
+        [-6.35, 0.0],
+        [-3.40, 0.0],
+        [-2.20, 3.40],
+        [-2.20, 7.90],
+        [-3.60, 7.90]
+      ],
+      "labelPosition": [-3.75, 3.9]
+    },
+    {
+      "id": "terraza",
+      "name": "Terraza",
+      "area": 16.35,
+      "areaLabel": "16.35 m²",
+      "kind": "exterior",
+      "polygon": [
+        [-3.40, 0.0],
+        [-1.50, 0.0],
+        [-1.50, 3.40],
+        [0.0, 3.40],
+        [0.0, 7.90],
+        [-2.20, 7.90],
+        [-2.20, 3.40]
+      ],
+      "labelPosition": [-1.15, 5.65]
+    },
+    {
+      "id": "porche",
+      "name": "Porche",
+      "area": 5.09,
+      "areaLabel": "5.09 m²",
+      "kind": "exterior",
+      "polygon": [
+        [-1.50, 0.0],
+        [0.0, 0.0],
+        [0.0, 3.40],
+        [-1.50, 3.40]
+      ],
+      "labelPosition": [-0.75, 2.3]
+    },
+    {
+      "id": "dormitorio-2",
+      "name": "Dormitorio 2",
+      "area": 11.38,
+      "areaLabel": "11.38 m²",
+      "kind": "interior",
+      "polygon": [
+        [0.0, 0.0],
+        [3.35, 0.0],
+        [3.35, 3.40],
+        [0.0, 3.40]
+      ],
+      "labelPosition": [1.65, 1.7]
+    },
+    {
+      "id": "bano-1",
+      "name": "Baño 1",
+      "area": 4.91,
+      "areaLabel": "4.91 m²",
+      "kind": "interior",
+      "polygon": [
+        [3.95, 0.0],
+        [6.23, 0.0],
+        [6.23, 2.15],
+        [3.95, 2.15]
+      ],
+      "labelPosition": [5.1, 1.1]
+    },
+    {
+      "id": "dormitorio-1",
+      "name": "Dormitorio 1",
+      "area": 10.25,
+      "areaLabel": "10.25 m²",
+      "kind": "interior",
+      "polygon": [
+        [6.85, 0.0],
+        [9.87, 0.0],
+        [9.87, 3.40],
+        [6.85, 3.40]
+      ],
+      "labelPosition": [8.35, 1.7]
+    },
+    {
+      "id": "pasillo",
+      "name": "Pasillo",
+      "area": 3.78,
+      "areaLabel": "3.78 m²",
+      "kind": "interior",
+      "polygon": [
+        [3.35, 2.15],
+        [6.85, 2.15],
+        [6.85, 3.40],
+        [3.35, 3.40]
+      ],
+      "labelPosition": [5.1, 2.8]
+    },
+    {
+      "id": "salon-cocina",
+      "name": "Salón - cocina",
+      "area": 32.60,
+      "areaLabel": "32.60 m²",
+      "kind": "interior",
+      "polygon": [
+        [0.0, 3.40],
+        [7.25, 3.40],
+        [7.25, 7.90],
+        [0.0, 7.90]
+      ],
+      "labelPosition": [3.5, 5.5]
+    },
+    {
+      "id": "escaleras",
+      "name": "Escaleras",
+      "area": 3.97,
+      "areaLabel": "3.97 m²",
+      "kind": "interior",
+      "polygon": [
+        [7.25, 4.00],
+        [8.65, 4.00],
+        [8.65, 7.90],
+        [7.25, 7.90]
+      ],
+      "labelPosition": [7.95, 6.1]
+    },
+    {
+      "id": "entrada",
+      "name": "Entrada",
+      "area": 4.80,
+      "areaLabel": "4.80 m²",
+      "kind": "interior",
+      "polygon": [
+        [8.65, 4.00],
+        [9.87, 4.00],
+        [9.87, 5.75],
+        [8.65, 5.75]
+      ],
+      "labelPosition": [9.25, 4.85]
+    },
+    {
+      "id": "aseo",
+      "name": "Aseo",
+      "area": 2.23,
+      "areaLabel": "2.23 m²",
+      "kind": "interior",
+      "polygon": [
+        [8.65, 5.75],
+        [9.87, 5.75],
+        [9.87, 7.90],
+        [8.65, 7.90]
+      ],
+      "labelPosition": [9.25, 6.8]
+    },
+    {
+      "id": "armarios",
+      "name": "Armarios",
+      "area": 4.41,
+      "areaLabel": "4.41 m²",
+      "kind": "interior",
+      "polygon": [
+        [3.35, 0.0],
+        [3.95, 0.0],
+        [3.95, 2.15],
+        [3.35, 2.15]
+      ],
+      "labelPosition": [3.65, 1.05]
+    },
+    {
+      "id": "armario-dorm-1",
+      "name": "Armario",
+      "area": 1.33,
+      "areaLabel": "1.33 m²",
+      "kind": "interior",
+      "polygon": [
+        [6.23, 0.0],
+        [6.85, 0.0],
+        [6.85, 2.15],
+        [6.23, 2.15]
+      ],
+      "labelPosition": [6.54, 1.05]
+    },
+    {
+      "id": "armario-entrada",
+      "name": "Armario Entrada",
+      "area": 1.81,
+      "areaLabel": "1.81 m²",
+      "kind": "interior",
+      "polygon": [
+        [6.85, 3.40],
+        [9.87, 3.40],
+        [9.87, 4.00],
+        [6.85, 4.00]
+      ],
+      "labelPosition": [8.36, 3.7]
+    }
+  ]
+}

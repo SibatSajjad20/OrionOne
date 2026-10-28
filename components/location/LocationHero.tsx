@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { scrollToElement } from "@/lib/scrollTo";
+import { setupOrionSplitReveal } from "@/lib/orionSplitReveal";
 
 interface LocationHeroProps {
   onOpenInquiry?: () => void;
@@ -13,6 +14,8 @@ interface LocationHeroProps {
 export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
   const containerRef = useRef<HTMLElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const bodyRef = useRef<HTMLParagraphElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,19 +25,13 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
 
     if (!container || !leftCol || !imgContainer) return;
 
-    const ctx = gsap.context(() => {
-      // Smooth initial mount entrance
-      gsap.fromTo(
-        leftCol,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.0,
-          ease: "power3.out",
-        }
-      );
+    const cleanupSplit = setupOrionSplitReveal({
+      root: container,
+      headings: [headingRef.current],
+      bodies: [bodyRef.current],
+    });
 
+    const ctx = gsap.context(() => {
       gsap.fromTo(
         imgContainer,
         { opacity: 0 },
@@ -46,7 +43,10 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
       );
     }, container);
 
-    return () => ctx.revert();
+    return () => {
+      cleanupSplit();
+      ctx.revert();
+    };
   }, []);
 
   const scrollToAddress = (e: React.MouseEvent) => {
@@ -60,6 +60,7 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
   return (
     <section
       ref={containerRef}
+      data-bg="moss"
       className="relative w-full min-h-[92vh] lg:min-h-screen bg-[#0F3D3C] text-[#EDE5DA] overflow-hidden flex items-center pt-28 sm:pt-32 lg:pt-0"
       aria-label="Location Architectural Showcase"
     >
@@ -133,14 +134,20 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
         className="relative z-20 max-w-[1400px] w-full mx-auto px-4 sm:px-8 lg:px-16 py-12 lg:py-20"
       >
         <div className="max-w-2xl lg:max-w-3xl space-y-7 sm:space-y-8">
-          <h1 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] font-light text-[#EDE5DA] tracking-tight leading-[1.12] uppercase transform-gpu backface-hidden">
+          <h1
+            ref={headingRef}
+            className="type-display font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] text-[#EDE5DA] tracking-tight leading-[1.12]"
+          >
             <span className="block">At the Heart</span>
-            <span className="block italic font-normal text-sand-gradient normal-case">
+            <span className="type-display-accent block italic font-normal text-sand-gradient">
               of DHA Phase III
             </span>
           </h1>
 
-          <p className="font-sans-body text-base sm:text-lg lg:text-xl text-[#EDE5DA]/85 font-light leading-relaxed max-w-xl">
+          <p
+            ref={bodyRef}
+            className="font-sans-body text-base sm:text-lg lg:text-xl text-[#EDE5DA]/85 font-light leading-relaxed max-w-xl"
+          >
             Orion One brings lakefront living, contemporary architecture, and everyday connectivity together within DHA Phase III.
           </p>
 
@@ -149,6 +156,7 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
             <a
               href="#address"
               onClick={scrollToAddress}
+              data-no-split
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 shadow-xl hover:shadow-[#62AA9E]/20 hover:-translate-y-0.5 cursor-pointer"
             >
               <span>Explore the Location</span>

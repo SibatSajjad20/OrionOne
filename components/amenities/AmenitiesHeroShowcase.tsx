@@ -297,9 +297,9 @@ export default function AmenitiesHeroShowcase({
             ref={heroContentRef}
             className="w-full max-w-4xl mx-auto space-y-6 sm:space-y-8 will-change-transform"
           >
-            <h1 className="font-serif-heading text-3xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-light text-[#EDE5DA] leading-[1.12] uppercase transform-gpu backface-hidden">
+            <h1 className="type-display font-serif-heading font-luxia-display text-3xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] text-[#EDE5DA] leading-[1.12]">
               <span className="block">Designed Around</span>
-              <span className="block italic font-normal text-sand-gradient normal-case">
+              <span className="type-display-accent block italic font-normal text-sand-gradient">
                 How You Live
               </span>
             </h1>
@@ -356,9 +356,9 @@ export default function AmenitiesHeroShowcase({
 
             {/* Centered "Signature Environments" Text */}
             <div className="relative z-10 max-w-5xl space-y-4">
-              <h2 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light text-[#EDE5DA] leading-[1.02] uppercase">
+              <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-[#EDE5DA] leading-[1.02]">
                 Signature <br />
-                <span className="italic font-normal text-sand-gradient normal-case">
+                <span className="type-display-accent italic font-normal text-sand-gradient">
                   Environments
                 </span>
               </h2>
@@ -410,7 +410,7 @@ export default function AmenitiesHeroShowcase({
 
               {/* Bottom Content: Headline & Narrative with Safe-Area Elevation */}
               <div className="absolute bottom-16 sm:bottom-20 lg:bottom-24 left-4 sm:left-8 lg:left-16 max-w-3xl z-10 space-y-2 sm:space-y-3 pr-4 sm:pr-8 pb-[env(safe-area-inset-bottom,0px)]">
-                <h3 className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.08]">
+                <h3 className="font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-[1.08]">
                   {slide.title}
                 </h3>
 

@@ -11,13 +11,15 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative w-full bg-[#0d2828] text-[#EDE5DA] border-t border-[#EDE5DA]/15 pt-16 sm:pt-24 pb-8 sm:pb-12 font-sans-body">
+    <footer
+      data-bg="moss"
+      className="relative w-full bg-[#0d2828] text-[#EDE5DA] border-t border-[#EDE5DA]/15 pt-16 sm:pt-24 pb-8 sm:pb-12 font-sans-body"
+    >
       {/* Ambient top border glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-[#62AA9E]/40 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 sm:gap-12 pb-12 sm:pb-16 border-b border-[#EDE5DA]/10">
-          
           {/* Brand Info & Mission Statement */}
           <div className="md:col-span-5 space-y-6">
             <div className="flex flex-col space-y-3">

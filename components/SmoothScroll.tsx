@@ -57,7 +57,11 @@ function isSamePageHash(anchor: HTMLAnchorElement) {
   }
 }
 
-export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+export default function SmoothScroll({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const lenisRef = useRef<Lenis | null>(null);
 
@@ -74,8 +78,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     window.__orionScroll = { velocity: 0, progress: 0, direction: 1 };
 
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let reduced = motionQuery.matches;
+    const reduced =
+      document.documentElement.dataset.reducedMotion === "true";
 
     const profile = wheelProfile();
     const lenis = new Lenis({
@@ -113,7 +117,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         return;
       }
       const anchor = (event.target as Element | null)?.closest?.("a");
-      if (!(anchor instanceof HTMLAnchorElement) || !isSamePageHash(anchor)) return;
+      if (!(anchor instanceof HTMLAnchorElement) || !isSamePageHash(anchor))
+        return;
       if (anchor.target && anchor.target !== "_self") return;
       event.preventDefault();
       const url = new URL(anchor.href, window.location.href);
@@ -125,7 +130,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     lenis.scrollTo(0, { immediate: true });
 
-    if (pathname === "/" && document.documentElement.classList.contains("loading-lock")) {
+    if (
+      pathname === "/" &&
+      document.documentElement.classList.contains("loading-lock")
+    ) {
       lenis.stop();
     } else {
       document.documentElement.classList.remove("loading-lock");
@@ -166,19 +174,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     gsap.ticker.lagSmoothing(0);
     if (!reduced) bindTicker();
 
-    const onMotionChange = (event: MediaQueryListEvent) => {
-      reduced = event.matches;
-      lenis.options.smoothWheel = !reduced;
-      lenis.options.anchors = anchorOptions(reduced);
-      if (reduced) {
-        unbindTicker();
-        lenis.scrollTo(lenis.actualScroll, { immediate: true, force: true });
-      } else {
-        bindTicker();
-      }
-    };
-    motionQuery.addEventListener("change", onMotionChange);
-
     const handleRefresh = () => {
       lenis.resize();
     };
@@ -190,7 +185,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       window.removeEventListener("lenis:stop", handleLenisStop);
       window.removeEventListener("lenis:start", handleLenisStart);
       window.removeEventListener("click", preventNativeHashJump, true);
-      motionQuery.removeEventListener("change", onMotionChange);
       unbindTicker();
       ScrollTrigger.removeEventListener("refresh", handleRefresh);
       lenis.destroy();

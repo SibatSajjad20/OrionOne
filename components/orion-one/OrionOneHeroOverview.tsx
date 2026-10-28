@@ -472,14 +472,14 @@ export default function OrionOneHeroOverview({
             className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center px-4 sm:px-8 pointer-events-auto will-change-transform pt-16"
           >
             <div className="max-w-4xl mx-auto space-y-6">
-              <h1 className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-[#EDE5DA] leading-[1.06] uppercase">
+              <h1 className="type-display font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl text-[#EDE5DA] leading-[1.06]">
                 A New Horizon <br />
-                <span className="italic font-normal text-sand-gradient normal-case">
+                <span className="type-display-accent italic font-normal text-sand-gradient">
                   of Luxury
                 </span>
               </h1>
 
-              <p className="font-serif-heading text-base sm:text-xl md:text-2xl text-[#EDE5DA] font-light italic max-w-2xl mx-auto">
+              <p className="font-serif-heading text-base sm:text-xl md:text-2xl text-[#EDE5DA] italic max-w-2xl mx-auto">
                 Where architecture flows like water and every view inspires
               </p>
 
@@ -527,8 +527,8 @@ export default function OrionOneHeroOverview({
             ref={addressStatementRef}
             className="relative z-10 max-w-4xl text-center space-y-4 will-change-transform"
           >
-            <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-8xl font-light text-[#EDE5DA] leading-[1.06] uppercase">
-              More Than An Address
+            <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl xl:text-8xl text-[#EDE5DA] leading-[1.06]">
+              More Than an Address
             </h2>
 
             <p className="font-sans-body text-xs sm:text-sm md:text-base lg:text-lg text-[#C9BFB1] font-light max-w-2xl mx-auto leading-relaxed pt-1">
@@ -566,8 +566,8 @@ export default function OrionOneHeroOverview({
             ref={destinationStatementRef}
             className="relative z-10 max-w-4xl text-center space-y-4 will-change-transform"
           >
-            <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl xl:text-8xl font-light leading-[1.06] uppercase">
-              <span className="italic font-normal text-sand-gradient uppercase">
+            <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl xl:text-8xl leading-[1.06]">
+              <span className="type-display-accent italic font-normal text-sand-gradient">
                 A Destination
               </span>
             </h2>
@@ -621,7 +621,7 @@ export default function OrionOneHeroOverview({
                 <div className="absolute inset-0 bg-gradient-to-l from-[#081a1a]/85 via-[#081a1a]/25 to-transparent pointer-events-none z-[3]" />
 
                 <div className="absolute right-6 sm:right-12 lg:right-16 xl:right-24 bottom-10 sm:bottom-16 lg:bottom-20 z-20 pointer-events-none select-none max-w-xl text-right">
-                  <h3 className="font-serif-heading text-2xl sm:text-5xl md:text-7xl lg:text-8xl font-light uppercase text-[#EDE5DA] pr-2">
+                  <h3 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl md:text-7xl lg:text-8xl text-[#EDE5DA] pr-2">
                     {pillar.title}
                   </h3>
                 </div>

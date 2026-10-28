@@ -99,9 +99,9 @@ export default function CommercialSpaces({ onOpenInquiry }: CommercialSpacesProp
     >
       {/* Header */}
       <div ref={headerRef} className="max-w-4xl mb-12 sm:mb-16 space-y-4">
-        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+        <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
           Your Business <br />
-          <span className="italic font-normal text-sand-gradient normal-case">
+          <span className="type-display-accent italic font-normal text-sand-gradient">
             Your Space
           </span>
         </h2>
@@ -116,7 +116,7 @@ export default function CommercialSpaces({ onOpenInquiry }: CommercialSpacesProp
         className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-10 sm:gap-y-12 mb-16 sm:mb-20"
       >
         <div className="level-card group border-t border-[#EDE5DA]/20 pt-6 sm:pt-8 flex flex-col justify-start transition-colors duration-300">
-          <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
+          <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
             Ground Floor
           </h3>
           <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -125,7 +125,7 @@ export default function CommercialSpaces({ onOpenInquiry }: CommercialSpacesProp
         </div>
 
         <div className="level-card group border-t border-[#EDE5DA]/20 pt-6 sm:pt-8 flex flex-col justify-start transition-colors duration-300">
-          <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
+          <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
             First Floor
           </h3>
           <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -137,7 +137,7 @@ export default function CommercialSpaces({ onOpenInquiry }: CommercialSpacesProp
       {/* The Approved Commercial Floor Plan Exhibition Frame */}
       <div ref={floorPlanRef} className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EDE5DA]/15">
-          <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA] font-light">
+          <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]">
             Commercial Floor Plan
           </h3>
         </div>

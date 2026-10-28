@@ -37,7 +37,7 @@ export default function CommercialTaglineTicker({
         <div className="flex shrink-0 items-center">
           {items.map((_, i) => (
             <div key={`part1-${i}`} className="flex items-center">
-              <span className="font-serif-heading text-lg sm:text-2xl lg:text-3xl font-light text-[#EDE5DA]/90 tracking-wide whitespace-nowrap">
+              <span className="font-serif-heading text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA]/90 tracking-wide whitespace-nowrap">
                 {TAGLINE}
               </span>
               <span
@@ -54,7 +54,7 @@ export default function CommercialTaglineTicker({
         <div className="flex shrink-0 items-center" aria-hidden="true">
           {items.map((_, i) => (
             <div key={`part2-${i}`} className="flex items-center">
-              <span className="font-serif-heading text-lg sm:text-2xl lg:text-3xl font-light text-[#EDE5DA]/90 tracking-wide whitespace-nowrap">
+              <span className="font-serif-heading text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA]/90 tracking-wide whitespace-nowrap">
                 {TAGLINE}
               </span>
               <span

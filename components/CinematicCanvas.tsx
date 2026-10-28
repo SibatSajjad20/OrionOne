@@ -18,7 +18,7 @@ if (typeof window !== "undefined") {
 // When new section-specific cut frames are provided, simply swap the folder path
 // or configure chapter-specific frame sequences below.
 // ---------------------------------------------------------------------------
-const TOTAL_FRAMES = 393;
+const TOTAL_FRAMES = 554;
 const COLUMN_FRAMES_COUNT = 240;
 
 // ---------------------------------------------------------------------------
@@ -34,12 +34,33 @@ interface ChapterDef {
 }
 
 const CHAPTER_DEFS: ChapterDef[] = [
-  { id: "scene2", name: "Architecture", startIdx: 0, endIdx: 65, anchorIdx: 0 },         // frames 1..66
-  { id: "scene3", name: "Waterfront", startIdx: 66, endIdx: 155, anchorIdx: 66 },        // frames 67..156 (pure Waterfront)
-  { id: "scene5", name: "Masterplan", startIdx: 204, endIdx: 275, anchorIdx: 204 },      // frames 205..276 (pure Masterplan)
-  { id: "scene4", name: "Destination", startIdx: 163, endIdx: 196, anchorIdx: 163 },     // frames 164..197 (Infinity Pool)
-  { id: "scene7", name: "Closing", startIdx: 329, endIdx: 392, anchorIdx: 329 },         // frames 330..393
+  { id: "scene2", name: "Architecture", startIdx: 0, endIdx: 191, anchorIdx: 0 },        // scene-1-frames 1..192 (full 24fps)
+  { id: "scene3", name: "Waterfront", startIdx: 192, endIdx: 383, anchorIdx: 192 },      // scene-2-frames 1..192 (full 24fps)
+  { id: "scene5", name: "Masterplan", startIdx: 384, endIdx: 455, anchorIdx: 384 },      // video-frames 205..276 (pure Masterplan)
+  { id: "scene4", name: "Destination", startIdx: 456, endIdx: 489, anchorIdx: 456 },     // video-frames 164..197 (Infinity Pool)
+  { id: "scene7", name: "Closing", startIdx: 490, endIdx: 553, anchorIdx: 490 },         // video-frames 330..393
 ];
+
+function getMainFrameUrl(idx: number): string {
+  if (idx <= 191) {
+    const frameNum = String(idx + 1).padStart(4, "0");
+    return `/scene-1-frames/frame_${frameNum}.webp`;
+  }
+  if (idx <= 383) {
+    const frameNum = String(idx - 192 + 1).padStart(4, "0");
+    return `/scene-2-frames/frame_${frameNum}.webp`;
+  }
+  if (idx <= 455) {
+    const frameNum = String(idx - 384 + 205).padStart(4, "0");
+    return `/video-frames/frame_${frameNum}.webp`;
+  }
+  if (idx <= 489) {
+    const frameNum = String(idx - 456 + 164).padStart(4, "0");
+    return `/video-frames/frame_${frameNum}.webp`;
+  }
+  const frameNum = String(idx - 490 + 330).padStart(4, "0");
+  return `/video-frames/frame_${frameNum}.webp`;
+}
 
 // Bidirectional, chapter-clamped safe frame lookup
 function getSafeFrame(frames: HTMLImageElement[], targetIdx: number): HTMLImageElement | null {
@@ -47,7 +68,7 @@ function getSafeFrame(frames: HTMLImageElement[], targetIdx: number): HTMLImageE
 
   const chapter = CHAPTER_DEFS.find((c) => targetIdx >= c.startIdx && targetIdx <= c.endIdx);
   if (!chapter) {
-    return frames[163] || frames[329] || frames[204] || frames[0] || null;
+    return frames[456] || frames[490] || frames[384] || frames[0] || null;
   }
 
   // Nearest frame search bounded strictly within chapter
@@ -158,11 +179,13 @@ interface OrionFramesCache {
 let moduleFramesCache: OrionFramesCache | null = null;
 
 function getGlobalFramesCache(): OrionFramesCache | null {
-  if (moduleFramesCache?.isLoaded) return moduleFramesCache;
+  if (moduleFramesCache?.isLoaded && moduleFramesCache.mainFrames.length === TOTAL_FRAMES) {
+    return moduleFramesCache;
+  }
   if (typeof window !== "undefined") {
-    const win = window as unknown as { __orionFramesCache?: OrionFramesCache };
-    if (win.__orionFramesCache?.isLoaded) {
-      moduleFramesCache = win.__orionFramesCache;
+    const win = window as unknown as { __orionFramesCacheV2?: OrionFramesCache };
+    if (win.__orionFramesCacheV2?.isLoaded && win.__orionFramesCacheV2.mainFrames.length === TOTAL_FRAMES) {
+      moduleFramesCache = win.__orionFramesCacheV2;
       return moduleFramesCache;
     }
   }
@@ -172,7 +195,7 @@ function getGlobalFramesCache(): OrionFramesCache | null {
 function setGlobalFramesCache(cache: OrionFramesCache): void {
   moduleFramesCache = cache;
   if (typeof window !== "undefined") {
-    (window as unknown as { __orionFramesCache?: OrionFramesCache }).__orionFramesCache = cache;
+    (window as unknown as { __orionFramesCacheV2?: OrionFramesCache }).__orionFramesCacheV2 = cache;
   }
 }
 
@@ -460,8 +483,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       lastBlendFrameRef.current = -1;
       lastBlendAlphaRef.current = 0;
 
-      if (framesRef.current.length > 0 && framesRef.current[0]) {
-        renderToCanvas(framesRef.current[0]);
+      if (framesRef.current.length > 0) {
+        const curImg = getSafeFrame(framesRef.current, targetMainFrameRef.current);
+        const blendImg = targetBlendFrameRef.current >= 0 ? getSafeFrame(framesRef.current, targetBlendFrameRef.current) : null;
+        if (curImg) {
+          renderToCanvas(curImg, blendImg, targetBlendAlphaRef.current);
+        }
       }
     }
 
@@ -636,18 +663,23 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     const col2Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
     const col3Frames: HTMLImageElement[] = new Array(COLUMN_FRAMES_COUNT);
 
-    // Active sequence indices (326 total frames in narrative order)
-    // Scene 2 (Architecture): 0..65 (66 frames)
-    // Scene 3 (Waterfront): 66..155 (90 frames, pure Waterfront)
-    // Scene 5 (Masterplan): 204..275 (72 frames, pure Masterplan)
-    // Scene 4 (Destination): 163..196 (34 frames, Infinity Pool)
-    // Scene 7 (Closing): 329..392 (64 frames)
+    // Priority preload sequence (364 frames) for instantaneous preloader completion:
+    // Loads even frames + boundary anchors of Scene 1 (0..191) and Scene 2 (192..383),
+    // plus all frames of Scene 5 (384..455), Scene 4 (456..489), and Scene 7 (490..553).
+    // Odd infill frames for Scene 1 & Scene 2 stream immediately after at top priority for full 24fps.
     const activeIndices: number[] = [];
-    for (let i = 0; i <= 65; i++) activeIndices.push(i);
-    for (let i = 66; i <= 155; i++) activeIndices.push(i);
-    for (let i = 204; i <= 275; i++) activeIndices.push(i);
-    for (let i = 163; i <= 196; i++) activeIndices.push(i);
-    for (let i = 329; i <= 392; i++) activeIndices.push(i);
+    const infillScene12Indices: number[] = [];
+    for (let i = 0; i <= 191; i++) {
+      if (i % 2 === 0 || i === 191) activeIndices.push(i);
+      else infillScene12Indices.push(i);
+    }
+    for (let i = 192; i <= 383; i++) {
+      if (i % 2 === 0 || i === 383) activeIndices.push(i);
+      else infillScene12Indices.push(i);
+    }
+    for (let i = 384; i <= 455; i++) activeIndices.push(i);
+    for (let i = 456; i <= 489; i++) activeIndices.push(i);
+    for (let i = 490; i <= 553; i++) activeIndices.push(i);
 
     const startPreload = async () => {
       let loadedCount = 0;
@@ -676,10 +708,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         renderFrameToColumnCanvas(col3CanvasRef.current, col3CtxRef, img);
       });
 
-      // Active sequence tasks — loads all 326 narrative frames and pre-decodes them off-thread
+      // Active sequence tasks — loads priority narrative frames and pre-decodes them off-thread
       const mainTasks = activeIndices.map((idx) => async () => {
-        const frameNum = String(idx + 1).padStart(4, "0");
-        const img = await loadImage(`/video-frames/frame_${frameNum}.webp`);
+        const img = await loadImage(getMainFrameUrl(idx));
         if (isCancelled) return;
         loadedFrames[idx] = img;
         loadedCount++;
@@ -692,7 +723,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         setTimeout(resolve, 15000);
       });
 
-      // Run parallel workers for 100% of active narrative frames
+      // Run parallel workers for 100% of priority narrative frames
       await Promise.race([
         Promise.all([col1Initial, col2Initial, col3Initial, runWorkerPool(mainTasks, 16)]),
         timeoutPromise,
@@ -754,6 +785,21 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         );
       }
 
+      // Immediately stream remaining odd 24fps frames for Scene 1 & Scene 2, then column frames
+      const infillMainTasks = infillScene12Indices.map((idx) => async () => {
+        if (isCancelled) return;
+        const img = await loadImage(getMainFrameUrl(idx));
+        if (!isCancelled) {
+          loadedFrames[idx] = img;
+        }
+      });
+      runWorkerPool(infillMainTasks, 16).then(() => {
+        if (!isCancelled) {
+          framesRef.current = loadedFrames;
+          lastFrameIndexRef.current = -1; // Force redraw if resting on an odd frame
+        }
+      });
+
       // Stream column frames in the background via the worker pool (milestones first, then infill)
       loadColumnFramesBackground(col1Frames, col2Frames, col3Frames);
     };
@@ -774,13 +820,83 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
 
   // ---------------------------------------------------------------------------
   // DECOUPLED RAF RENDER TICKER
-  // Coalesces canvas draws to at most 1 draw per display refresh (60Hz / 120Hz).
-  // Eliminates paint thrashing and redundant draw calls during rapid scroll bursts.
+  // Coalesces canvas draws to at most 1 draw per display refresh (60Hz / 120Hz)
+  // with sub-frame progress smoothing so every 24fps frame glides without stepping.
   // ---------------------------------------------------------------------------
   useEffect(() => {
+    let smoothedProg = scrollProgressRef.current;
+
+    const computeFramesForProgress = (progress: number) => {
+      if (progress <= 0.109) {
+        // Scene 1: Architecture (scene-1-frames 0..191, full 24fps)
+        const norm = Math.max(0, Math.min(1, progress / 0.109));
+        targetMainFrameRef.current = Math.round(norm * 191);
+        targetBlendFrameRef.current = -1;
+        targetBlendAlphaRef.current = 0;
+      } else if (progress < 0.236) {
+        // Scene 2: Waterfront pre-transition (scene-2-frames 192..383, full 24fps)
+        const norm = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
+        targetMainFrameRef.current = 192 + Math.round(norm * (383 - 192));
+        targetBlendFrameRef.current = -1;
+        targetBlendAlphaRef.current = 0;
+      } else if (progress <= 0.268) {
+        // Seamless Optical Crossfade from Scene 2 Waterfront (192..383) into Scene 5 Masterplan (384..455)
+        // Both scenes remain in fluid camera motion during the cross-dissolve: NO static frozen frame!
+        const normWF = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
+        const frameWF = 192 + Math.round(normWF * (383 - 192));
+
+        const normMP = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
+        const frameMP = 384 + Math.round(normMP * (455 - 384));
+
+        const t = (progress - 0.236) / (0.268 - 0.236);
+        const smoothT = t * t * (3 - 2 * t); // Smooth Hermite S-curve ease
+
+        targetMainFrameRef.current = Math.min(383, Math.max(192, frameWF));
+        targetBlendFrameRef.current = Math.min(455, Math.max(384, frameMP));
+        targetBlendAlphaRef.current = smoothT;
+      } else if (progress <= 0.405) {
+        // Scene 5: Masterplan (frames 384..455)
+        // Continues smooth camera glide right through 0.405 as Section 6 (Investment) dissolves in
+        const norm = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
+        targetMainFrameRef.current = 384 + Math.round(norm * (455 - 384));
+        targetBlendFrameRef.current = -1;
+        targetBlendAlphaRef.current = 0;
+      } else if (progress <= 0.705) {
+        // Section 6 (Investment) active: holds frame 456 ready for Scene 4 (Destination)
+        targetMainFrameRef.current = 456;
+        targetBlendFrameRef.current = -1;
+        targetBlendAlphaRef.current = 0;
+      } else if (progress <= 0.845) {
+        // Scene 4: Destination & Pillars (frames 456..489 - Infinity Pool)
+        // In gentle motion as Investment section dissolves out
+        const norm = Math.max(0, Math.min(1, (progress - 0.705) / (0.845 - 0.705)));
+        targetMainFrameRef.current = 456 + Math.round(norm * (489 - 456));
+        targetBlendFrameRef.current = -1;
+        targetBlendAlphaRef.current = 0;
+      } else {
+        // Scene 7: Closing (frames 490..553)
+        const norm = Math.max(0, Math.min(1, (progress - 0.845) / (1.0 - 0.845)));
+        targetMainFrameRef.current = 490 + Math.round(norm * (553 - 490));
+        targetBlendFrameRef.current = -1;
+        targetBlendAlphaRef.current = 0;
+      }
+
+      targetMainFrameRef.current = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetMainFrameRef.current));
+    };
+
     const renderTick = () => {
       const frames = framesRef.current;
       if (!frames || frames.length === 0) return;
+
+      // Micro-smoothed progress interpolation for 60Hz/120Hz butter-smooth frame stepping
+      const rawProg = scrollProgressRef.current;
+      const diff = rawProg - smoothedProg;
+      if (Math.abs(diff) < 0.00004 || Math.abs(diff) > 0.15) {
+        smoothedProg = rawProg;
+      } else {
+        smoothedProg += diff * 0.35;
+      }
+      computeFramesForProgress(smoothedProg);
 
       const targetMain = targetMainFrameRef.current;
       const targetBlend = targetBlendFrameRef.current;
@@ -877,64 +993,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           const progress = self.progress;
           scrollProgressRef.current = progress;
 
-          // 1. Calculate piecewise main frame index & optical crossfade targets
-          if (progress <= 0.109) {
-            // Scene 2: Architecture (frames 0..65)
-            const norm = Math.max(0, Math.min(1, progress / 0.109));
-            targetMainFrameRef.current = Math.floor(norm * 65);
-            targetBlendFrameRef.current = -1;
-            targetBlendAlphaRef.current = 0;
-          } else if (progress < 0.236) {
-            // Scene 3: Waterfront pre-transition (frames 66..145)
-            const norm = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
-            targetMainFrameRef.current = 66 + Math.floor(norm * (155 - 66));
-            targetBlendFrameRef.current = -1;
-            targetBlendAlphaRef.current = 0;
-          } else if (progress <= 0.268) {
-            // Seamless Optical Crossfade between Waterfront (frames 145..155) and Masterplan (frames 204..217)
-            // Both scenes remain in fluid camera motion during the cross-dissolve: NO static frozen frame!
-            const normWF = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
-            const frameWF = 66 + Math.floor(normWF * (155 - 66));
-
-            const normMP = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
-            const frameMP = 204 + Math.floor(normMP * (275 - 204));
-
-            const t = (progress - 0.236) / (0.268 - 0.236);
-            const smoothT = t * t * (3 - 2 * t); // Smooth Hermite S-curve ease
-
-            targetMainFrameRef.current = Math.min(155, Math.max(66, frameWF));
-            targetBlendFrameRef.current = Math.min(275, Math.max(204, frameMP));
-            targetBlendAlphaRef.current = smoothT;
-          } else if (progress <= 0.405) {
-            // Scene 5: Masterplan (frames 204..275)
-            // Continues smooth camera glide right through 0.405 as Section 6 (Investment) dissolves in
-            const norm = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
-            targetMainFrameRef.current = 204 + Math.floor(norm * (275 - 204));
-            targetBlendFrameRef.current = -1;
-            targetBlendAlphaRef.current = 0;
-          } else if (progress <= 0.705) {
-            // Section 6 (Investment) active: holds frame 163 ready for Scene 4 (Destination)
-            targetMainFrameRef.current = 163;
-            targetBlendFrameRef.current = -1;
-            targetBlendAlphaRef.current = 0;
-          } else if (progress <= 0.845) {
-            // Scene 4: Destination & Pillars (frames 163..196 - Infinity Pool)
-            // In gentle motion as Investment section dissolves out
-            const norm = Math.max(0, Math.min(1, (progress - 0.705) / (0.845 - 0.705)));
-            targetMainFrameRef.current = 163 + Math.floor(norm * (196 - 163));
-            targetBlendFrameRef.current = -1;
-            targetBlendAlphaRef.current = 0;
-          } else {
-            // Scene 7: Closing (frames 329..392)
-            const norm = Math.max(0, Math.min(1, (progress - 0.845) / (1.0 - 0.845)));
-            targetMainFrameRef.current = 329 + Math.floor(norm * (392 - 329));
-            targetBlendFrameRef.current = -1;
-            targetBlendAlphaRef.current = 0;
-          }
-
-          targetMainFrameRef.current = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetMainFrameRef.current));
-
-          // Section 6 active states for render loop gating
+          // 1. Update scrollProgressRef (renderTick interpolates and computes exact 24fps frame targets)
+          // Also keep Section 6 active states synchronized for render loop gating
           isSection6ActiveRef.current = progress >= 0.37 && progress <= 0.74;
           isSection6FullyOpaqueRef.current = progress >= 0.405 && progress <= 0.705;
 
@@ -1127,7 +1187,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       {/* Fallback First Frame for instantaneous load */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/video-frames/frame_0001.webp"
+        src="/scene-1-frames/frame_0001.webp"
         alt="Orion One Lakefront"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
       />
@@ -1162,14 +1222,14 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             className="w-12 h-12 sm:w-14 sm:h-14 mr-auto sm:ml-auto mb-1 pointer-events-none flex items-center justify-center opacity-0"
             aria-hidden="true"
           />
-          <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+          <h1 className="type-display font-serif font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-tight">
             A New Horizon
-            <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
+            <span className="type-display-accent block font-serif font-luxia-display italic text-[#62AA9E] font-normal mt-1 text-xl sm:text-4xl lg:text-5xl">
               of Luxury.
             </span>
           </h1>
 
-          <p className="font-serif text-sm sm:text-2xl font-light text-[#EDE5DA]/90 italic leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <p className="font-serif text-sm sm:text-2xl text-[#EDE5DA]/90 italic leading-relaxed">
             &ldquo;Where architecture flows like water and every view inspires.&rdquo;
           </p>
         </div>
@@ -1193,9 +1253,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             aria-hidden="true"
           />
 
-          <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+          <h2 className="type-section font-serif font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-tight">
             Life,
-            <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-xl sm:text-4xl lg:text-5xl">
+            <span className="type-display-accent block font-serif font-luxia-display italic text-[#62AA9E] font-normal mt-1 text-xl sm:text-4xl lg:text-5xl">
               By the Water.
             </span>
           </h2>
@@ -1222,9 +1282,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             aria-hidden="true"
           />
 
-          <h2 className="font-serif text-xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+          <h2 className="type-section font-serif font-luxia-display text-xl sm:text-4xl lg:text-5xl text-[#EDE5DA] leading-tight">
             The Lakefront
-            <span className="block font-serif italic text-[#62AA9E] font-normal text-lg sm:text-3xl lg:text-4xl normal-case mt-0.5 sm:mt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            <span className="type-display-accent block font-serif italic text-[#62AA9E] font-normal text-lg sm:text-3xl lg:text-4xl mt-0.5 sm:mt-1">
               at the Heart of DHA Phase III.
             </span>
           </h2>
@@ -1242,9 +1302,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         {/* Floating Top Header across the 3 columns */}
         <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none pt-24 sm:pt-28 lg:pt-32 pb-10 sm:pb-16 bg-gradient-to-b from-[#081a1a]/95 via-[#081a1a]/70 to-transparent">
           <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-            <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] leading-tight uppercase drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)]">
+            <h2 className="type-section font-serif font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] leading-tight">
               Where Lifestyle{" "}
-              <span className="font-serif italic text-[#62AA9E] font-normal normal-case">
+              <span className="type-display-accent font-serif italic text-[#62AA9E] font-normal">
                 Meets Investment.
               </span>
             </h2>
@@ -1291,7 +1351,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               />
 
               <div className="space-y-1 sm:space-y-2">
-                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
+                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-snug">
                   {INVESTMENT_COLUMNS[0].title}
                 </h3>
                 <p className="text-xs sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
@@ -1347,7 +1407,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               />
 
               <div className="space-y-1 sm:space-y-2">
-                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
+                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-snug">
                   {INVESTMENT_COLUMNS[1].title}
                 </h3>
                 <p className="text-xs sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
@@ -1402,7 +1462,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               />
 
               <div className="space-y-1 sm:space-y-2">
-                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] font-light leading-snug">
+                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-snug">
                   {INVESTMENT_COLUMNS[2].title}
                 </h3>
                 <p className="text-[10px] sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
@@ -1445,9 +1505,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               aria-hidden="true"
             />
 
-            <h2 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-tight uppercase">
+            <h2 className="type-section font-serif font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-tight">
               <span className="block">A Destination.</span>
-              <span className="!block font-serif italic text-[#62AA9E] font-normal text-xl sm:text-4xl lg:text-5xl mt-1 sm:mt-2 normal-case">
+              <span className="type-display-accent !block font-serif font-luxia-display italic text-[#62AA9E] font-normal text-xl sm:text-4xl lg:text-5xl mt-1 sm:mt-2">
                 More Than an Address.
               </span>
             </h2>
@@ -1460,7 +1520,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 key={pillar.name}
                 className="border-t border-[#EDE5DA]/20 pt-4 sm:pt-8 flex flex-col justify-start"
               >
-                <h3 className="font-serif text-base sm:text-2xl lg:text-3xl font-light text-[#EDE5DA] tracking-tight mb-1 sm:mb-3 drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+                <h3 className="font-serif text-base sm:text-2xl lg:text-3xl text-[#EDE5DA] tracking-tight mb-1 sm:mb-3">
                   {pillar.name}
                 </h3>
                 <p className="font-sans-body text-[11px] sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
@@ -1487,9 +1547,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           aria-hidden="true"
         />
 
-        <h2 className="font-serif text-3xl sm:text-6xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-tight uppercase">
+        <h2 className="type-section font-serif font-luxia-display text-3xl sm:text-6xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-tight">
           The Future
-          <span className="block font-serif italic text-[#62AA9E] font-normal mt-1 normal-case text-2xl sm:text-5xl lg:text-6xl">
+          <span className="type-display-accent block font-serif font-luxia-display italic text-[#62AA9E] font-normal mt-1 text-2xl sm:text-5xl lg:text-6xl">
             Has an Address.
           </span>
         </h2>

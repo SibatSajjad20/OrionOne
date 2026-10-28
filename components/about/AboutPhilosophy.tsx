@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+import { setupOrionSplitReveal } from "@/lib/orionSplitReveal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -11,7 +12,7 @@ if (typeof window !== "undefined") {
 
 export default function AboutPhilosophy() {
   const sectionRef = useRef<HTMLElement>(null);
-  const quoteRef = useRef<HTMLDivElement>(null);
+  const quoteRef = useRef<HTMLQuoteElement>(null);
   const imageFrameRef = useRef<HTMLDivElement>(null);
   const thesesGridRef = useRef<HTMLDivElement>(null);
 
@@ -23,25 +24,12 @@ export default function AboutPhilosophy() {
 
     if (!section || !quote || !imageFrame || !thesesGrid) return;
 
-    const ctx = gsap.context(() => {
-      // Manifesto quote entrance
-      gsap.fromTo(
-        quote,
-        { opacity: 0, y: 35 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          clearProps: "all",
-          scrollTrigger: {
-            trigger: quote,
-            start: "top 85%",
-            once: true,
-          },
-        }
-      );
+    const cleanupSplit = setupOrionSplitReveal({
+      root: section,
+      headings: [quote],
+    });
 
+    const ctx = gsap.context(() => {
       // Panoramic image frame entrance
       gsap.fromTo(
         imageFrame,
@@ -55,7 +43,7 @@ export default function AboutPhilosophy() {
           scrollTrigger: {
             trigger: imageFrame,
             start: "top 85%",
-            once: true,
+            toggleActions: "play none none reverse",
           },
         }
       );
@@ -76,20 +64,24 @@ export default function AboutPhilosophy() {
             scrollTrigger: {
               trigger: thesesGrid,
               start: "top 85%",
-              once: true,
+              toggleActions: "play none none reverse",
             },
           }
         );
       }
     }, section);
 
-    return () => ctx.revert();
+    return () => {
+      cleanupSplit();
+      ctx.revert();
+    };
   }, []);
 
   return (
     <section
       id="philosophy"
       ref={sectionRef}
+      data-bg="moss"
       className="relative py-16 sm:py-24 bg-[#081a1a] border-y border-[#EDE5DA]/15 overflow-hidden"
     >
       {/* Subtle ambient lighting vignette */}
@@ -100,10 +92,15 @@ export default function AboutPhilosophy() {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* The Central Manifesto Spread */}
-        <div ref={quoteRef} className="max-w-4xl mx-auto text-center mb-8 sm:mb-14">
-          <blockquote className="font-serif-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.25rem] font-light text-[#EDE5DA] tracking-tight leading-[1.18] uppercase max-w-4xl mx-auto">
-            &ldquo;We don&apos;t just build projects, <br />
-            <span className="italic font-normal text-sand-gradient uppercase">we create destinations.&rdquo;</span>
+        <div className="max-w-4xl mx-auto text-center mb-8 sm:mb-14">
+          <blockquote
+            ref={quoteRef}
+            className="type-section font-serif-heading font-luxia-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.25rem] text-[#EDE5DA] tracking-tight leading-[1.18] max-w-4xl mx-auto"
+          >
+            &ldquo;We Don&apos;t Just Build Projects, <br />
+            <span className="type-display-accent italic font-normal text-sand-gradient">
+              We Create Destinations.&rdquo;
+            </span>
           </blockquote>
         </div>
 
@@ -129,16 +126,25 @@ export default function AboutPhilosophy() {
             className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 border-t border-[#EDE5DA]/15 pt-12"
           >
             <div className="thesis-card space-y-3">
-              <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
+              <h3
+                data-scroll-reveal="eyebrow"
+                className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA]"
+              >
                 Fluidity Over Rigidity
               </h3>
-              <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
+              <p
+                data-scroll-reveal="body"
+                className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed"
+              >
                 Water has no sharp corners. The towers curve organically, channeling prevailing lake breezes and allowing natural morning and evening light to penetrate deep into every residence.
               </p>
             </div>
 
             <div className="thesis-card space-y-3">
-              <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
+              <h3
+                data-scroll-reveal="eyebrow"
+                className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA]"
+              >
                 Integrated Functionality
               </h3>
               <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -147,7 +153,10 @@ export default function AboutPhilosophy() {
             </div>
 
             <div className="thesis-card space-y-3">
-              <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
+              <h3
+                data-scroll-reveal="eyebrow"
+                className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA]"
+              >
                 Generational Longevity
               </h3>
               <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">

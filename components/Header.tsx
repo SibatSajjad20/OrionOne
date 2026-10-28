@@ -11,6 +11,8 @@ interface HeaderProps {
   onOpenInquiry?: () => void;
 }
 
+type HeaderTheme = "moss" | "sand" | "mint";
+
 export const RESIDENCE_SUITES_MENU = [
   { name: "All Residences", href: "/residence" },
   { name: "1 Bedroom Apartments", href: "/residence/1-bedroom" },
@@ -45,9 +47,11 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
   ({ className = "", onOpenInquiry }, ref) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [activeTheme, setActiveTheme] = useState<HeaderTheme>("moss");
     const [residencesDropdownOpen, setResidencesDropdownOpen] = useState(false);
     const [mobileResidencesOpen, setMobileResidencesOpen] = useState(false);
     const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const progressBarRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
 
     const handleMouseEnter = () => {
@@ -67,14 +71,76 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
       };
     }, []);
 
+    // Scroll state + 1px left Mint progress bar + single [data-bg] observer under header
     useEffect(() => {
-      const handleScroll = () => {
-        setScrolled(window.scrollY > 15);
+      const reducedMotion =
+        document.documentElement.dataset.reducedMotion === "true";
+
+      let sections: HTMLElement[] = [];
+      const refreshSections = () => {
+        sections = Array.from(
+          document.querySelectorAll<HTMLElement>("[data-bg]")
+        );
       };
+      refreshSections();
+
+      // Single IntersectionObserver targeting the horizontal strip directly under the fixed header
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const bg = (entry.target as HTMLElement).dataset.bg as
+                | HeaderTheme
+                | undefined;
+              if (bg === "sand" || bg === "moss" || bg === "mint") {
+                setActiveTheme(bg);
+              }
+            }
+          }
+        },
+        {
+          // Observe the top 72px header band
+          rootMargin: "-10px 0px -90% 0px",
+          threshold: 0,
+        }
+      );
+
+      sections.forEach((sec) => observer.observe(sec));
+
+      const handleScroll = () => {
+        const y = window.scrollY;
+        setScrolled(y > 15);
+
+        if (!reducedMotion && progressBarRef.current) {
+          const docHeight =
+            document.documentElement.scrollHeight - window.innerHeight;
+          const progress =
+            docHeight > 0 ? Math.min(1, Math.max(0, y / docHeight)) : 0;
+          progressBarRef.current.style.transform = `scaleY(${progress})`;
+        }
+
+        // Fallback check for pinned/sticky sections under header (y = 36px)
+        const probeY = 36;
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const rect = sections[i].getBoundingClientRect();
+          if (rect.top <= probeY && rect.bottom >= probeY) {
+            const bg = sections[i].dataset.bg as HeaderTheme | undefined;
+            if (bg === "sand" || bg === "moss" || bg === "mint") {
+              setActiveTheme(bg);
+            }
+            break;
+          }
+        }
+      };
+
       window.addEventListener("scroll", handleScroll, { passive: true });
       handleScroll();
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+
+      return () => {
+        observer.disconnect();
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, [pathname]);
 
     // Close mobile drawer and dropdown on route change
     useEffect(() => {
@@ -84,7 +150,9 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
     // Prevent background scrolling and lock Lenis when mobile drawer is open
     useEffect(() => {
-      const lenis = (window as unknown as { lenis?: { stop: () => void; start: () => void } }).lenis;
+      const lenis = (
+        window as unknown as { lenis?: { stop: () => void; start: () => void } }
+      ).lenis;
       if (menuOpen) {
         document.documentElement.classList.add("modal-lock");
         document.body.classList.add("modal-lock");
@@ -123,31 +191,55 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
       return pathname === link.href;
     };
 
+    const isSandTheme = activeTheme === "sand";
+
+    const headerSurfaceClass = isSandTheme
+      ? scrolled
+        ? "bg-[#EDE5DA]/95 text-[#153D3D] border-[#153D3D]/15 shadow-[0_8px_32px_rgba(21,61,61,0.12)] h-[72px]"
+        : "bg-[#EDE5DA]/85 text-[#153D3D] border-[#153D3D]/10 shadow-[0_4px_24px_rgba(21,61,61,0.08)] h-20"
+      : scrolled
+      ? "bg-[#081a1a] md:bg-[#081a1a]/95 text-[#EDE5DA] border-[#EDE5DA]/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] h-[72px]"
+      : "bg-[#0d2828] md:bg-[#0d2828]/85 text-[#EDE5DA] border-[#EDE5DA]/10 shadow-[0_4px_24px_rgba(0,0,0,0.3)] h-20";
+
+    const navLinkIdleClass = isSandTheme
+      ? "text-[#153D3D]/75 hover:text-[#153D3D]"
+      : "text-[#EDE5DA]/75 hover:text-[#EDE5DA]";
+
     return (
       <>
+        {/* 1px Mint Scroll Progress on the Left Edge (Desktop Only) */}
+        <div
+          aria-hidden="true"
+          className="hidden lg:block fixed top-0 bottom-0 left-0 z-[55] w-[1px] bg-[#EDE5DA]/10 pointer-events-none"
+        >
+          <div
+            ref={progressBarRef}
+            className="w-full h-full bg-[#62AA9E] origin-top scale-y-0 will-change-transform"
+          />
+        </div>
+
         <header
           ref={ref}
-          className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 border-b border-[#EDE5DA]/10 backdrop-blur-none md:backdrop-blur-xl ${
-            scrolled
-              ? "bg-[#081a1a] md:bg-[#081a1a]/95 shadow-[0_8px_32px_rgba(0,0,0,0.5)] h-[72px]"
-              : "bg-[#0d2828] md:bg-[#0d2828]/85 shadow-[0_4px_24px_rgba(0,0,0,0.3)] h-20"
-          } ${className}`}
+          data-header-theme={activeTheme}
+          className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 motion-reduce:transition-none border-b backdrop-blur-none md:backdrop-blur-xl ${headerSurfaceClass} ${className}`}
         >
           <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 h-full flex items-center justify-between gap-3 sm:gap-4">
-            {/* Primary Wordmark & Sun-over-water Horizon Mark */}
+            {/* Primary Wordmark & Sun-over-water Horizon Mark (NEVER rotated per brand rule) */}
             <div className="flex items-center shrink-0 min-w-0">
               <Link
                 href="/"
                 className="flex items-center py-1 group"
                 aria-label="Orion One Home"
               >
-                <div className="relative h-8 sm:h-9 w-28 sm:w-32 transition-transform duration-300 group-hover:scale-[1.02]">
+                <div className="relative h-8 sm:h-9 w-28 sm:w-32 transition-transform duration-300 motion-reduce:transition-none group-hover:scale-[1.02]">
                   <Image
                     src="/orion-logo-white.png"
                     alt="Orion One by SP Builders"
                     fill
                     sizes="(max-width: 640px) 112px, 128px"
-                    className="object-contain object-left drop-shadow-sm"
+                    className={`object-contain object-left drop-shadow-sm transition-all duration-300 motion-reduce:transition-none ${
+                      isSandTheme ? "brightness-0" : ""
+                    }`}
                     priority
                   />
                 </div>
@@ -171,16 +263,22 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                       <Link
                         href={link.href}
                         onClick={() => setResidencesDropdownOpen(false)}
-                        className={`relative inline-flex items-center gap-1 py-2 transition-colors duration-200 whitespace-nowrap cursor-pointer ${
+                        className={`relative inline-flex items-center gap-1 py-2 transition-colors duration-200 motion-reduce:transition-none whitespace-nowrap cursor-pointer ${
                           active
                             ? "text-[#62AA9E] font-semibold"
-                            : "text-[#EDE5DA]/75 hover:text-[#EDE5DA]"
+                            : navLinkIdleClass
                         }`}
                       >
                         <span>{link.name}</span>
                         <ChevronDown
-                          className={`w-3 h-3 text-[#EDE5DA]/60 transition-transform duration-200 ${
-                            residencesDropdownOpen ? "rotate-180 text-[#62AA9E]" : "group-hover:rotate-180"
+                          className={`w-3 h-3 transition-transform duration-200 motion-reduce:transition-none ${
+                            isSandTheme
+                              ? "text-[#153D3D]/60"
+                              : "text-[#EDE5DA]/60"
+                          } ${
+                            residencesDropdownOpen
+                              ? "rotate-180 text-[#62AA9E]"
+                              : "group-hover:rotate-180"
                           }`}
                         />
 
@@ -191,13 +289,13 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
                         {/* Subtle Hover Underline Expand */}
                         {!active && (
-                          <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#62AA9E]/40 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
+                          <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#62AA9E]/40 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 motion-reduce:transition-none origin-center" />
                         )}
                       </Link>
 
                       {/* Dropdown Menu */}
                       <div
-                        className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 w-56 transition-all duration-200 origin-top z-50 ${
+                        className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 w-56 transition-all duration-200 motion-reduce:transition-none origin-top z-50 ${
                           residencesDropdownOpen
                             ? "opacity-100 scale-100 pointer-events-auto visible"
                             : "opacity-0 scale-95 pointer-events-none invisible"
@@ -231,10 +329,10 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`group relative py-2 inline-flex items-center transition-colors duration-200 whitespace-nowrap shrink-0 ${
+                    className={`group relative py-2 inline-flex items-center transition-colors duration-200 motion-reduce:transition-none whitespace-nowrap shrink-0 ${
                       active
                         ? "text-[#62AA9E] font-semibold"
-                        : "text-[#EDE5DA]/75 hover:text-[#EDE5DA]"
+                        : navLinkIdleClass
                     }`}
                   >
                     <span>{link.name}</span>
@@ -246,7 +344,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
                     {/* Subtle Hover Underline Expand */}
                     {!active && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#62AA9E]/40 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center" />
+                      <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#62AA9E]/40 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 motion-reduce:transition-none origin-center" />
                     )}
                   </Link>
                 );
@@ -261,7 +359,13 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Direct WhatsApp Concierge"
-                className="hidden sm:inline-flex items-center justify-center gap-2 h-9 sm:h-9.5 text-[10.5px] xl:text-[11px] font-semibold tracking-[0.12em] xl:tracking-[0.14em] uppercase text-[#EDE5DA] bg-[#153D3D]/50 hover:bg-[#153D3D] hover:text-[#62AA9E] border border-[#EDE5DA]/15 hover:border-[#62AA9E]/40 px-3.5 xl:px-4 rounded-full transition-all duration-300 shadow-sm whitespace-nowrap shrink-0 group"
+                data-magnetic
+                data-magnetic-strength="12"
+                className={`hidden sm:inline-flex items-center justify-center gap-2 h-9 sm:h-9.5 text-[10.5px] xl:text-[11px] font-semibold tracking-[0.12em] xl:tracking-[0.14em] uppercase px-3.5 xl:px-4 rounded-full transition-all duration-300 motion-reduce:transition-none shadow-sm whitespace-nowrap shrink-0 group ${
+                  isSandTheme
+                    ? "text-[#153D3D] bg-[#153D3D]/10 hover:bg-[#153D3D] hover:text-[#EDE5DA] border border-[#153D3D]/20"
+                    : "text-[#EDE5DA] bg-[#153D3D]/50 hover:bg-[#153D3D] hover:text-[#62AA9E] border border-[#EDE5DA]/15 hover:border-[#62AA9E]/40"
+                }`}
               >
                 <MessageCircle className="w-3.5 h-3.5 text-[#62AA9E] transition-transform duration-300 group-hover:scale-110 shrink-0" />
                 <span>WhatsApp</span>
@@ -283,7 +387,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                 onClick={handleInquireClick}
                 data-magnetic
                 data-magnetic-strength="14"
-                className="inline-flex items-center justify-center gap-1.5 h-9 sm:h-9.5 text-[9.5px] sm:text-[10.5px] xl:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] xl:tracking-[0.16em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#081a1a] px-3.5 sm:px-4.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.75,0,0.25,1)] shadow-[0_4px_16px_rgba(98,170,158,0.2)] hover:shadow-[0_4px_24px_rgba(98,170,158,0.35)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 cursor-pointer group"
+                className="inline-flex items-center justify-center gap-1.5 h-9 sm:h-9.5 text-[9.5px] sm:text-[10.5px] xl:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] xl:tracking-[0.16em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#081a1a] px-3.5 sm:px-4.5 rounded-full transition-all duration-500 motion-reduce:transition-none ease-[cubic-bezier(0.75,0,0.25,1)] shadow-[0_4px_16px_rgba(98,170,158,0.2)] hover:shadow-[0_4px_24px_rgba(98,170,158,0.35)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 cursor-pointer group"
               >
                 <span>
                   <span className="hidden min-[360px]:inline">Book a </span>
@@ -295,7 +399,11 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               {/* Mobile/Tablet Menu Button */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="xl:hidden inline-flex items-center justify-center gap-1.5 h-9 text-[#EDE5DA] hover:text-[#62AA9E] bg-[#153D3D]/50 hover:bg-[#153D3D] border border-[#EDE5DA]/15 px-3 rounded-full transition-all duration-200 cursor-pointer shrink-0"
+                className={`xl:hidden inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-full transition-all duration-200 motion-reduce:transition-none cursor-pointer shrink-0 ${
+                  isSandTheme
+                    ? "text-[#153D3D] bg-[#153D3D]/10 hover:bg-[#153D3D]/20 border border-[#153D3D]/20"
+                    : "text-[#EDE5DA] hover:text-[#62AA9E] bg-[#153D3D]/50 hover:bg-[#153D3D] border border-[#EDE5DA]/15"
+                }`}
                 aria-label="Toggle navigation menu"
               >
                 <span className="text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.15em] font-sans-body">
@@ -350,7 +458,9 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                       key={link.href}
                       style={{ animationDelay: `${idx * 40}ms` }}
                       className={`border-b border-[#EDE5DA]/10 py-1.5 sm:py-2 rounded-xl transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
-                        active ? "bg-[#62AA9E]/[0.07] px-3 sm:px-4 border border-[#62AA9E]/25" : "hover:bg-white/[0.02] px-2 sm:px-3"
+                        active
+                          ? "bg-[#62AA9E]/[0.07] px-3 sm:px-4 border border-[#62AA9E]/25"
+                          : "hover:bg-white/[0.02] px-2 sm:px-3"
                       }`}
                     >
                       <div className="flex items-center justify-between min-h-[44px]">
@@ -361,14 +471,18 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                         >
                           <span
                             className={`text-[11px] font-sans-body tracking-[0.2em] font-semibold transition-colors ${
-                              active ? "text-[#62AA9E]" : "text-[#62AA9E]/60 group-hover:text-[#62AA9E]"
+                              active
+                                ? "text-[#62AA9E]"
+                                : "text-[#62AA9E]/60 group-hover:text-[#62AA9E]"
                             }`}
                           >
                             {ordinal}
                           </span>
                           <span
                             className={`font-serif-heading text-lg sm:text-xl tracking-wide transition-colors ${
-                              active ? "text-[#62AA9E] font-medium" : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
+                              active
+                                ? "text-[#62AA9E] font-medium"
+                                : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
                             }`}
                           >
                             {link.name}
@@ -388,7 +502,9 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                         >
                           <ChevronDown
                             className={`w-4 h-4 transition-transform duration-200 ${
-                              mobileResidencesOpen ? "rotate-180 text-[#62AA9E]" : ""
+                              mobileResidencesOpen
+                                ? "rotate-180 text-[#62AA9E]"
+                                : ""
                             }`}
                           />
                         </button>
@@ -438,14 +554,18 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                     <div className="flex items-center gap-3">
                       <span
                         className={`text-[11px] font-sans-body tracking-[0.2em] font-semibold transition-colors ${
-                          active ? "text-[#62AA9E]" : "text-[#62AA9E]/60 group-hover:text-[#62AA9E]"
+                          active
+                            ? "text-[#62AA9E]"
+                            : "text-[#62AA9E]/60 group-hover:text-[#62AA9E]"
                         }`}
                       >
                         {ordinal}
                       </span>
                       <span
                         className={`font-serif-heading text-lg sm:text-xl tracking-wide transition-colors ${
-                          active ? "text-[#62AA9E] font-medium" : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
+                          active
+                            ? "text-[#62AA9E] font-medium"
+                            : "text-[#EDE5DA] group-hover:text-[#62AA9E]"
                         }`}
                       >
                         {link.name}
@@ -460,7 +580,9 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
                     <div className="flex items-center gap-2 pl-8 sm:pl-0">
                       <span
                         className={`text-[10px] sm:text-[11px] font-sans-body tracking-widest uppercase font-light transition-colors ${
-                          active ? "text-[#62AA9E]/80 font-normal" : "text-[#EDE5DA]/50 group-hover:text-[#62AA9E]/80"
+                          active
+                            ? "text-[#62AA9E]/80 font-normal"
+                            : "text-[#EDE5DA]/50 group-hover:text-[#62AA9E]/80"
                         }`}
                       >
                         {link.subtitle}

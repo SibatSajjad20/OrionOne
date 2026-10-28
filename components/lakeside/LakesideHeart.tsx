@@ -1,44 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+import { setupOrionSplitReveal } from "@/lib/orionSplitReveal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
 export default function LakesideHeart() {
-  const [activePerspective, setActivePerspective] = useState<"shoreline" | "elevation">("shoreline");
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const subheadRef = useRef<HTMLParagraphElement>(null);
+  const bodyRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
     const frame = frameRef.current;
-    const header = headerRef.current;
-    if (!section || !frame || !header) return;
+    if (!section || !frame) return;
+
+    const cleanupSplit = setupOrionSplitReveal({
+      root: section,
+      headings: [headingRef.current],
+      eyebrows: [subheadRef.current],
+      bodies: [bodyRef.current],
+    });
 
     const ctx = gsap.context(() => {
-      // Header smooth fade and lift
-      gsap.fromTo(
-        header,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.0,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: header,
-            start: "top 85%",
-            once: true,
-          },
-        }
-      );
-
       // Frame entrance reveal
       gsap.fromTo(
         frame,
@@ -51,19 +42,23 @@ export default function LakesideHeart() {
           scrollTrigger: {
             trigger: frame,
             start: "top 80%",
-            once: true,
+            toggleActions: "play none none reverse",
           },
         }
       );
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      cleanupSplit();
+      ctx.revert();
+    };
   }, []);
 
   return (
     <section
       id="heart-of-orion"
       ref={sectionRef}
+      data-bg="moss"
       className="relative py-16 sm:py-36 bg-[#153D3D] text-[#EDE5DA] overflow-hidden border-b border-[#EDE5DA]/15"
       aria-label="The Lake at the Heart of Orion One"
     >
@@ -75,19 +70,28 @@ export default function LakesideHeart() {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Header */}
-        <div ref={headerRef} className="max-w-4xl mb-10 sm:mb-14 space-y-4 sm:space-y-5">
-          <h2 className="font-serif-heading text-xl sm:text-4xl lg:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+        <div className="max-w-4xl mb-10 sm:mb-14 space-y-4 sm:space-y-5">
+          <h2
+            ref={headingRef}
+            className="type-section font-serif-heading font-luxia-display text-xl sm:text-4xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]"
+          >
             The Lake at the Heart of <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+            <span className="type-display-accent italic font-normal text-sand-gradient">
               Orion One
             </span>
           </h2>
 
-          <p className="font-serif-heading text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA]/90 font-light leading-snug">
+          <p
+            ref={subheadRef}
+            className="font-serif-heading text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA]/90 leading-snug"
+          >
             The lake is more than a view. It forms the setting for everyday experiences at Orion One
           </p>
 
-          <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl">
+          <p
+            ref={bodyRef}
+            className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl"
+          >
             From morning walks to relaxed evenings, the waterfront creates a natural connection between residences, dining, leisure, and community.
           </p>
         </div>

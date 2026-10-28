@@ -100,10 +100,10 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
           </div>
 
           <div className="mt-5 sm:mt-8 space-y-2">
-            <span className="text-[10px] uppercase tracking-[0.35em] text-[#62AA9E] font-medium font-sans-body">
+            <span className="type-eyebrow text-[10px] uppercase tracking-[0.35em] text-[#62AA9E] font-medium font-sans-body">
               Private Concierge Desk
             </span>
-            <h2 className="font-serif text-2xl sm:text-4xl font-light text-[#EDE5DA]">
+            <h2 className="type-section font-serif text-2xl sm:text-4xl text-[#EDE5DA]">
               Book a Private Tour
             </h2>
             <p className="text-xs sm:text-sm text-[#EDE5DA]/80 font-light leading-relaxed">
@@ -125,7 +125,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
           ) : (
             <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-4 sm:space-y-5">
               <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
+                <label className="type-ui text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
                   Full Name
                 </label>
                 <div className="relative flex items-center">
@@ -142,7 +142,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
+                <label className="type-ui text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
                   Phone / WhatsApp
                 </label>
                 <div className="relative flex items-center">
@@ -159,7 +159,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
+                <label className="type-ui text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
                   Area of Interest
                 </label>
                 <div className="relative flex items-center">
@@ -178,7 +178,7 @@ export default function InquiryDrawer({ isOpen, onClose }: InquiryDrawerProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
+                <label className="type-ui text-[11px] uppercase tracking-[0.2em] text-[#EDE5DA]/70 font-medium">
                   Preferred Schedule
                 </label>
                 <div className="relative flex items-center">

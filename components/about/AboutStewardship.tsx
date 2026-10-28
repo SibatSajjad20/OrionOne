@@ -105,9 +105,9 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Canopy */}
         <div ref={canopyRef} className="max-w-4xl mb-12 sm:mb-20 space-y-4">
-          <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Built for Today <br />
-            <span className="italic font-normal text-sand-gradient normal-case">Designed for Tomorrow</span>
+            <span className="type-display-accent italic font-normal text-sand-gradient">Designed for Tomorrow</span>
           </h2>
           <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl pt-2">
             Orion One reflects SP Builders&apos; commitment to structural honesty, disciplined planning, and lasting value. Situated on a finite shoreline in Sector F, DHA Phase III, Islamabad, the development is engineered to stand as a landmark for generations.
@@ -120,7 +120,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 border-t border-[#EDE5DA]/15 pt-10 sm:pt-12 mb-12 sm:mb-24"
         >
           <div className="matrix-card space-y-3">
-            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
+            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA]">
               Geographic Rarity
             </h3>
             <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -129,7 +129,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
           </div>
 
           <div className="matrix-card space-y-3">
-            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
+            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA]">
               Kinetic Geometry
             </h3>
             <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -138,7 +138,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
           </div>
 
           <div className="matrix-card space-y-3">
-            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
+            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA]">
               Material Honesty
             </h3>
             <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -147,7 +147,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
           </div>
 
           <div className="matrix-card space-y-3">
-            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA] font-light">
+            <h3 className="font-serif-heading text-lg sm:text-xl text-[#EDE5DA]">
               Generational Equity
             </h3>
             <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
@@ -164,7 +164,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
             {/* Left: Invitation Headline and Overview */}
             <div className="lg:col-span-7 space-y-6">
-              <h3 className="font-serif-heading text-2xl sm:text-4xl lg:text-5xl font-light text-[#EDE5DA] tracking-tight leading-[1.12]">
+              <h3 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] tracking-tight leading-[1.12]">
                 Experience Orion One in Person
               </h3>
               <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed max-w-xl">

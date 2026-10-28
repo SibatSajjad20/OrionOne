@@ -16,7 +16,7 @@ export default function MagneticEffects() {
     const mq = window.matchMedia("(min-width: 992px) and (pointer: fine)");
     if (!mq.matches) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = document.documentElement.dataset.reducedMotion === "true";
     if (reduced) return;
 
     const cleanups: Array<() => void> = [];

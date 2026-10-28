@@ -117,9 +117,9 @@ export default function AboutEcosystem() {
     <section id="ecosystem" className="relative py-28 sm:py-40 max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 overflow-hidden">
       {/* Section Canopy - Centered */}
       <div className="max-w-5xl mx-auto text-center mb-12 sm:mb-16 space-y-4">
-        <h2 className="font-serif-heading text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
+        <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
           Prestige Lakefront Living <br className="lg:hidden" />
-          <span className=" font-normal text-sand-gradient uppercase lg:ml-3">Five Connected Realms</span>
+          <span className="type-display-accent italic font-normal text-sand-gradient lg:ml-3">Five Connected Realms</span>
         </h2>
         <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl mx-auto">
           Designed around the lake, shaped by contemporary architecture, and created for a more considered way of living. At Orion One, every dimension of daily life exists in natural balance.
@@ -138,7 +138,7 @@ export default function AboutEcosystem() {
                 className={`group flex items-baseline gap-3 text-left transition-all duration-300 cursor-pointer pb-2 relative ${isActive ? "text-[#EDE5DA]" : "text-[#EDE5DA]/40 hover:text-[#EDE5DA]/70"
                   }`}
               >
-                <span className="font-serif-heading text-base sm:text-xl font-light tracking-wide uppercase">
+                <span className="type-section font-serif-heading text-base sm:text-xl tracking-wide">
                   {realm.name}
                 </span>
 
@@ -171,7 +171,7 @@ export default function AboutEcosystem() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start border-t border-[#EDE5DA]/15 pt-8">
           {/* Left: Narrative */}
           <div className="lg:col-span-5 space-y-3">
-            <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] font-light">
+            <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA]">
               {activeRealm.tagline}
             </h3>
             <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">

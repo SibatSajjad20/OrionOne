@@ -110,9 +110,9 @@ export default function CommercialAdvantage() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
         {/* Section Header */}
         <div ref={headerRef} className="max-w-4xl mb-12 sm:mb-20 space-y-4">
-          <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.08] uppercase">
-            Designed For <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+          <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
+            Designed for <br />
+            <span className="type-display-accent italic font-normal text-sand-gradient">
               Visibility & Activity
             </span>
           </h2>
@@ -131,7 +131,7 @@ export default function CommercialAdvantage() {
               key={adv.number}
               className="advantage-card group border-t border-[#EDE5DA]/20 pt-6 sm:pt-8 flex flex-col justify-start transition-colors duration-300"
             >
-              <h3 className="font-serif-heading text-2xl sm:text-3xl font-light text-[#EDE5DA] tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
+              <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-3 group-hover:text-[#62AA9E] transition-colors">
                 {adv.headline}
               </h3>
 

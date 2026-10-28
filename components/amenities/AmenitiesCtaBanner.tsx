@@ -55,9 +55,9 @@ export default function AmenitiesCtaBanner({ onOpenInquiry }: AmenitiesCtaBanner
         ref={containerRef}
         className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16 text-center space-y-8 will-change-transform"
       >
-        <h2 className="font-serif-heading text-2xl sm:text-5xl lg:text-7xl font-light text-[#EDE5DA] leading-[1.08] uppercase max-w-4xl mx-auto">
+        <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] leading-[1.08] max-w-4xl mx-auto">
           Everything You Need <br />
-          <span className="italic font-normal text-sand-gradient normal-case">
+          <span className="type-display-accent italic font-normal text-sand-gradient">
             Within Reach
           </span>
         </h2>

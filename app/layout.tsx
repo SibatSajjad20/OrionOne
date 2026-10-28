@@ -4,6 +4,7 @@ import { Montserrat, Bodoni_Moda } from "next/font/google";
 import "./globals.css";
 import "lenis/dist/lenis.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import OrionCursor from "@/components/OrionCursor";
 import MagneticEffects from "@/components/MagneticEffects";
 import AgentationToolbar from "@/components/AgentationToolbar";
 
@@ -14,22 +15,20 @@ export const viewport: Viewport = {
   themeColor: "#153D3D",
 };
 
-// Brand Guidelines: Luxia — Display & Headlines
+// Brand Guidelines: Luxia Regular — Subheadings & Editorial Serif
 const luxia = localFont({
-  src: [
-    {
-      path: "./fonts/luxia-regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "./fonts/luxia-regular.ttf",
-      weight: "400",
-      style: "normal",
-    },
-  ],
+  src: [{ path: "./fonts/luxia-regular.woff2", weight: "400", style: "normal" }],
   variable: "--font-luxia",
   display: "swap",
+  adjustFontFallback: false,
+});
+
+// Brand Guidelines: Luxia Display — Large Headings & Hero Titles (>= 48px)
+const luxiaDisplay = localFont({
+  src: [{ path: "./fonts/luxia-display.woff2", weight: "500", style: "normal" }],
+  variable: "--font-luxia-display",
+  display: "swap",
+  adjustFontFallback: false,
 });
 
 // Brand Guidelines: Montserrat — Body Copy, Navigation, Captions & UI
@@ -72,7 +71,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${luxia.variable} ${bodoniModa.variable} ${montserrat.variable} dark`}
+      className={`${luxia.variable} ${luxiaDisplay.variable} ${bodoniModa.variable} ${montserrat.variable} dark`}
       suppressHydrationWarning
     >
       <head suppressHydrationWarning>
@@ -85,10 +84,11 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] antialiased selection:bg-[#62AA9E] selection:text-[#153D3D]">
+      <body className="min-h-screen bg-[#153D3D] text-[#EDE5DA] selection:bg-[#62AA9E] selection:text-[#153D3D]">
         <SmoothScroll>
           {children}
         </SmoothScroll>
+        <OrionCursor />
         <MagneticEffects />
         {process.env.NODE_ENV === "development" && <AgentationToolbar />}
       </body>

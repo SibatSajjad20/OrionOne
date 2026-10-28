@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+import { setupOrionSplitReveal } from "@/lib/orionSplitReveal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -45,32 +46,20 @@ const PHILOSOPHY_PILLARS: PhilosophyItem[] = [
 
 export default function ResidencePhilosophy() {
   const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
+  const introTitleRef = useRef<HTMLHeadingElement>(null);
+  const introBodyRef = useRef<HTMLParagraphElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const imagesRef = useRef<(HTMLDivElement | null)[]>([]);
   const headingsRef = useRef<(HTMLHeadingElement | null)[]>([]);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Header entrance animation
-      if (headerRef.current) {
-        gsap.fromTo(
-          headerRef.current,
-          { opacity: 0, y: 35 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1.2,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: headerRef.current,
-              start: "top 85%",
-              once: true,
-            },
-          }
-        );
-      }
+    const cleanupSplit = setupOrionSplitReveal({
+      root: sectionRef.current,
+      headings: [introTitleRef.current],
+      bodies: [introBodyRef.current],
+    });
 
+    const ctx = gsap.context(() => {
       // Alternating scroll-driven horizontal hover animation: Right -> Left -> Right -> Left
       cardsRef.current.forEach((card, idx) => {
         const img = imagesRef.current[idx];
@@ -129,6 +118,7 @@ export default function ResidencePhilosophy() {
 
     return () => {
       clearTimeout(timer);
+      cleanupSplit();
       ctx.revert();
     };
   }, []);
@@ -137,6 +127,7 @@ export default function ResidencePhilosophy() {
     <section
       id="philosophy"
       ref={sectionRef}
+      data-bg="moss"
       className="relative w-full bg-[#081a1a] text-[#EDE5DA] overflow-hidden border-t border-[#EDE5DA]/10"
       aria-label="Design Philosophy"
     >
@@ -147,14 +138,17 @@ export default function ResidencePhilosophy() {
       />
 
       {/* Intro Header */}
-      <div
-        ref={headerRef}
-        className="w-full max-w-4xl mx-auto px-4 sm:px-12 py-16 sm:py-32 text-center flex flex-col items-center"
-      >
-        <h2 className="font-serif-heading text-2xl uppercase sm:text-5xl lg:text-6xl font-light text-[#EDE5DA] leading-[1.08] mb-4 sm:mb-6">
-          Designed around the way you live
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-12 py-16 sm:py-32 text-center flex flex-col items-center">
+        <h2
+          ref={introTitleRef}
+          className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-[1.08] mb-4 sm:mb-6"
+        >
+          Designed Around the Way You Live
         </h2>
-        <p className="font-sans-body text-xs sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl">
+        <p
+          ref={introBodyRef}
+          className="font-sans-body text-xs sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl"
+        >
           Every residence is planned with deliberate attention to how space is
           experienced throughout the day, balancing human proportion, light,
           and privacy.
@@ -176,10 +170,11 @@ export default function ResidencePhilosophy() {
               ref={(el) => {
                 imagesRef.current[idx] = el;
               }}
-              className={`absolute -top-[10%] -bottom-[10%] -left-[20%] w-[140%] h-[120%] pointer-events-none will-change-transform transition-transform duration-700 ease-out ${idx % 2 === 0
+              className={`absolute -top-[10%] -bottom-[10%] -left-[20%] w-[140%] h-[120%] pointer-events-none will-change-transform transition-transform duration-700 ease-out ${
+                idx % 2 === 0
                   ? "group-hover:translate-x-3"
                   : "group-hover:-translate-x-3"
-                }`}
+              }`}
             >
               <Image
                 src={pillar.imageSrc}
@@ -200,7 +195,7 @@ export default function ResidencePhilosophy() {
                 ref={(el) => {
                   headingsRef.current[idx] = el;
                 }}
-                className="font-serif-heading text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light text-[#EDE5DA] leading-[1.05]"
+                className="font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-[#EDE5DA] leading-[1.05]"
               >
                 {pillar.title}
               </h2>

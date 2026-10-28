@@ -109,6 +109,7 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
   return (
     <section
       ref={sectionRef}
+      data-bg="moss"
       className="relative w-full min-h-[92vh] lg:min-h-screen flex flex-col justify-end overflow-hidden bg-[#153D3D]"
       aria-label="Lakeside Experience Hero"
     >
@@ -119,8 +120,9 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
       >
         {/* Poster / Fallback Image — fades once video is ready */}
         <div
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${videoLoaded ? "opacity-0" : "opacity-100"
-            }`}
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
+            videoLoaded ? "opacity-0" : "opacity-100"
+          }`}
         >
           <Image
             src="/images/lakeside/hero-lake.jpg"
@@ -172,7 +174,7 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
           {/* Display Headline */}
           <h1
             ref={headlineRef}
-            className="font-serif-heading text-2xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[#EDE5DA] tracking-tight leading-[1.05]"
+            className="font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-6xl xl:text-7xl text-[#EDE5DA] tracking-tight leading-[1.05]"
           >
             LIFE BY THE WATER
           </h1>

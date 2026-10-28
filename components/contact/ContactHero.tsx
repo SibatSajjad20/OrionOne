@@ -65,10 +65,10 @@ export default function ContactHero({ onOpenInquiry: _onOpenInquiry }: ContactHe
       <div className="pb-12 sm:pb-20 max-w-5xl">
         <h1
           ref={headlineRef}
-          className="font-serif-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-light text-[#EDE5DA] tracking-tight leading-[1.12] uppercase transform-gpu backface-hidden"
+          className="type-display font-serif-heading font-luxia-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] text-[#EDE5DA] tracking-tight leading-[1.12]"
         >
           <span className="block">Every Message</span>
-          <span className="block italic font-normal text-sand-gradient normal-case">
+          <span className="type-display-accent block italic font-normal text-sand-gradient">
             Starts Something Timeless
           </span>
         </h1>

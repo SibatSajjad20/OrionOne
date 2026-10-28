@@ -1,14 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Luxia";
-  src: url("/fonts/luxia-regular.woff2") format("woff2"),
-       url("/fonts/luxia-regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme {
   --color-moss: #153D3D;
   --color-moss-dark: #0d2828;
@@ -20,8 +11,9 @@
   --color-stone: #808080;
   --color-martian: #B2CE93;
 
-  --font-luxia: var(--font-luxia), "Luxia", var(--font-bodoni), "Didot", "Bodoni MT", serif;
-  --font-serif: var(--font-luxia), "Luxia", var(--font-bodoni), "Didot", "Bodoni MT", serif;
+  --font-luxia: var(--font-luxia), var(--font-bodoni), "Didot", "Bodoni MT", serif;
+  --font-luxia-display: var(--font-luxia-display), var(--font-luxia), serif;
+  --font-serif: var(--font-luxia), var(--font-bodoni), "Didot", "Bodoni MT", serif;
   --font-sans: var(--font-montserrat), "Montserrat", system-ui, sans-serif;
 }
 
@@ -53,7 +45,7 @@ html {
   font-family: var(--font-sans);
   width: 100%;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
   overscroll-behavior-y: none;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
@@ -75,7 +67,7 @@ body {
   font-family: var(--font-sans);
   width: 100%;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -161,6 +153,7 @@ h1, h2, h3, h4, h5, h6 {
 .font-serif-heading,
 .font-serif {
   font-family: var(--font-serif);
+  font-weight: 400;
   letter-spacing: 0.005em;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -169,6 +162,14 @@ h1, h2, h3, h4, h5, h6 {
   font-synthesis: none;
   -webkit-font-synthesis: none;
   overflow: visible;
+}
+
+/* Large headings (H1 and hero titles, font-size >= 48px) use Luxia Display (weight 500) */
+h1.font-serif-heading,
+h1.font-serif,
+.font-luxia-display {
+  font-family: var(--font-luxia-display);
+  font-weight: 500;
 }
 
 /* Ensure all italic spans inside serif headings have room to breathe and never clip */
@@ -317,3 +318,57 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+/* Custom Orion One sub-mark cursor — hide native cursor only when active on fine-pointer desktop */
+@media (hover: hover) and (pointer: fine) {
+  body.orion-cursor-active,
+  body.orion-cursor-active a,
+  body.orion-cursor-active button,
+  body.orion-cursor-active [role="button"],
+  body.orion-cursor-active [data-cursor="hover"],
+  body.orion-cursor-active [data-cursor="view"],
+  body.orion-cursor-active .cursor-pointer,
+  body.orion-cursor-active .cursor-zoom-in {
+    cursor: none !important;
+  }
+
+  body.orion-cursor-active input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  body.orion-cursor-active textarea,
+  body.orion-cursor-active [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
+/* Orion One text casing & typography utilities */
+.type-display,
+.type-section {
+  font-family: var(--font-luxia), serif;
+  font-weight: 400;
+  letter-spacing: -0.01em; /* Brand Guidelines */
+  text-transform: none;    /* Title Case as written in copy */
+  text-rendering: geometricPrecision;
+}
+.type-display-accent {     /* italic sand line — same case as parent */
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;    /* NEVER combine with uppercase */
+}
+.type-eyebrow {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #62AA9E;
+}
+.type-ui {                 /* nav, buttons, form labels, badges */
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.type-body {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 300;
+  letter-spacing: 0;
+  text-transform: none;
+}
