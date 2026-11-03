@@ -101,7 +101,7 @@ export default function CommercialSpaces({ onOpenInquiry }: CommercialSpacesProp
       <div ref={headerRef} className="max-w-4xl mb-12 sm:mb-16 space-y-4">
         <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
           Your Business <br />
-          <span className="type-display-accent italic font-normal text-sand-gradient">
+          <span className="type-display-accent font-normal text-sand-gradient">
             Your Space
           </span>
         </h2>

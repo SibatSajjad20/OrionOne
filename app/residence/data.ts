@@ -66,7 +66,7 @@ export interface ResidenceSuiteData {
 export type FloorCategory = "commercial" | "amenities" | "residential";
 
 export interface TowerLevelData {
-  /** 0 = Ground Floor, 1 = First Floor, 2 = Second Floor, 3..13 = Apartment Floors (14 floors total) */
+  /** 0 = Ground Floor, 1 = First Floor, 2 = Second Floor, 3..14 = Apartment Floors (15 floors total) */
   level: number;
   code: string;
   name: string;
@@ -255,7 +255,7 @@ export const RESIDENCE_SUITES: ResidenceSuiteData[] = [
     quoteBanner: {
       tag: "LAKEFRONT RETREAT",
       quote:
-        "Instead of Corridors, Walking Paths Connect the Apartments — Making Orion One Feel Closer to a Private Retreat.",
+        "Instead of Corridors, Walking Paths Connect the Apartments - Making Orion One Feel Closer to a Private Retreat.",
       imageSrc: "/images/residence/pic-3.webp",
     },
     lakeViewPerspective: {
@@ -437,7 +437,7 @@ export const RESIDENCE_SUITES: ResidenceSuiteData[] = [
     quoteBanner: {
       tag: "LAKEFRONT RETREAT",
       quote:
-        "Instead of Corridors, Walking Paths Connect the Apartments — Making Orion One Feel Closer to a Private Retreat.",
+        "Instead of Corridors, Walking Paths Connect the Apartments - Making Orion One Feel Closer to a Private Retreat.",
       imageSrc: "/images/residence/pic-3.webp",
     },
     lakeViewPerspective: {
@@ -625,7 +625,7 @@ export const RESIDENCE_SUITES: ResidenceSuiteData[] = [
     quoteBanner: {
       tag: "LAKEFRONT RETREAT",
       quote:
-        "Instead of Corridors, Walking Paths Connect the Apartments — Making Orion One Feel Closer to a Private Retreat.",
+        "Instead of Corridors, Walking Paths Connect the Apartments - Making Orion One Feel Closer to a Private Retreat.",
       imageSrc: "/images/residence/pic-3.webp",
     },
     lakeViewPerspective: {
@@ -816,7 +816,7 @@ export const RESIDENCE_SUITES: ResidenceSuiteData[] = [
     quoteBanner: {
       tag: "LAKEFRONT RETREAT",
       quote:
-        "Instead of Corridors, Walking Paths Connect the Apartments — Making Orion One Feel Closer to a Private Retreat.",
+        "Instead of Corridors, Walking Paths Connect the Apartments - Making Orion One Feel Closer to a Private Retreat.",
       imageSrc: "/images/residence/pic-3.webp",
     },
     lakeViewPerspective: {
@@ -829,27 +829,42 @@ export const RESIDENCE_SUITES: ResidenceSuiteData[] = [
 ];
 
 /**
- * Exact 14-Floor Building Structure of Orion One mapped to /images/residence/5-final.jpg:
+ * Exact 15-Floor Building Structure of Orion One mapped to /images/residence/5-final.jpg:
  * - Ground Floor (GF): Commercial Shops & Waterfront Promenade
  * - First Floor (01): Commercial Shops & Showrooms
  * - Second Floor (02): Gym, Infinity Pool, Spa & Resident Amenities
- * - 3rd Floor to 13th Floor (03 – 13): Residential Apartments (11 apartment floors)
- * Total = 14 Floors including Ground Floor.
+ * - 3rd Floor to 14th Floor (03 – 14): Residential Apartments & Crown Penthouses (12 apartment floors)
+ * Total = 15 Floors including Ground Floor (GF, 01 to 14).
  */
 export const TOWER_LEVELS: TowerLevelData[] = [
+  {
+    level: 14,
+    code: "14",
+    name: "14th Floor",
+    category: "residential",
+    yTop: 15.58,
+    yBottom: 18.82,
+    xLeft: 62.52,
+    xRight: 78.92,
+    subtitle: "EXECUTIVE SKY PENTHOUSES · PRIVATE POOL SUITES",
+    detailMeta: "Crown Penthouse Level · Highest Lakefront Horizon",
+    description:
+      "The pinnacle residential level of Orion One, home to private cantilevered plunge pool penthouses and signature three-bedroom suites with unobstructed horizon views.",
+    availableSuites: ["private-pool", "3-bedroom"],
+  },
   {
     level: 13,
     code: "13",
     name: "13th Floor",
     category: "residential",
-    yTop: 6.2,
-    yBottom: 13.0,
-    xLeft: 59.5,
-    xRight: 80.0,
+    yTop: 18.82,
+    yBottom: 21.7,
+    xLeft: 62.12,
+    xRight: 79.32,
     subtitle: "PRIVATE POOL RESIDENCES · 3 BEDROOM APARTMENTS",
-    detailMeta: "Crown Residential Level · Lakefront Facing",
+    detailMeta: "Upper Crown Residences · Lakefront Facing",
     description:
-      "The uppermost residential floor of Orion One, home to private plunge pool residences and corner three-bedroom apartments with open horizon views.",
+      "High sky residences featuring private pool terraces, wrap-around glazing, and expansive three-bedroom floor plans overlooking the shoreline.",
     availableSuites: ["private-pool", "3-bedroom"],
   },
   {
@@ -857,10 +872,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "12",
     name: "12th Floor",
     category: "residential",
-    yTop: 13.0,
-    yBottom: 19.2,
-    xLeft: 57.0,
-    xRight: 81.0,
+    yTop: 21.7,
+    yBottom: 27.28,
+    xLeft: 60.52,
+    xRight: 79.72,
     subtitle: "PRIVATE POOL RESIDENCES · 2 & 3 BEDROOM APARTMENTS",
     detailMeta: "Upper Tower Residences · Panoramic Outlook",
     description:
@@ -872,10 +887,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "11",
     name: "11th Floor",
     category: "residential",
-    yTop: 19.2,
-    yBottom: 25.4,
-    xLeft: 56.4,
-    xRight: 81.2,
+    yTop: 27.28,
+    yBottom: 32.86,
+    xLeft: 60.04,
+    xRight: 79.88,
     subtitle: "1 BEDROOM · 2 BEDROOM · 3 BEDROOM APARTMENTS",
     detailMeta: "Residential Apartments · Lakefront & Parkland View",
     description:
@@ -887,10 +902,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "10",
     name: "10th Floor",
     category: "residential",
-    yTop: 25.4,
-    yBottom: 31.6,
-    xLeft: 56.2,
-    xRight: 81.2,
+    yTop: 32.86,
+    yBottom: 38.44,
+    xLeft: 59.88,
+    xRight: 79.88,
     subtitle: "1 BEDROOM · 2 BEDROOM · 3 BEDROOM APARTMENTS",
     detailMeta: "Residential Apartments · Direct Waterfront Horizon",
     description:
@@ -902,10 +917,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "09",
     name: "9th Floor",
     category: "residential",
-    yTop: 31.6,
-    yBottom: 37.8,
-    xLeft: 56.2,
-    xRight: 81.2,
+    yTop: 38.44,
+    yBottom: 44.02,
+    xLeft: 59.88,
+    xRight: 79.88,
     subtitle: "2 BEDROOM · 3 BEDROOM · PRIVATE POOL RESIDENCES",
     detailMeta: "Cantilevered Terrace Level · Lakefront Facing",
     description:
@@ -917,10 +932,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "08",
     name: "8th Floor",
     category: "residential",
-    yTop: 37.8,
-    yBottom: 44.0,
-    xLeft: 56.2,
-    xRight: 81.2,
+    yTop: 44.02,
+    yBottom: 49.6,
+    xLeft: 59.88,
+    xRight: 79.88,
     subtitle: "1 BEDROOM · 2 BEDROOM · 3 BEDROOM APARTMENTS",
     detailMeta: "Residential Apartments · Lakefront Facing",
     description:
@@ -932,10 +947,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "07",
     name: "7th Floor",
     category: "residential",
-    yTop: 44.0,
-    yBottom: 50.2,
-    xLeft: 55.8,
-    xRight: 81.5,
+    yTop: 49.6,
+    yBottom: 55.18,
+    xLeft: 59.56,
+    xRight: 80.12,
     subtitle: "1 BEDROOM · 2 BEDROOM · 3 BEDROOM APARTMENTS",
     detailMeta: "Sky Garden Transition · Lakefront Facing",
     description:
@@ -947,10 +962,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "06",
     name: "6th Floor",
     category: "residential",
-    yTop: 50.2,
-    yBottom: 56.5,
-    xLeft: 52.8,
-    xRight: 84.8,
+    yTop: 55.18,
+    yBottom: 60.85,
+    xLeft: 57.16,
+    xRight: 82.76,
     subtitle: "1 BEDROOM · 2 BEDROOM · 3 BEDROOM APARTMENTS",
     detailMeta: "Wide Terrace Residences · Shoreline Outlook",
     description:
@@ -962,10 +977,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "05",
     name: "5th Floor",
     category: "residential",
-    yTop: 56.5,
-    yBottom: 62.5,
-    xLeft: 52.5,
-    xRight: 85.0,
+    yTop: 60.85,
+    yBottom: 66.25,
+    xLeft: 56.92,
+    xRight: 82.92,
     subtitle: "1 BEDROOM · 2 BEDROOM · 3 BEDROOM APARTMENTS",
     detailMeta: "Residential Apartments · Direct Lake View",
     description:
@@ -977,10 +992,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "04",
     name: "4th Floor",
     category: "residential",
-    yTop: 62.5,
-    yBottom: 68.5,
-    xLeft: 52.2,
-    xRight: 85.0,
+    yTop: 66.25,
+    yBottom: 71.65,
+    xLeft: 56.68,
+    xRight: 82.92,
     subtitle: "1 BEDROOM · 2 BEDROOM APARTMENTS",
     detailMeta: "Residential Apartments · Promenade & Lake View",
     description:
@@ -992,10 +1007,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "03",
     name: "3rd Floor",
     category: "residential",
-    yTop: 68.5,
-    yBottom: 74.5,
-    xLeft: 52.0,
-    xRight: 85.0,
+    yTop: 71.65,
+    yBottom: 77.05,
+    xLeft: 56.52,
+    xRight: 82.92,
     subtitle: "1 BEDROOM · 2 BEDROOM APARTMENTS",
     detailMeta: "First Residential Level · Direct Amenity Access",
     description:
@@ -1007,10 +1022,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "02",
     name: "2nd Floor",
     category: "amenities",
-    yTop: 74.5,
-    yBottom: 80.0,
-    xLeft: 51.5,
-    xRight: 85.2,
+    yTop: 77.05,
+    yBottom: 82.0,
+    xLeft: 56.12,
+    xRight: 83.08,
     subtitle: "GYM · INFINITY POOL · SPA & WELLNESS AMENITIES",
     detailMeta: "Dedicated Resident Wellness & Recreation Level",
     description:
@@ -1036,10 +1051,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "01",
     name: "1st Floor",
     category: "commercial",
-    yTop: 80.0,
-    yBottom: 85.0,
-    xLeft: 51.5,
-    xRight: 85.2,
+    yTop: 82.0,
+    yBottom: 86.5,
+    xLeft: 56.12,
+    xRight: 83.08,
     subtitle: "COMMERCIAL SHOPS · SHOWROOMS & DINING TERRACES",
     detailMeta: "Upper Commercial Promenade · Lakeview Frontage",
     description:
@@ -1064,10 +1079,10 @@ export const TOWER_LEVELS: TowerLevelData[] = [
     code: "GF",
     name: "Ground Floor",
     category: "commercial",
-    yTop: 85.0,
-    yBottom: 90.0,
-    xLeft: 51.5,
-    xRight: 85.2,
+    yTop: 86.5,
+    yBottom: 91.0,
+    xLeft: 56.12,
+    xRight: 83.08,
     subtitle: "COMMERCIAL SHOPS · WATERFRONT RETAIL ARCADE",
     detailMeta: "Shoreline Arrival & Retail Promenade",
     description:

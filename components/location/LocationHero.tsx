@@ -139,7 +139,7 @@ export default function LocationHero({ onOpenInquiry }: LocationHeroProps) {
             className="type-display font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] text-[#EDE5DA] tracking-tight leading-[1.12]"
           >
             <span className="block">At the Heart</span>
-            <span className="type-display-accent block italic font-normal text-sand-gradient">
+            <span className="type-display-accent block font-normal text-sand-gradient">
               of DHA Phase III
             </span>
           </h1>

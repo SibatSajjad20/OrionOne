@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
@@ -63,7 +63,6 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
   const imageWrapRefs = useRef<(HTMLDivElement | null)[]>([]);
   const copyRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mobileCardsRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -134,22 +133,13 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
               end: "bottom bottom",
               scrub: 0.4,
               invalidateOnRefresh: true,
-              onUpdate: (self) => {
-                const p = self.progress;
-                if (p < 0.42) {
-                  setActiveIndex(0);
-                } else if (p < 0.74) {
-                  setActiveIndex(1);
-                } else {
-                  setActiveIndex(2);
-                }
-              },
             },
           });
 
-          // Phase 1 (0 -> 0.26): Two Sand/Moss curtain layers peel open left/right over the first terrace image
+          // Phase 1 (0 -> 0.25): Two Sand/Moss curtain layers peel open left/right over the first terrace image.
+          // Sand inner curtain peels slightly ahead of Moss outer curtain so the center reveal is crystal clear.
           tl.to(
-            shutterLeftMossRef.current,
+            shutterLeftSandRef.current,
             {
               clipPath: "inset(0% 100% 0% 0%)",
               ease: "power2.inOut",
@@ -158,7 +148,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
             0
           )
             .to(
-              shutterRightMossRef.current,
+              shutterRightSandRef.current,
               {
                 clipPath: "inset(0% 0% 0% 100%)",
                 ease: "power2.inOut",
@@ -167,29 +157,29 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
               0
             )
             .to(
-              shutterLeftSandRef.current,
+              shutterLeftMossRef.current,
               {
                 clipPath: "inset(0% 100% 0% 0%)",
                 ease: "power2.inOut",
-                duration: 0.26,
+                duration: 0.25,
               },
-              0.04
+              0.02
             )
             .to(
-              shutterRightSandRef.current,
+              shutterRightMossRef.current,
               {
                 clipPath: "inset(0% 0% 0% 100%)",
                 ease: "power2.inOut",
-                duration: 0.26,
+                duration: 0.25,
               },
-              0.04
+              0.02
             )
             .to(
               image0,
               {
                 scale: 1.04,
                 ease: "power2.out",
-                duration: 0.28,
+                duration: 0.26,
               },
               0
             )
@@ -201,19 +191,29 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
                 ease: "power2.out",
                 duration: 0.16,
               },
-              0.12
+              0.1
             );
 
           // Phase 2 (0.30 -> 0.64): First panel peels upward revealing second terrace facet underneath
           tl.to(
-            panel0,
+            copy0,
             {
-              yPercent: -100,
-              ease: "power2.inOut",
-              duration: 0.34,
+              opacity: 0,
+              y: -24,
+              ease: "power2.in",
+              duration: 0.12,
             },
-            0.3
+            0.29
           )
+            .to(
+              panel0,
+              {
+                yPercent: -100,
+                ease: "power2.inOut",
+                duration: 0.34,
+              },
+              0.3
+            )
             .to(
               image0,
               {
@@ -246,14 +246,24 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
 
           // Phase 3 (0.66 -> 1.0): Second panel peels upward revealing third terrace facet, settling right at 1.0 (no dead scroll)
           tl.to(
-            panel1,
+            copy1,
             {
-              yPercent: -100,
-              ease: "power2.inOut",
-              duration: 0.34,
+              opacity: 0,
+              y: -24,
+              ease: "power2.in",
+              duration: 0.12,
             },
-            0.66
+            0.65
           )
+            .to(
+              panel1,
+              {
+                yPercent: -100,
+                ease: "power2.inOut",
+                duration: 0.34,
+              },
+              0.66
+            )
             .to(
               image1,
               {
@@ -336,7 +346,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
           <div className="absolute top-24 left-8 xl:left-16 z-50 max-w-xl pointer-events-none">
             <h2 className="font-serif-heading font-luxia-display text-4xl xl:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08] drop-shadow-md">
               Curated{" "}
-              <span className="italic font-normal text-sand-gradient normal-case">
+              <span className="font-normal text-sand-gradient normal-case">
                 Perspectives
               </span>
             </h2>
@@ -391,9 +401,6 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
                   }}
                   className="absolute bottom-12 xl:bottom-16 left-8 xl:left-16 z-20 max-w-xl space-y-3 will-change-transform"
                 >
-                  <span className="font-sans-body text-xs uppercase tracking-[0.28em] text-[#62AA9E] font-semibold block">
-                    Terrace Facet {facet.number}
-                  </span>
                   <h3 className="font-serif-heading font-luxia-display text-4xl xl:text-5xl text-[#EDE5DA] leading-[1.08]">
                     {facet.title}
                   </h3>
@@ -412,7 +419,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
             aria-hidden="true"
             className="
               pointer-events-none absolute inset-y-0 left-0 w-1/2 z-40
-              bg-[#EDE5DA]/20 backdrop-blur-[2px] border-r border-[#EDE5DA]/40
+              bg-[#EDE5DA]
               will-change-[clip-path]
             "
           />
@@ -421,7 +428,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
             aria-hidden="true"
             className="
               pointer-events-none absolute inset-y-0 right-0 w-1/2 z-40
-              bg-[#EDE5DA]/20 backdrop-blur-[2px] border-l border-[#EDE5DA]/40
+              bg-[#EDE5DA]
               will-change-[clip-path]
             "
           />
@@ -432,7 +439,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
             aria-hidden="true"
             className="
               pointer-events-none absolute inset-y-0 left-0 w-1/2 z-40
-              bg-[#153D3D] border-r border-[#62AA9E]/45
+              bg-[#153D3D]
               will-change-[clip-path]
             "
           />
@@ -441,38 +448,10 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
             aria-hidden="true"
             className="
               pointer-events-none absolute inset-y-0 right-0 w-1/2 z-40
-              bg-[#153D3D] border-l border-[#62AA9E]/45
+              bg-[#153D3D]
               will-change-[clip-path]
             "
           />
-
-          {/* Mint 01 / 02 / 03 Ticks Bottom-Right */}
-          <div
-            className="absolute bottom-12 xl:bottom-16 right-8 xl:right-16 z-50 flex items-center gap-4 bg-[#081a1a]/75 backdrop-blur-md border border-[#EDE5DA]/15 px-5 py-3 rounded-full"
-            aria-label="Terrace perspective indicator"
-          >
-            {ARCHITECTURAL_FACETS.map((facet, idx) => {
-              const isActive = activeIndex === idx;
-              return (
-                <div key={facet.id} className="flex items-center gap-2">
-                  <span
-                    className={`font-sans-body text-xs tracking-[0.22em] transition-colors duration-300 ${
-                      isActive
-                        ? "text-[#62AA9E] font-bold"
-                        : "text-[#EDE5DA]/45 font-light"
-                    }`}
-                  >
-                    {facet.number}
-                  </span>
-                  <span
-                    className={`h-[2px] rounded-full transition-all duration-300 ${
-                      isActive ? "w-7 bg-[#62AA9E]" : "w-2 bg-[#EDE5DA]/20"
-                    }`}
-                  />
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
 
@@ -483,7 +462,7 @@ export default function OrionOneArchitecture({}: OrionOneArchitectureProps) {
         <div className="max-w-2xl space-y-3">
           <h2 className="font-serif-heading font-luxia-display text-3xl sm:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Curated <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+            <span className="font-normal text-sand-gradient normal-case">
               Perspectives
             </span>
           </h2>

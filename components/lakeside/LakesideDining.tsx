@@ -77,7 +77,7 @@ export default function LakesideDining() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Visual Showcase - Pure Clean Architectural Photography */}
           <div ref={visualRef} className="lg:col-span-7 order-2 lg:order-1 will-change-transform">
-            <div className="relative rounded-2xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl group">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl group">
               <div className="relative aspect-[16/11] w-full overflow-hidden">
                 <Image
                   src="/images/lakeside/dining-terrace.jpg"
@@ -92,10 +92,9 @@ export default function LakesideDining() {
 
           {/* Right Column: Narrative Copy */}
           <div ref={textRef} className="lg:col-span-5 order-1 lg:order-2 space-y-6 will-change-transform">
-
             <h2 className="type-section font-serif-heading font-luxia-display text-4xl sm:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
               Dining by the <br />
-              <span className="type-display-accent italic font-normal text-sand-gradient">
+              <span className="type-display-accent font-normal text-sand-gradient">
                 Lake
               </span>
             </h2>

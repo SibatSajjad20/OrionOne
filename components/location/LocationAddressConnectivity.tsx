@@ -501,7 +501,7 @@ export default function LocationAddressConnectivity() {
             <div className="max-w-[540px] space-y-3 sm:space-y-6 text-left">
               <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
                 A Lakefront <br />
-                <span className="type-display-accent italic font-normal text-sand-gradient">
+                <span className="type-display-accent font-normal text-sand-gradient">
                   Address
                 </span>
               </h2>
@@ -543,7 +543,7 @@ export default function LocationAddressConnectivity() {
           >
             <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-[#EDE5DA] leading-[1.02]">
               Connected to <br />
-              <span className="type-display-accent italic font-normal text-sand-gradient">
+              <span className="type-display-accent font-normal text-sand-gradient">
                 DHA &amp; Beyond
               </span>
             </h2>
@@ -629,7 +629,7 @@ export default function LocationAddressConnectivity() {
             <div className="relative z-10 max-w-5xl space-y-4 will-change-transform">
               <h2 className="type-section font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-[#EDE5DA] leading-[1.02]">
                 Everything <br />
-                <span className="type-display-accent italic font-normal text-sand-gradient">
+                <span className="type-display-accent font-normal text-sand-gradient">
                   Around Us
                 </span>
               </h2>

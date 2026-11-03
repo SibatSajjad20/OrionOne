@@ -182,7 +182,7 @@ export default function CommercialHero({ onOpenInquiry }: CommercialHeroProps) {
             className="type-display font-serif-heading font-luxia-display text-3xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl text-[#EDE5DA] tracking-tight leading-[1.12]"
           >
             <span className="block">Where Business</span>
-            <span className="type-display-accent block italic font-normal text-sand-gradient">
+            <span className="type-display-accent block font-normal text-sand-gradient">
               Meets Destination Living
             </span>
           </h1>

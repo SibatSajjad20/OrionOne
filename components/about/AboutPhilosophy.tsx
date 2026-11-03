@@ -97,9 +97,9 @@ export default function AboutPhilosophy() {
             ref={quoteRef}
             className="type-section font-serif-heading font-luxia-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.25rem] text-[#EDE5DA] tracking-tight leading-[1.18] max-w-4xl mx-auto"
           >
-            &ldquo;We Don&apos;t Just Build Projects, <br />
-            <span className="type-display-accent italic font-normal text-sand-gradient">
-              We Create Destinations.&rdquo;
+            &quot;We Don&apos;t Just Build Projects, <br />
+            <span className="type-display-accent font-normal text-sand-gradient">
+              We Create Destinations.&quot;
             </span>
           </blockquote>
         </div>

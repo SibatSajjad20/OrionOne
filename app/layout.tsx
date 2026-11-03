@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { Montserrat, Bodoni_Moda } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import "lenis/dist/lenis.css";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -18,7 +18,7 @@ export const viewport: Viewport = {
 // Brand Guidelines: Luxia Regular — Subheadings & Editorial Serif
 const luxia = localFont({
   src: [{ path: "./fonts/luxia-regular.woff2", weight: "400", style: "normal" }],
-  variable: "--font-luxia",
+  variable: "--font-luxia-src",
   display: "swap",
   adjustFontFallback: false,
 });
@@ -26,7 +26,7 @@ const luxia = localFont({
 // Brand Guidelines: Luxia Display — Large Headings & Hero Titles (>= 48px)
 const luxiaDisplay = localFont({
   src: [{ path: "./fonts/luxia-display.woff2", weight: "500", style: "normal" }],
-  variable: "--font-luxia-display",
+  variable: "--font-luxia-display-src",
   display: "swap",
   adjustFontFallback: false,
 });
@@ -36,15 +36,6 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-// Authentic High-Contrast Serif with Italic Support (Didone style matching Luxia/Didot)
-const bodoniModa = Bodoni_Moda({
-  variable: "--font-bodoni",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -71,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${luxia.variable} ${luxiaDisplay.variable} ${bodoniModa.variable} ${montserrat.variable} dark`}
+      className={`${luxia.variable} ${luxiaDisplay.variable} ${montserrat.variable} dark`}
       suppressHydrationWarning
     >
       <head suppressHydrationWarning>

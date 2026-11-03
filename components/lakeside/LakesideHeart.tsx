@@ -76,7 +76,7 @@ export default function LakesideHeart() {
             className="type-section font-serif-heading font-luxia-display text-xl sm:text-4xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]"
           >
             The Lake at the Heart of <br />
-            <span className="type-display-accent italic font-normal text-sand-gradient">
+            <span className="type-display-accent font-normal text-sand-gradient">
               Orion One
             </span>
           </h2>
@@ -99,7 +99,7 @@ export default function LakesideHeart() {
         {/* Panoramic Exhibition Frame */}
         <div
           ref={frameRef}
-          className="relative rounded-2xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl"
+          className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl"
         >
           <div className="relative aspect-[16/10] sm:aspect-[21/10] w-full overflow-hidden">
             <Image

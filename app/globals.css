@@ -11,9 +11,9 @@
   --color-stone: #808080;
   --color-martian: #B2CE93;
 
-  --font-luxia: var(--font-luxia), var(--font-bodoni), "Didot", "Bodoni MT", serif;
-  --font-luxia-display: var(--font-luxia-display), var(--font-luxia), serif;
-  --font-serif: var(--font-luxia), var(--font-bodoni), "Didot", "Bodoni MT", serif;
+  --font-luxia: var(--font-luxia-src), serif;
+  --font-luxia-display: var(--font-luxia-display-src), var(--font-luxia-src), serif;
+  --font-serif: var(--font-luxia-src), serif;
   --font-sans: var(--font-montserrat), "Montserrat", system-ui, sans-serif;
 }
 
@@ -199,7 +199,6 @@ h1.font-serif,
 
 .font-editorial-quote {
   font-family: var(--font-serif);
-  font-style: italic;
   overflow: visible;
 }
 
@@ -321,6 +320,7 @@ h1.font-serif,
 /* Custom Orion One sub-mark cursor — hide native cursor only when active on fine-pointer desktop */
 @media (hover: hover) and (pointer: fine) {
   body.orion-cursor-active,
+  body.orion-cursor-active *,
   body.orion-cursor-active a,
   body.orion-cursor-active button,
   body.orion-cursor-active [role="button"],
@@ -341,15 +341,22 @@ h1.font-serif,
 /* Orion One text casing & typography utilities */
 .type-display,
 .type-section {
-  font-family: var(--font-luxia), serif;
-  font-weight: 400;
+  font-family: var(--font-luxia-display);
+  font-weight: 500;
   letter-spacing: -0.01em; /* Brand Guidelines */
   text-transform: none;    /* Title Case as written in copy */
   text-rendering: geometricPrecision;
 }
-.type-display-accent {     /* italic sand line — same case as parent */
-  font-style: italic;
-  font-weight: 400;
+.type-display {
+  line-height: 1.05;
+}
+.type-section {
+  line-height: 1.1;
+}
+.type-display-accent {     /* accent line — same case, font, size & weight as parent */
+  font-family: inherit;
+  font-weight: inherit;
+  font-style: normal;
   text-transform: none;    /* NEVER combine with uppercase */
 }
 .type-eyebrow {

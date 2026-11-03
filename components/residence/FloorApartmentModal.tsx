@@ -103,8 +103,9 @@ export default function FloorApartmentModal({
   const suite =
     getSuiteBySlug(selectedSuiteSlug) || getSuiteBySlug("2-bedroom")!;
 
-  const prevLevel = levelData.level > 0 ? levelData.level - 1 : 13;
-  const nextLevel = levelData.level < 13 ? levelData.level + 1 : 0;
+  const maxLevel = Math.max(...TOWER_LEVELS.map((l) => l.level));
+  const prevLevel = levelData.level > 0 ? levelData.level - 1 : maxLevel;
+  const nextLevel = levelData.level < maxLevel ? levelData.level + 1 : 0;
 
   const planSrc = isResidential
     ? suite.floorPlanSrc
@@ -154,7 +155,7 @@ export default function FloorApartmentModal({
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#EDE5DA]/70">
-                Floor {levelData.code} / 13
+                Floor {levelData.code} / 14
               </span>
               <button
                 type="button"

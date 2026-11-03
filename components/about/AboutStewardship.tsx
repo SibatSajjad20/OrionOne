@@ -107,7 +107,7 @@ export default function AboutStewardship({ onOpenInquiry }: AboutStewardshipProp
         <div ref={canopyRef} className="max-w-4xl mb-12 sm:mb-20 space-y-4">
           <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Built for Today <br />
-            <span className="type-display-accent italic font-normal text-sand-gradient">Designed for Tomorrow</span>
+            <span className="type-display-accent font-normal text-sand-gradient">Designed for Tomorrow</span>
           </h2>
           <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl pt-2">
             Orion One reflects SP Builders&apos; commitment to structural honesty, disciplined planning, and lasting value. Situated on a finite shoreline in Sector F, DHA Phase III, Islamabad, the development is engineered to stand as a landmark for generations.

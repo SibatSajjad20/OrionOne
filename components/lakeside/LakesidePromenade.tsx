@@ -70,10 +70,6 @@ export default function LakesidePromenade() {
     if (!container || !track) return;
 
     const ctx = gsap.context(() => {
-      const getScrollAmount = () => {
-        return -(track.scrollWidth - window.innerWidth + 80);
-      };
-
       const mm = gsap.matchMedia();
 
       // Desktop & Tablet: Smooth Pinned Horizontal Scroll
@@ -133,7 +129,7 @@ export default function LakesidePromenade() {
     <section
       id="promenade"
       ref={containerRef}
-      className="relative w-full min-h-[100dvh] flex flex-col justify-center bg-[#081a1a] text-[#EDE5DA] overflow-hidden border-b border-[#EDE5DA]/15 py-12 sm:py-0"
+      className="relative w-full min-h-[100dvh] flex flex-col justify-start pt-20 sm:pt-24 md:pt-28 pb-6 sm:pb-8 bg-[#081a1a] text-[#EDE5DA] overflow-hidden border-b border-[#EDE5DA]/15"
       aria-label="The Lakeside Promenade"
     >
       {/* Ambient background glow vignette */}
@@ -142,42 +138,51 @@ export default function LakesidePromenade() {
         aria-hidden="true"
       />
 
-      {/* Clean Stage Header */}
-      <div className="pt-8 sm:pt-12 pb-2 sm:pb-3 px-4 sm:px-8 lg:px-16 max-w-[1500px] mx-auto w-full shrink-0">
+      {/* Clean Stage Header - Moved up and tightened */}
+      <div className="pb-3 sm:pb-4 px-4 sm:px-8 lg:px-16 max-w-[1500px] mx-auto w-full shrink-0">
         <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
-          The Lakeside <span className="type-display-accent italic font-normal text-sand-gradient">Promenade</span>
+          The Lakeside <span className="type-display-accent font-normal text-sand-gradient">Promenade</span>
         </h2>
+        <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light max-w-xl mt-1.5 sm:mt-2 leading-relaxed">
+          A continuous pedestrian loop connecting calm waters, lush tree canopies, and civic gathering terraces.
+        </p>
       </div>
 
       {/* Horizontal Sliding Track (Desktop & Mobile Synchronized) */}
-      <div className="pt-3 sm:pt-4 pb-6 sm:pb-8 overflow-hidden w-full">
+      <div className="pt-2 sm:pt-3 pb-4 sm:pb-6 overflow-hidden w-full">
         <div
           ref={trackRef}
-          className="flex flex-row items-stretch gap-4 md:gap-6 px-4 sm:px-8 lg:px-16 w-max will-change-transform"
+          className="flex flex-row items-stretch gap-4 sm:gap-6 px-4 sm:px-8 lg:px-16 w-max will-change-transform"
         >
           {PROMENADE_ITEMS.map((item) => (
             <article
               key={item.id}
-              className="promenade-card w-[82vw] sm:w-[420px] md:w-[460px] lg:w-[480px] shrink-0 rounded-2xl bg-[#0d2828] border border-[#EDE5DA]/15 p-4 sm:p-5 shadow-2xl flex flex-col justify-start group transition-colors duration-500 hover:border-[#62AA9E]/40"
+              className="promenade-card group w-[82vw] sm:w-[380px] md:w-[410px] lg:w-[430px] shrink-0 rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828]/80 backdrop-blur-md border border-[#EDE5DA]/15 shadow-xl flex flex-col justify-start transition-all duration-500 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/95 hover:shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
             >
-              {/* Clean Architectural Photo */}
-              <div className="relative aspect-[16/9.5] w-full rounded-xl overflow-hidden bg-[#081a1a] border border-[#EDE5DA]/10 shrink-0">
+              {/* Full-bleed Architectural Photo without numbering/labels */}
+              <div className="relative aspect-[16/9.5] w-full overflow-hidden bg-[#081a1a] shrink-0">
                 <Image
                   src={item.image}
                   alt={item.alt}
                   fill
-                  sizes="(max-width: 768px) 82vw, 480px"
-                  className="object-cover object-center transition-transform duration-[2500ms] group-hover:scale-105"
+                  sizes="(max-width: 768px) 82vw, 430px"
+                  className="object-cover object-center transition-transform duration-[2500ms] ease-out group-hover:scale-105"
+                />
+
+                {/* Subtle scrim transition */}
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-[#0d2828] via-[#0d2828]/15 to-transparent pointer-events-none"
+                  aria-hidden="true"
                 />
               </div>
 
-              {/* Clean Editorial Narrative */}
-              <div className="pt-3 sm:pt-4 space-y-1.5 sm:space-y-2 flex-1 flex flex-col justify-start">
-                <h3 className="font-serif-heading text-lg sm:text-2xl text-[#EDE5DA] leading-snug">
+              {/* Clean Editorial Content */}
+              <div className="p-4 sm:p-5 lg:p-6 flex-1 flex flex-col justify-start space-y-1.5 sm:space-y-2">
+                <h3 className="font-serif-heading font-luxia-display text-lg sm:text-xl lg:text-2xl text-[#EDE5DA] leading-snug tracking-tight group-hover:text-[#62AA9E] transition-colors duration-300">
                   {item.title}
                 </h3>
 
-                <p className="font-sans-body text-xs sm:text-sm text-[#C9BFB1] font-light leading-relaxed">
+                <p className="font-sans-body text-xs sm:text-[13px] text-[#C9BFB1] font-light leading-relaxed">
                   {item.description}
                 </p>
               </div>

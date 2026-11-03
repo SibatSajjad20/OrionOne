@@ -67,7 +67,7 @@ export default function ResidencePerspective() {
         {/* Centered Heading in one line & Paragraph below */}
         <div ref={narrativeRef} className="w-full text-center mb-10 sm:mb-16">
           <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-[#EDE5DA] leading-tight max-w-5xl mx-auto">
-            A Home with a<span className="type-display-accent italic font-normal text-sand-gradient"> Different Perspective</span>
+            A Home with a<span className="type-display-accent font-normal text-sand-gradient"> Different Perspective</span>
           </h2>
           <p className="font-sans-body text-xs sm:text-base md:text-lg text-[#EDE5DA]/85 font-light leading-relaxed max-w-3xl mx-auto mt-4 sm:mt-6">
             Living at Orion One offers a lakeside home shaped by natural light and premium amenities. This tranquil destination seamlessly blends wellness, recreation, dining, and community into your daily life

@@ -177,7 +177,7 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
         >
           <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] max-w-5xl">
             The Pinnacle of Lakefront Living in{" "}
-            <span className="type-display-accent italic font-normal text-sand-gradient">
+            <span className="type-display-accent font-normal text-sand-gradient">
               DHA Phase III
             </span>
           </h2>
@@ -188,13 +188,13 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
         >
           <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] leading-[1.08] max-w-5xl mx-auto">
             Claim Your Place <br />
-            <span className="type-display-accent italic font-normal text-sand-gradient">
+            <span className="type-display-accent font-normal text-sand-gradient">
               on the Waterfront
             </span>
           </h2>
 
           <p className="font-sans-body text-xs sm:text-base lg:text-lg text-[#EDE5DA]/90 font-light max-w-2xl mx-auto leading-relaxed">
-            Private residences, premier commercial terraces, and resort-style amenities come together in Islamabad’s premier lakeside masterplan.
+            Private residences, premier commercial terraces, and resort-style amenities come together in Islamabad&apos;s premier lakeside masterplan.
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 w-full sm:w-auto mx-auto">

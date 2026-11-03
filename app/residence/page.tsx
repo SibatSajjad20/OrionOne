@@ -34,7 +34,7 @@ export default function ResidencePage() {
       <Header onOpenInquiry={() => setIsInquiryOpen(true)} />
 
       <main className="relative">
-        {/* Interactive 14-Floor Orion One Building Explorer */}
+        {/* Interactive 15-Floor Orion One Building Explorer */}
         <OrionTowerExplorer onOpenInquiry={() => setIsInquiryOpen(true)} />
 
         {/* Residence Typologies & Floor Plans Catalog */}

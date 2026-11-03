@@ -19,7 +19,7 @@ export default function ContactCtaBanner({ onOpenInquiry }: ContactCtaBannerProp
         {/* Section Headline */}
         <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-[1.12]">
           Let&apos;s Build Something <br className="hidden sm:inline" />
-          <span className="type-display-accent italic font-normal text-sand-gradient">Remarkable</span>
+          <span className="type-display-accent font-normal text-sand-gradient">Remarkable</span>
         </h2>
 
         {/* Subtitle */}

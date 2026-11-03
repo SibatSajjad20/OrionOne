@@ -232,7 +232,7 @@ export default function AmenitiesIndex() {
         <div ref={headerRef} className="text-center max-w-4xl mx-auto mb-12 sm:mb-24 space-y-4">
           <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Amenities at a{" "}
-            <span className="type-display-accent italic font-normal text-sand-gradient">
+            <span className="type-display-accent font-normal text-sand-gradient">
               Glance
             </span>
           </h2>

@@ -1216,21 +1216,21 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         {/* Directional Soft Vignette Scrim: Darkens bottom on mobile, right on desktop */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/95 via-[#0d2828]/55 via-35% to-transparent sm:bg-gradient-to-l sm:from-[#0d2828]/90 sm:via-[#0d2828]/45 sm:to-transparent pointer-events-none -z-10" />
 
-        <div className="relative max-w-xl text-left sm:text-right space-y-3 sm:space-y-4 pb-[env(safe-area-inset-bottom,0px)]">
+        <div className="relative max-w-xl text-left sm:text-right pb-[env(safe-area-inset-bottom,0px)]">
           <div
             ref={scene1LogoAnchorRef}
-            className="w-12 h-12 sm:w-14 sm:h-14 mr-auto sm:ml-auto mb-1 pointer-events-none flex items-center justify-center opacity-0"
+            className="w-12 h-12 sm:w-14 sm:h-14 mr-auto sm:ml-auto mb-3 pointer-events-none flex items-center justify-center opacity-0"
             aria-hidden="true"
           />
-          <h1 className="type-display font-serif font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-tight">
-            A New Horizon
-            <span className="type-display-accent block font-serif font-luxia-display italic text-[#62AA9E] font-normal mt-1 text-xl sm:text-4xl lg:text-5xl">
+          <h1 className="type-display font-luxia-display text-[34px] sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-[1.05] tracking-[-0.01em]">
+            <span className="block">A New Horizon</span>
+            <span className="type-display-accent block font-luxia-display text-[#62AA9E] mt-0">
               of Luxury.
             </span>
           </h1>
 
-          <p className="font-serif text-sm sm:text-2xl text-[#EDE5DA]/90 italic leading-relaxed">
-            &ldquo;Where architecture flows like water and every view inspires.&rdquo;
+          <p className="font-sans-body text-sm sm:text-base lg:text-lg font-light not-italic text-[#EDE5DA]/90 leading-relaxed max-w-xl mt-4 sm:mt-6 sm:ml-auto">
+            &quot;Where architecture flows like water and every view inspires.&quot;
           </p>
         </div>
       </div>
@@ -1246,21 +1246,21 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         {/* Directional Soft Vignette Scrim: Darkens bottom on mobile, left on desktop */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0d2828]/95 via-[#0d2828]/55 via-35% to-transparent sm:bg-gradient-to-r sm:from-[#0d2828]/90 sm:via-[#0d2828]/45 sm:to-transparent pointer-events-none -z-10" />
 
-        <div className="relative max-w-xl text-left space-y-3 sm:space-y-4 pb-[env(safe-area-inset-bottom,0px)]">
+        <div className="relative max-w-xl text-left pb-[env(safe-area-inset-bottom,0px)]">
           <div
             ref={scene2LogoAnchorRef}
-            className="w-12 h-12 sm:w-14 sm:h-14 mb-1 pointer-events-none flex items-center justify-center"
+            className="w-12 h-12 sm:w-14 sm:h-14 mb-3 pointer-events-none flex items-center justify-center"
             aria-hidden="true"
           />
 
-          <h2 className="type-section font-serif font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-tight">
-            Life,
-            <span className="type-display-accent block font-serif font-luxia-display italic text-[#62AA9E] font-normal mt-1 text-xl sm:text-4xl lg:text-5xl">
-              By the Water.
+          <h2 className="type-section font-luxia-display text-[34px] sm:text-5xl lg:text-6xl text-[#EDE5DA] leading-[1.05] tracking-[-0.01em]">
+            <span className="block">Life,{" "}</span>
+            <span className="type-display-accent block font-luxia-display text-[#62AA9E] mt-0">
+              by the Water.
             </span>
           </h2>
 
-          <p className="text-xs sm:text-lg font-sans-body text-[#EDE5DA]/90 font-light leading-relaxed max-w-md drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <p className="text-xs sm:text-base font-sans-body text-[#EDE5DA]/90 font-light leading-relaxed max-w-md drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] mt-4 sm:mt-6">
             A lakefront address shaped around views, movement, nature and everyday living.
           </p>
         </div>
@@ -1282,9 +1282,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             aria-hidden="true"
           />
 
-          <h2 className="type-section font-serif font-luxia-display text-xl sm:text-4xl lg:text-5xl text-[#EDE5DA] leading-tight">
-            The Lakefront
-            <span className="type-display-accent block font-serif italic text-[#62AA9E] font-normal text-lg sm:text-3xl lg:text-4xl mt-0.5 sm:mt-1">
+          <h2 className="type-section font-luxia-display text-[28px] sm:text-4xl lg:text-5xl text-[#EDE5DA] leading-[1.1] tracking-[-0.01em]">
+            <span className="block">The Lakefront</span>
+            <span className="type-display-accent block font-luxia-display text-[#62AA9E] mt-0">
               at the Heart of DHA Phase III.
             </span>
           </h2>
@@ -1300,11 +1300,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         className="absolute inset-0 w-full h-full z-20 opacity-0 pointer-events-none overflow-hidden bg-[#0d2828]"
       >
         {/* Floating Top Header across the 3 columns */}
-        <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none pt-24 sm:pt-28 lg:pt-32 pb-10 sm:pb-16 bg-gradient-to-b from-[#081a1a]/95 via-[#081a1a]/70 to-transparent">
+        <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none pt-20 sm:pt-28 lg:pt-32 pb-14 sm:pb-20 bg-gradient-to-b from-[#153D3D] via-[#153D3D]/80 to-transparent">
           <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-            <h2 className="type-section font-serif font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] leading-tight">
+            <h2 className="type-section font-luxia-display text-[28px] sm:text-4xl lg:text-5xl text-[#EDE5DA] leading-[1.1] tracking-[-0.01em]">
               Where Lifestyle{" "}
-              <span className="type-display-accent font-serif italic text-[#62AA9E] font-normal">
+              <span className="type-display-accent font-luxia-display text-[#62AA9E]">
                 Meets Investment.
               </span>
             </h2>
@@ -1350,11 +1350,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 aria-hidden="true"
               />
 
-              <div className="space-y-1 sm:space-y-2">
-                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-snug">
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-[1.2] tracking-[-0.01em]">
                   {INVESTMENT_COLUMNS[0].title}
                 </h3>
-                <p className="text-xs sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
+                <p className="font-sans-body text-xs sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed mt-3">
                   {INVESTMENT_COLUMNS[0].detail}
                 </p>
               </div>
@@ -1406,11 +1406,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 aria-hidden="true"
               />
 
-              <div className="space-y-1 sm:space-y-2">
-                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-snug">
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-[1.2] tracking-[-0.01em]">
                   {INVESTMENT_COLUMNS[1].title}
                 </h3>
-                <p className="text-xs sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
+                <p className="font-sans-body text-xs sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed mt-3">
                   {INVESTMENT_COLUMNS[1].detail}
                 </p>
               </div>
@@ -1461,11 +1461,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 aria-hidden="true"
               />
 
-              <div className="space-y-1 sm:space-y-2">
-                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-snug">
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl text-[#EDE5DA] leading-[1.2] tracking-[-0.01em]">
                   {INVESTMENT_COLUMNS[2].title}
                 </h3>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-[#EDE5DA]/85 font-light leading-relaxed">
+                <p className="font-sans-body text-xs sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed mt-3">
                   {INVESTMENT_COLUMNS[2].detail}
                 </p>
               </div>
@@ -1505,9 +1505,9 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
               aria-hidden="true"
             />
 
-            <h2 className="type-section font-serif font-luxia-display text-2xl sm:text-5xl lg:text-6xl text-[#EDE5DA] tracking-tight leading-tight">
+            <h2 className="type-section font-luxia-display text-[34px] sm:text-5xl lg:text-6xl text-[#EDE5DA] tracking-[-0.01em] leading-[1.05]">
               <span className="block">A Destination.</span>
-              <span className="type-display-accent !block font-serif font-luxia-display italic text-[#62AA9E] font-normal text-xl sm:text-4xl lg:text-5xl mt-1 sm:mt-2">
+              <span className="type-display-accent block font-luxia-display text-[#62AA9E] mt-0">
                 More Than an Address.
               </span>
             </h2>
@@ -1520,10 +1520,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 key={pillar.name}
                 className="border-t border-[#EDE5DA]/20 pt-4 sm:pt-8 flex flex-col justify-start"
               >
-                <h3 className="font-serif text-base sm:text-2xl lg:text-3xl text-[#EDE5DA] tracking-tight mb-1 sm:mb-3">
+                <h3 className="font-serif text-lg sm:text-2xl lg:text-3xl text-[#EDE5DA] tracking-[-0.01em] leading-[1.2] mb-3">
                   {pillar.name}
                 </h3>
-                <p className="font-sans-body text-[11px] sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
+                <p className="font-sans-body text-xs sm:text-sm text-[#EDE5DA]/85 font-light leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
                   {pillar.desc}
                 </p>
               </div>
@@ -1543,36 +1543,36 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         {/* 3D Orion Logo Docking Anchor */}
         <div
           ref={closingLogoTargetRef}
-          className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-3 pointer-events-none flex items-center justify-center relative"
+          className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-6 sm:mb-8 pointer-events-none flex items-center justify-center relative"
           aria-hidden="true"
         />
 
-        <h2 className="type-section font-serif font-luxia-display text-3xl sm:text-6xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-tight">
-          The Future
-          <span className="type-display-accent block font-serif font-luxia-display italic text-[#62AA9E] font-normal mt-1 text-2xl sm:text-5xl lg:text-6xl">
+        <h2 className="type-section font-luxia-display text-[38px] sm:text-6xl lg:text-7xl text-[#EDE5DA] tracking-[-0.01em] leading-[1.05] text-center mx-auto mb-10">
+          <span className="block">The Future</span>
+          <span className="type-display-accent block font-luxia-display text-[#62AA9E] mt-0">
             Has an Address.
           </span>
         </h2>
 
         {/* Dual Actions from 01 - Home Page.pdf */}
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-md px-2 sm:px-0">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-md px-2 sm:px-0">
           <button
             onClick={() => {
               if (onOpenInquiry) {
                 onOpenInquiry();
               }
             }}
-            className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-full bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] font-sans-body font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-xl flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-full bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] font-sans-body font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-xl flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
           >
-            <span>Book a Private Tour</span>
-            <ArrowRight className="w-4 h-4" />
+            <span className="whitespace-nowrap">Book a Private Tour</span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
 
           <a
             href="#architecture"
-            className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-full bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/20 hover:border-[#62AA9E] text-[#EDE5DA] font-sans-body font-medium text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-lg flex items-center justify-center text-center"
+            className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-full bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/20 hover:border-[#62AA9E] text-[#EDE5DA] font-sans-body font-medium text-xs tracking-[0.2em] uppercase transition-all duration-300 shadow-lg flex items-center justify-center text-center whitespace-nowrap"
           >
-            Explore Orion One
+            <span className="whitespace-nowrap">Explore Orion One</span>
           </a>
         </div>
       </div>

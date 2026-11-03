@@ -229,14 +229,54 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
 
   return (
     <section
+      id="residence-collection"
       ref={containerRef}
       data-bg="moss"
-      className="relative pt-28 sm:pt-36 pb-24 px-4 sm:px-12 lg:px-20 bg-[#153D3D] text-[#EDE5DA] overflow-hidden"
+      className="relative pt-20 sm:pt-28 pb-24 px-4 sm:px-12 lg:px-20 bg-[#153D3D] text-[#EDE5DA] overflow-hidden scroll-mt-20"
     >
+      {/* Soft Ambient Blend from Tower Explorer */}
+      <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none bg-gradient-to-b from-[#153D3D] via-[#153D3D]/60 to-transparent z-10" />
+
       {/* Subtle Ambient Radial Lighting */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_0%,rgba(28,78,78,0.4)_0%,rgba(21,61,61,0.2)_50%,transparent_80%)]" />
 
       <div className="relative z-20 max-w-7xl mx-auto w-full">
+        {/* Transitional Bridge from Macro Tower Explorer into Micro Collection */}
+        <div className="pt-2 sm:pt-4 mb-8 sm:mb-12 pb-6 sm:pb-8 border-b border-white/10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="flex flex-col">
+            <span className="font-serif-heading font-luxia-display text-2xl sm:text-3xl text-white">
+              15 Levels
+            </span>
+            <span className="font-sans-body text-[9.5px] uppercase tracking-[0.22em] text-[#62AA9E] mt-1 font-medium">
+              Promenade to Sky Crown
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-serif-heading font-luxia-display text-2xl sm:text-3xl text-white">
+              4 Typologies
+            </span>
+            <span className="font-sans-body text-[9.5px] uppercase tracking-[0.22em] text-[#EDE5DA]/70 mt-1">
+              1, 2, 3 Bed & Pool Suites
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-serif-heading font-luxia-display text-2xl sm:text-3xl text-white">
+              100% Lakefront
+            </span>
+            <span className="font-sans-body text-[9.5px] uppercase tracking-[0.22em] text-[#62AA9E] mt-1 font-medium">
+              Direct Waterfront Horizons
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-serif-heading font-luxia-display text-2xl sm:text-3xl text-white">
+              Level 02 Club
+            </span>
+            <span className="font-sans-body text-[9.5px] uppercase tracking-[0.22em] text-[#EDE5DA]/70 mt-1">
+              Infinity Pool, Gym & Spa
+            </span>
+          </div>
+        </div>
+
         {/* Top Canopy Brand Header & Rotating Badge */}
         <div ref={badgeRef} className="flex items-center justify-between pt-2 mb-8 sm:mb-14">
           <div className="flex items-center gap-4">

@@ -512,7 +512,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
             </span>
 
             <blockquote className="type-section font-serif-heading font-luxia-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#EDE5DA] leading-tight tracking-tight max-w-4xl mx-auto mb-10">
-              &ldquo;{suite.quoteBanner.quote}&rdquo;
+              &quot;{suite.quoteBanner.quote}&quot;
             </blockquote>
 
             <div className="flex justify-center">

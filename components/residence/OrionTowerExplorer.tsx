@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ChevronDown } from "lucide-react";
+import { scrollToElement } from "@/lib/scrollTo";
 import {
   TOWER_LEVELS,
   TowerLevelData,
@@ -9,10 +10,10 @@ import {
 } from "@/app/residence/data";
 import FloorApartmentModal from "./FloorApartmentModal";
 
-const IMG_NATURAL_W = 3840;
-const IMG_NATURAL_H = 2160;
-const FOCAL_X = 0.68;
-const FOCAL_Y = 0.5;
+const NATURAL_W = 2560;
+const NATURAL_H = 1280;
+const FOCAL_X = 0.70;
+const FOCAL_Y = 1.0;
 
 interface OrionTowerExplorerProps {
   onOpenInquiry: () => void;
@@ -34,10 +35,10 @@ export default function OrionTowerExplorer({
     left: number;
     top: number;
   }>({
-    width: 1920,
-    height: 1080,
+    width: 2560,
+    height: 1280,
     left: 0,
-    top: 0,
+    top: 80,
   });
 
   useEffect(() => {
@@ -46,36 +47,51 @@ export default function OrionTowerExplorer({
     );
   }, []);
 
+  const updateRect = useCallback(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const stageW = stage.clientWidth;
+    const stageH = stage.clientHeight;
+    if (!stageW || !stageH) return;
+
+    const headerEl = document.querySelector("header");
+    const headerH = headerEl?.clientHeight || 80;
+
+    const containerW = stageW;
+    const containerH = Math.max(stageH - headerH, 1);
+
+    // Exact CSS object-fit: cover with object-position: 70% 100%
+    const scale = Math.max(containerW / NATURAL_W, containerH / NATURAL_H);
+    const width = NATURAL_W * scale;
+    const height = NATURAL_H * scale;
+
+    const left = (containerW - width) * FOCAL_X;
+    const top = headerH + (containerH - height) * FOCAL_Y;
+
+    setImgRect({ width, height, left, top });
+  }, []);
+
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const updateRect = () => {
-      const stageW = stage.clientWidth;
-      const stageH = stage.clientHeight;
-      if (!stageW || !stageH) return;
-
-      const scale = Math.max(
-        stageW / IMG_NATURAL_W,
-        stageH / IMG_NATURAL_H
-      );
-      const width = IMG_NATURAL_W * scale;
-      const height = IMG_NATURAL_H * scale;
-      const left = (stageW - width) * FOCAL_X;
-      const top = (stageH - height) * FOCAL_Y;
-
-      setImgRect({ width, height, left, top });
-    };
-
     updateRect();
-    const ro = new ResizeObserver(updateRect);
+
+    const ro = new ResizeObserver(() => {
+      updateRect();
+    });
     ro.observe(stage);
+
     window.addEventListener("resize", updateRect);
+    window.addEventListener("orientationchange", updateRect);
+
     return () => {
       ro.disconnect();
       window.removeEventListener("resize", updateRect);
+      window.removeEventListener("orientationchange", updateRect);
     };
-  }, []);
+  }, [updateRect]);
 
   const handleFloorClick = (lvl: TowerLevelData) => {
     if (isTouchDevice && hoveredLevel?.level !== lvl.level) {
@@ -89,6 +105,13 @@ export default function OrionTowerExplorer({
     const found = getTowerLevel(levelNum);
     if (found) {
       setSelectedLevel(found);
+    }
+  };
+
+  const scrollToCollection = () => {
+    const el = document.getElementById("residence-collection");
+    if (el) {
+      scrollToElement(el);
     }
   };
 
@@ -107,10 +130,51 @@ export default function OrionTowerExplorer({
         onMouseLeave={() => {
           if (!isTouchDevice) setHoveredLevel(null);
         }}
-        className="relative w-full h-screen min-h-[680px] bg-[#081a1a] overflow-hidden select-none"
+        className="relative w-full h-[100dvh] min-h-[680px] bg-[#153D3D] overflow-hidden select-none"
       >
         {/* ========================================================================= */}
-        {/* LAYER 1: SYNCHRONIZED 3840x2160 BUILDING IMAGE COORDINATE SPACE           */}
+        {/* IMAGE LAYER (starts below header: top: var(--header-h); left: 0; right: 0;*/}
+        {/* height: calc(100dvh - var(--header-h)); object-fit: cover; 70% 100%)       */}
+        {/* Full tower visible at 1440x900, 1280x720, and 1920x1080                   */}
+        {/* ========================================================================= */}
+        <div
+          className="absolute left-0 right-0 pointer-events-none"
+          style={{
+            top: "var(--header-h, 5rem)",
+            height: "calc(100dvh - var(--header-h, 5rem))",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/residence/residence-hero-dusk.webp"
+            alt="Orion One Residences at Dusk"
+            onLoad={updateRect}
+            className="w-full h-full object-cover select-none"
+            style={{ objectPosition: "70% 100%" }}
+          />
+        </div>
+
+        {/* ========================================================================= */}
+        {/* OVERLAY: LEFT GRADIENT                                                    */}
+        {/* linear-gradient(90deg, rgba(21,61,61,0.88) 0%, rgba(21,61,61,0.5) 30%, rgba(21,61,61,0) 55%) */}
+        {/* ========================================================================= */}
+        <div
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(21, 61, 61, 0.88) 0%, rgba(21, 61, 61, 0.5) 30%, rgba(21, 61, 61, 0) 55%)",
+          }}
+        />
+
+        {/* Atmospheric Dark Wash when hovering a level */}
+        <div
+          className={`absolute inset-0 bg-[#081a1a]/40 transition-opacity duration-500 ease-out pointer-events-none z-10 ${
+            hoveredLevel ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
+        {/* ========================================================================= */}
+        {/* CLIPPED ILLUMINATED FLOOR SLICE ON THE BUILDING                            */}
         {/* ========================================================================= */}
         <div
           style={{
@@ -119,31 +183,8 @@ export default function OrionTowerExplorer({
             left: `${imgRect.left}px`,
             top: `${imgRect.top}px`,
           }}
-          className="absolute pointer-events-none"
+          className="absolute pointer-events-none z-10"
         >
-          <Image
-            src="/images/residence/5-final.jpg"
-            alt="Orion One by SP Builders"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-
-          {/* Atmospheric Dark Wash when hovering a level */}
-          <div
-            className={`absolute inset-0 bg-[#081a1a]/55 transition-opacity duration-500 ease-out ${
-              hoveredLevel ? "opacity-100" : "opacity-0"
-            }`}
-          />
-
-          <div
-            className={`absolute inset-0 bg-gradient-to-r from-[#061414]/70 via-transparent to-[#061414]/60 transition-opacity duration-500 ${
-              hoveredLevel ? "opacity-100" : "opacity-0"
-            }`}
-          />
-
-          {/* Clipped Illuminated Floor Slice on the Building */}
           <div
             style={{
               clipPath: hoveredLevel
@@ -158,19 +199,19 @@ export default function OrionTowerExplorer({
               hoveredLevel ? "opacity-100" : "opacity-0"
             }`}
           >
-            <Image
-              src="/images/residence/5-final.jpg"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/residence/residence-hero-dusk.webp"
               alt=""
-              fill
-              sizes="100vw"
-              className="object-cover filter brightness-[1.18] contrast-[1.06]"
+              className="w-full h-full object-cover filter brightness-[1.18] contrast-[1.06]"
+              style={{ objectPosition: "70% 100%" }}
               aria-hidden="true"
             />
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 2: FULL-VIEWPORT HORIZONTAL FLOOR LIGHT BEAM                        */}
+        {/* FULL-VIEWPORT HORIZONTAL FLOOR LIGHT BEAM                                 */}
         {/* ========================================================================= */}
         <div
           style={{
@@ -185,7 +226,18 @@ export default function OrionTowerExplorer({
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 3: 14 BUILDING FLOOR HITBOXES (GF, 01, 02, 03..13)                  */}
+        {/* OVERLAY (c): BOTTOM GRADIENT TO MOSS FOR THE PILL                         */}
+        {/* ========================================================================= */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none z-20"
+          style={{
+            background:
+              "linear-gradient(to top, #153D3D 0%, rgba(21, 61, 61, 0.88) 35%, rgba(21, 61, 61, 0) 100%)",
+          }}
+        />
+
+        {/* ========================================================================= */}
+        {/* LAYER 3: 15 BUILDING FLOOR HITBOXES (GF, 01, 02 .. 14)                    */}
         {/* ========================================================================= */}
         <div
           style={{
@@ -311,44 +363,83 @@ export default function OrionTowerExplorer({
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 5: RIGHT-SIDE 14-FLOOR VERTICAL SCALE (13 .. 03, 02, 01, GF)        */}
+        {/* LAYER 5: RIGHT-SIDE 15-FLOOR VERTICAL SCALE (14 .. 03, 02, 01, GF)        */}
         {/* ========================================================================= */}
-        <div className="pointer-events-auto absolute top-24 bottom-10 right-3 sm:right-7 lg:right-10 z-30 flex items-center">
-          <div className="h-full w-[1px] bg-gradient-to-b from-transparent via-white/25 to-transparent mr-3 sm:mr-5 hidden sm:block" />
+        <div className="pointer-events-auto absolute top-24 sm:top-28 bottom-16 sm:bottom-20 right-2 sm:right-6 lg:right-8 z-30 flex items-center">
+          <div className="h-full flex flex-col justify-between py-1.5 sm:py-2.5 px-1.5 sm:px-2 rounded-2xl bg-[#061414]/75 backdrop-blur-md border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+            {/* Top architectural floor count tag */}
+            <div className="px-1 pb-1 mb-0.5 border-b border-white/10 flex items-center justify-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-[#62AA9E]" />
+              <span className="font-sans-body text-[8px] sm:text-[8.5px] font-bold uppercase tracking-[0.2em] text-[#62AA9E]">
+                15 Lvl
+              </span>
+            </div>
 
-          <div className="h-full flex flex-col justify-between py-2">
-            {TOWER_LEVELS.map((lvl) => {
-              const isActive = hoveredLevel?.level === lvl.level;
-              return (
-                <button
-                  key={lvl.level}
-                  type="button"
-                  onMouseEnter={() => setHoveredLevel(lvl)}
-                  onClick={() => setSelectedLevel(lvl)}
-                  aria-label={`Select ${lvl.name}`}
-                  className="group relative flex items-center justify-end gap-2.5 py-0.5 px-1.5 cursor-pointer focus:outline-none"
-                >
-                  <span
-                    className={`h-[1px] bg-white transition-all duration-200 ${
-                      isActive
-                        ? "w-4 sm:w-5 opacity-100"
-                        : "w-0 opacity-0 group-hover:w-2.5 group-hover:opacity-60"
-                    }`}
-                  />
-
-                  <span
-                    className={`font-sans-body text-[10px] sm:text-[11px] tracking-[0.18em] transition-all duration-200 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] ${
-                      isActive
-                        ? "text-white font-semibold scale-110"
-                        : "text-white/60 group-hover:text-white"
-                    }`}
+            {/* 15 Floor Buttons */}
+            <div className="flex-1 flex flex-col justify-between gap-0.5">
+              {TOWER_LEVELS.map((lvl) => {
+                const isActive = hoveredLevel?.level === lvl.level;
+                return (
+                  <button
+                    key={lvl.level}
+                    type="button"
+                    onMouseEnter={() => setHoveredLevel(lvl)}
+                    onClick={() => setSelectedLevel(lvl)}
+                    aria-label={`Select ${lvl.name}`}
+                    className="group relative flex items-center justify-end gap-2 py-0.5 px-1 cursor-pointer focus:outline-none"
                   >
-                    {lvl.code}
-                  </span>
-                </button>
-              );
-            })}
+                    {/* Desktop Tooltip preview to the left */}
+                    <span
+                      className={`hidden lg:block absolute right-full mr-2.5 px-2 py-0.5 rounded bg-[#0d2828]/95 border border-[#62AA9E]/30 text-[9px] uppercase tracking-[0.16em] whitespace-nowrap pointer-events-none transition-all duration-200 shadow-lg ${
+                        isActive
+                          ? "opacity-100 translate-x-0 text-[#EDE5DA]"
+                          : "opacity-0 translate-x-1 text-white/50"
+                      }`}
+                    >
+                      {lvl.name} · {lvl.category === "amenities" ? "Club" : lvl.category === "commercial" ? "Retail" : "Residence"}
+                    </span>
+
+                    {/* Hairline indicator */}
+                    <span
+                      className={`h-[1.5px] rounded-full transition-all duration-200 ${
+                        isActive
+                          ? "w-3 sm:w-4 bg-[#62AA9E] opacity-100 shadow-[0_0_8px_#62AA9E]"
+                          : "w-0 opacity-0 group-hover:w-2 group-hover:opacity-60 bg-white/40"
+                      }`}
+                    />
+
+                    {/* Floor Code */}
+                    <span
+                      className={`font-sans-body text-[9.5px] sm:text-[11px] font-medium tracking-[0.18em] transition-all duration-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] ${
+                        isActive
+                          ? "text-[#62AA9E] font-bold scale-110"
+                          : "text-white/65 group-hover:text-white"
+                      }`}
+                    >
+                      {lvl.code}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* LAYER 6: FLOATING INTERACTIVE SECTION NAVIGATOR                           */}
+        {/* ========================================================================= */}
+        <div className="pointer-events-auto absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center">
+          <button
+            type="button"
+            onClick={scrollToCollection}
+            className="group inline-flex items-center gap-2.5 sm:gap-3 px-5 sm:px-6 py-2.5 rounded-full bg-[#0d2828]/90 hover:bg-[#153D3D] text-[#EDE5DA] border border-white/20 hover:border-[#62AA9E] shadow-[0_8px_30px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:scale-105 cursor-pointer"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#62AA9E] animate-pulse" />
+            <span className="font-sans-body text-[9.5px] sm:text-[10.5px] uppercase font-bold tracking-[0.24em] text-white">
+              Explore Residence Typologies & Plans
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#62AA9E] group-hover:translate-y-0.5 transition-transform duration-300" />
+          </button>
         </div>
       </section>
 

@@ -11,7 +11,6 @@ if (typeof window !== "undefined") {
 }
 
 interface Dimension {
-  number: string;
   category: string;
   headline: string;
   description: string;
@@ -21,7 +20,6 @@ interface Dimension {
 
 const DIMENSIONS: Dimension[] = [
   {
-    number: "01",
     category: "Home",
     headline: "Lakefront Residences",
     description:
@@ -30,7 +28,6 @@ const DIMENSIONS: Dimension[] = [
     alt: "Lakefront Residences overlooking the water at Orion One",
   },
   {
-    number: "02",
     category: "Business",
     headline: "Commercial Spaces",
     description:
@@ -39,7 +36,6 @@ const DIMENSIONS: Dimension[] = [
     alt: "Commercial spaces and waterfront promenade at Orion One",
   },
   {
-    number: "03",
     category: "Leisure",
     headline: "Everyday Recreation",
     description:
@@ -48,7 +44,6 @@ const DIMENSIONS: Dimension[] = [
     alt: "Lakeside leisure and recreation horizon at Orion One",
   },
   {
-    number: "04",
     category: "Connectivity",
     headline: "Regional Networks",
     description:
@@ -238,16 +233,16 @@ export default function LocationConnects() {
         <div
           className="
             sticky top-0 h-screen w-full overflow-hidden
-            flex flex-col justify-between py-20 xl:py-24
+            flex flex-col justify-between py-6 lg:py-8 xl:py-10
           "
         >
           {/* Top Header with Counter-Drifting Title Lines */}
-          <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-16 flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-4">
-            <div className="space-y-3">
-              <p className="font-serif-heading text-base xl:text-lg text-[#62AA9E] tracking-wide">
+          <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-16 flex items-end justify-between">
+            <div className="space-y-1.5 xl:space-y-2">
+              <p className="font-serif-heading text-xs lg:text-sm xl:text-base text-[#62AA9E] tracking-wide">
                 Residential · Commercial · Lifestyle
               </p>
-              <h2 className="font-serif-heading font-luxia-display text-5xl xl:text-6xl text-[#EDE5DA] tracking-tight leading-[1.06]">
+              <h2 className="font-serif-heading font-luxia-display text-3xl lg:text-4xl xl:text-5xl text-[#EDE5DA] tracking-tight leading-[1.06]">
                 <span
                   ref={titleLine1Ref}
                   className="block will-change-transform"
@@ -256,26 +251,20 @@ export default function LocationConnects() {
                 </span>
                 <span
                   ref={titleLine2Ref}
-                  className="block italic font-normal text-sand-gradient normal-case will-change-transform"
+                  className="block font-normal text-sand-gradient normal-case will-change-transform"
                 >
                   Connects
                 </span>
               </h2>
             </div>
-
-            <p className="font-sans-body text-sm xl:text-base text-[#C9BFB1] font-light leading-relaxed max-w-md">
-              Orion One&apos;s location supports more than residential living. It
-              weaves together home, business, leisure, and regional access into
-              an enduring waterfront address.
-            </p>
           </div>
 
           {/* Horizontal Track of 4 Dimension Cards */}
-          <div className="relative w-full overflow-visible my-auto py-4">
+          <div className="relative w-full overflow-visible my-auto py-2 xl:py-3">
             <div
               ref={trackRef}
               className="
-                flex items-stretch gap-8 xl:gap-10 px-8 lg:px-16 w-max
+                flex items-stretch gap-6 xl:gap-8 px-8 lg:px-16 w-max
                 will-change-transform
               "
             >
@@ -284,7 +273,7 @@ export default function LocationConnects() {
                   key={dim.category}
                   onClick={() => handleCardClick(idx)}
                   className="
-                    group relative w-[520px] xl:w-[580px] shrink-0
+                    group relative w-[360px] lg:w-[400px] xl:w-[440px] 2xl:w-[480px] shrink-0
                     rounded-2xl overflow-hidden bg-[#0d2828]/80
                     border border-[#EDE5DA]/15 hover:border-[#62AA9E]/45
                     transition-colors duration-300 cursor-pointer
@@ -292,34 +281,31 @@ export default function LocationConnects() {
                   "
                 >
                   {/* Lake/Moss Visual Header */}
-                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#081a1a] border-b border-[#EDE5DA]/10">
+                  <div className="relative aspect-[16/9] max-h-[220px] xl:max-h-[240px] w-full overflow-hidden bg-[#081a1a] border-b border-[#EDE5DA]/10 shrink-0">
                     <Image
                       src={dim.image}
                       alt={dim.alt}
                       fill
-                      sizes="580px"
+                      sizes="(max-width: 1280px) 400px, 480px"
                       className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     <div
                       className="absolute inset-0 bg-gradient-to-t from-[#0d2828] via-[#0d2828]/25 to-transparent pointer-events-none"
                       aria-hidden="true"
                     />
-                    <span className="absolute top-4 left-5 font-sans-body text-xs tracking-[0.24em] text-[#62AA9E] font-semibold bg-[#081a1a]/75 backdrop-blur-md px-3 py-1 rounded-full border border-[#EDE5DA]/15">
-                      {dim.number}
-                    </span>
                   </div>
 
                   {/* Dimension Copy */}
-                  <div className="p-7 xl:p-8 space-y-3 flex-1 flex flex-col justify-between">
-                    <div className="space-y-2">
-                      <h3 className="font-serif-heading font-luxia-display text-3xl xl:text-4xl text-[#EDE5DA] tracking-tight leading-[1.1] group-hover:text-[#62AA9E] transition-colors">
+                  <div className="p-5 xl:p-6 space-y-2 flex-1 flex flex-col justify-between">
+                    <div className="space-y-1">
+                      <h3 className="font-serif-heading font-luxia-display text-2xl xl:text-3xl text-[#EDE5DA] tracking-tight leading-[1.1] group-hover:text-[#62AA9E] transition-colors">
                         {dim.category}
                       </h3>
-                      <span className="font-sans-body text-base xl:text-lg text-[#EDE5DA]/90 font-medium block leading-snug">
+                      <span className="font-sans-body text-sm xl:text-base text-[#EDE5DA]/90 font-medium block leading-snug">
                         {dim.headline}
                       </span>
                     </div>
-                    <p className="font-sans-body text-sm xl:text-base text-[#C9BFB1] font-light leading-relaxed pt-2">
+                    <p className="font-sans-body text-xs xl:text-sm text-[#C9BFB1] font-light leading-relaxed">
                       {dim.description}
                     </p>
                   </div>
@@ -329,7 +315,7 @@ export default function LocationConnects() {
           </div>
 
           {/* Mint 1px Progress Under Track */}
-          <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-16">
+          <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-16 pt-2">
             <div className="relative h-[1px] w-full bg-[#EDE5DA]/15 overflow-hidden">
               <div
                 ref={progressFillRef}
@@ -344,22 +330,16 @@ export default function LocationConnects() {
       {/* MOBILE (<1024px): Stacked Cards with Clip-Path Inset Reveal         */}
       {/* =================================================================== */}
       <div className="lg:hidden py-16 sm:py-24 px-4 sm:px-8 space-y-10">
-        <div className="max-w-3xl mx-auto text-center space-y-4">
+        <div className="max-w-3xl mx-auto text-center space-y-3">
           <h2 className="font-serif-heading font-luxia-display text-3xl sm:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Location That <br />
-            <span className="italic font-normal text-sand-gradient normal-case">
+            <span className="font-normal text-sand-gradient normal-case">
               Connects
             </span>
           </h2>
 
-          <p className="font-serif-heading text-lg sm:text-2xl text-[#EDE5DA]/90 leading-snug">
+          <p className="font-serif-heading text-base sm:text-xl text-[#62AA9E] leading-snug">
             Residential · Commercial · Lifestyle
-          </p>
-
-          <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl mx-auto">
-            Orion One&apos;s location supports more than residential living. It
-            weaves together home, business, leisure, and regional access into an
-            enduring waterfront address.
           </p>
         </div>
 
@@ -384,9 +364,6 @@ export default function LocationConnects() {
                   className="absolute inset-0 bg-gradient-to-t from-[#0d2828] via-transparent to-transparent pointer-events-none"
                   aria-hidden="true"
                 />
-                <span className="absolute top-3 left-4 font-sans-body text-[11px] tracking-[0.22em] text-[#62AA9E] font-semibold bg-[#081a1a]/75 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-[#EDE5DA]/15">
-                  {dim.number}
-                </span>
               </div>
 
               <div className="p-6 space-y-2.5">

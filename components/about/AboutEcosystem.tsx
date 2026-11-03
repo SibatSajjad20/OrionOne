@@ -119,7 +119,7 @@ export default function AboutEcosystem() {
       <div className="max-w-5xl mx-auto text-center mb-12 sm:mb-16 space-y-4">
         <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
           Prestige Lakefront Living <br className="lg:hidden" />
-          <span className="type-display-accent italic font-normal text-sand-gradient lg:ml-3">Five Connected Realms</span>
+          <span className="type-display-accent font-normal text-sand-gradient lg:ml-3">Five Connected Realms</span>
         </h2>
         <p className="font-sans-body text-sm sm:text-base text-[#C9BFB1] font-light leading-relaxed max-w-2xl mx-auto">
           Designed around the lake, shaped by contemporary architecture, and created for a more considered way of living. At Orion One, every dimension of daily life exists in natural balance.

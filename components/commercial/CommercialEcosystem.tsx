@@ -731,7 +731,7 @@ export default function CommercialEcosystem() {
         >
           <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-4xl lg:text-5xl text-[#EDE5DA] tracking-tight leading-[1.08]">
             Business Doesn&apos;t <br />
-            <span className="type-display-accent italic font-normal text-sand-gradient">
+            <span className="type-display-accent font-normal text-sand-gradient">
               Operate in Isolation
             </span>
           </h2>

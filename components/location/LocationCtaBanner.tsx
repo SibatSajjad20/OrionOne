@@ -57,7 +57,7 @@ export default function LocationCtaBanner({ onOpenInquiry }: LocationCtaBannerPr
       >
         <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl text-[#EDE5DA] tracking-tight leading-[1.05] max-w-4xl mx-auto">
           Come Experience <br />
-          <span className="type-display-accent italic font-normal text-sand-gradient">
+          <span className="type-display-accent font-normal text-sand-gradient">
             the Location
           </span>
         </h2>

@@ -474,12 +474,12 @@ export default function OrionOneHeroOverview({
             <div className="max-w-4xl mx-auto space-y-6">
               <h1 className="type-display font-serif-heading font-luxia-display text-3xl sm:text-6xl md:text-7xl lg:text-8xl text-[#EDE5DA] leading-[1.06]">
                 A New Horizon <br />
-                <span className="type-display-accent italic font-normal text-sand-gradient">
+                <span className="type-display-accent font-normal text-sand-gradient">
                   of Luxury
                 </span>
               </h1>
 
-              <p className="font-serif-heading text-base sm:text-xl md:text-2xl text-[#EDE5DA] italic max-w-2xl mx-auto">
+              <p className="font-serif-heading text-base sm:text-xl md:text-2xl text-[#EDE5DA] max-w-2xl mx-auto">
                 Where architecture flows like water and every view inspires
               </p>
 
@@ -567,7 +567,7 @@ export default function OrionOneHeroOverview({
             className="relative z-10 max-w-4xl text-center space-y-4 will-change-transform"
           >
             <h2 className="type-section font-serif-heading font-luxia-display text-2xl sm:text-5xl lg:text-7xl xl:text-8xl leading-[1.06]">
-              <span className="type-display-accent italic font-normal text-sand-gradient">
+              <span className="type-display-accent font-normal text-sand-gradient">
                 A Destination
               </span>
             </h2>

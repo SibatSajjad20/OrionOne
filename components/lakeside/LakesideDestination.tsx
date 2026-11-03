@@ -77,7 +77,7 @@ export default function LakesideDestination() {
           <div ref={textRef} className="lg:col-span-6 space-y-6 will-change-transform">
             <h2 className="type-section font-serif-heading font-luxia-display text-4xl sm:text-6xl text-[#EDE5DA] tracking-tight leading-[1.08]">
               A Destination Within <br />
-              <span className="type-display-accent italic font-normal text-sand-gradient">
+              <span className="type-display-accent font-normal text-sand-gradient">
                 DHA Phase III
               </span>
             </h2>
@@ -99,7 +99,7 @@ export default function LakesideDestination() {
 
           {/* Right Column: Visual Frame - Pure Clean Photography */}
           <div ref={visualRef} className="lg:col-span-6 will-change-transform">
-            <div className="relative rounded-2xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl group">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl group">
               <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden">
                 <Image
                   src="/images/lakeside/masterplan-context.jpg"

@@ -68,7 +68,7 @@ export default function ContactHero({ onOpenInquiry: _onOpenInquiry }: ContactHe
           className="type-display font-serif-heading font-luxia-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] text-[#EDE5DA] tracking-tight leading-[1.12]"
         >
           <span className="block">Every Message</span>
-          <span className="type-display-accent block italic font-normal text-sand-gradient">
+          <span className="type-display-accent block font-normal text-sand-gradient">
             Starts Something Timeless
           </span>
         </h1>
