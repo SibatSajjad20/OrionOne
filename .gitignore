@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files
+.env
+.env*.local
+.env.production
+.env.development
+!.env.example
 
 # vercel
 .vercel
@@ -47,6 +51,8 @@ next-env.d.ts
 *.cdr
 *.pdf
 CLAUDE.md
+scene1_replacement*
+scene2_replacement*
 /public/video-frames-balcony-backup/
 /public/video-frames-old/
 /public/scene-4-frames/

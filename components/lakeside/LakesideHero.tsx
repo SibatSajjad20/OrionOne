@@ -136,13 +136,14 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
 
         <video
           ref={videoRef}
-          key="/scene_3.mp4"
-          src="/scene_3.mp4"
+          key="/videos/scene_3.mp4"
+          src="/videos/scene_3.mp4"
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
+          poster="/images/lakeside/hero-lake.jpg"
           onLoadedData={() => setVideoLoaded(true)}
           onCanPlay={() => setVideoLoaded(true)}
           onPlaying={() => setVideoLoaded(true)}
@@ -151,7 +152,7 @@ export default function LakesideHero({ onOpenInquiry }: LakesideHeroProps) {
             videoLoaded ? "opacity-100" : "opacity-0"
           }`}
         >
-          <source src="/scene_3.mp4" type="video/mp4" />
+          <source src="/videos/scene_3.mp4" type="video/mp4" />
         </video>
 
         {/* Architectural Vignette Gradients */}

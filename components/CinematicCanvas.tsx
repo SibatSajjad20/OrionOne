@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, useMemo, memo } from "react";
-import NextImage from "next/image";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { ArrowRight } from "lucide-react";
-import OrionLogoScrollWheel from "./OrionLogoScrollWheel";
 import LoadingScreen from "./LoadingScreen";
+
+const OrionLogoScrollWheel = dynamic(
+  () => import("./OrionLogoScrollWheel"),
+  { ssr: false }
+);
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -1054,10 +1058,10 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           targetCol2FrameRef.current = Math.min(COLUMN_FRAMES_COUNT - 1, Math.floor(p2 * (COLUMN_FRAMES_COUNT - 1)));
           targetCol3FrameRef.current = Math.min(COLUMN_FRAMES_COUNT - 1, Math.floor(p3 * (COLUMN_FRAMES_COUNT - 1)));
 
-          // Update progress bars
-          if (col1BarRef.current) col1BarRef.current.style.width = `${p1 * 100}%`;
-          if (col2BarRef.current) col2BarRef.current.style.width = `${p2 * 100}%`;
-          if (col3BarRef.current) col3BarRef.current.style.width = `${p3 * 100}%`;
+          // Update progress bars via GPU transform to eliminate layout thrashing
+          if (col1BarRef.current) col1BarRef.current.style.transform = `scaleX(${p1})`;
+          if (col2BarRef.current) col2BarRef.current.style.transform = `scaleX(${p2})`;
+          if (col3BarRef.current) col3BarRef.current.style.transform = `scaleX(${p3})`;
 
           // Focus scrims and mobile responsive column visibility
           const isCol1Active = investProg >= 0 && investProg <= 0.33;
@@ -1364,8 +1368,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 <div className="w-full h-1 sm:h-1.5 rounded-full bg-[#EDE5DA]/20 overflow-hidden backdrop-blur-sm">
                   <div
                     ref={col1BarRef}
-                    className="h-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full transition-all duration-75"
-                    style={{ width: "0%" }}
+                    className="h-full w-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full origin-left will-change-transform"
+                    style={{ transform: "scaleX(0)" }}
                   />
                 </div>
               </div>
@@ -1419,8 +1423,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 <div className="w-full h-1 sm:h-1.5 rounded-full bg-[#EDE5DA]/20 overflow-hidden backdrop-blur-sm">
                   <div
                     ref={col2BarRef}
-                    className="h-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full transition-all duration-75"
-                    style={{ width: "0%" }}
+                    className="h-full w-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full origin-left will-change-transform"
+                    style={{ transform: "scaleX(0)" }}
                   />
                 </div>
               </div>
@@ -1474,8 +1478,8 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
                 <div className="w-full h-1 sm:h-1.5 rounded-full bg-[#EDE5DA]/20 overflow-hidden backdrop-blur-sm">
                   <div
                     ref={col3BarRef}
-                    className="h-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full transition-all duration-75"
-                    style={{ width: "0%" }}
+                    className="h-full w-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full origin-left will-change-transform"
+                    style={{ transform: "scaleX(0)" }}
                   />
                 </div>
               </div>

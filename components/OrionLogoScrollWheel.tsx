@@ -237,7 +237,10 @@ export default function OrionLogoScrollWheel({
     cameraRef.current = camera;
 
     // 3. WebGL Renderer with High-DPI and Tone Mapping (100% Transparent Background)
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const isMobileOrCoarse =
+      window.innerWidth < 768 ||
+      window.matchMedia("(pointer: coarse)").matches;
+    const dpr = isMobileOrCoarse ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
     const renderer = new THREE.WebGLRenderer({
       canvas,
       alpha: true,
@@ -437,10 +440,12 @@ export default function OrionLogoScrollWheel({
         logoWrapper.scale.setScalar(modelScale);
 
         // Rotation & Choreography:
-        // Continuous rotation around Y as user scrolls
-        const scrollRotY = prog * Math.PI * 18;
-        const tiltZ = Math.sin(prog * Math.PI * 6) * 0.08;
-        const tiltX = Math.cos(prog * Math.PI * 4) * 0.04;
+        // Respect prefers-reduced-motion: static front-facing or gentle orientation
+        const isReducedNow =
+          document.documentElement.dataset.reducedMotion === "true";
+        const scrollRotY = isReducedNow ? 0 : prog * Math.PI * 18;
+        const tiltZ = isReducedNow ? 0 : Math.sin(prog * Math.PI * 6) * 0.08;
+        const tiltX = isReducedNow ? 0 : Math.cos(prog * Math.PI * 4) * 0.04;
 
         // CTA docking forward-facing alignment
         const ctaBlend = Math.max(0, Math.min(1, (prog - 0.875) / (0.920 - 0.875)));

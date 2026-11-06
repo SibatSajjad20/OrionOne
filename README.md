@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orion One — Web Application
 
-## Getting Started
+> **Where the Lake Meets Living** — A signature luxury lakefront development in DHA Phase III, Islamabad by **SP Builders**.
 
-First, run the development server:
+---
 
+## Technical Stack
+
+- **Framework**: Next.js 16 (App Router, Turbopack, standalone output)
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS v4, custom brand CSS variables
+- **Motion & Smooth Scroll**: Lenis 1.3, GSAP 3.15 (ScrollTrigger)
+- **3D Interactive Islands**: Three.js (dynamic client islands with SSR disabled)
+- **Deployment Platform**: Hostinger Node.js Web Apps (or any standard Node.js 20/22 runtime)
+
+---
+
+## Local Development & Smoke Test
+
+### 1. Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Run Local Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Production Build & Smoke Test
+To verify production build and runtime parity locally:
+```bash
+npm run build
+npm run start
+```
+Or test the standalone Node.js server directly:
+```bash
+node .next/standalone/server.js
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Hostinger Node.js Web App Deployment
 
-To learn more about Next.js, take a look at the following resources:
+When setting up or verifying the web application in **Hostinger hPanel**:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Setting | Value |
+|---|---|
+| **Application Type** | `Next.js` |
+| **Node.js Version** | `20.x` or `22.x` (LTS) |
+| **Build Command** | `npm run build` |
+| **Start Command** | `npm run start` (or `node .next/standalone/server.js`) |
+| **Output Directory** | `.next` (Hostinger wraps standalone) |
+| **Deployment Branch** | `fix/hostinger-ready-and-home-perf` (or merged `main`) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Environment Variables (hPanel)
 
-## Deploy on Vercel
+Configure the following under **Environment Variables** in hPanel:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Variable | Recommended Value | Purpose |
+|---|---|---|
+| `NODE_ENV` | `production` | Enables production optimizations and disables dev toolbars |
+| `PORT` | Auto-assigned | Port managed by Hostinger reverse proxy |
+| `NEXT_PUBLIC_ENABLE_AGENTATION` | `false` | Ensures dev feedback toolbar is inactive |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Brand Integrity Rules
+
+- **Brand Colors**: Moss (`#153D3D`), Sand (`#EDE5DA`), Mint (`#62AA9E`), Stone (`#808080`), Martian (`#B2CE93`).
+- **Typography**: Luxia Display (Headings), Luxia Regular (Editorial/Subheadings), Montserrat (Body/UI).
+- **Logo**: Do NOT rotate, skew, or recolor the white signature logos.

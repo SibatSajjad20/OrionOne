@@ -18,7 +18,12 @@ import {
   TOWER_LEVELS,
   getSuiteBySlug,
 } from "@/app/residence/data";
-import FloorPlan3DViewer from "./FloorPlan3DViewer";
+import dynamic from "next/dynamic";
+
+const FloorPlan3DViewer = dynamic(
+  () => import("./FloorPlan3DViewer"),
+  { ssr: false }
+);
 import oneBedroomPlanJson from "@/app/residence/plans/1-bedroom.json";
 import type { FloorPlanData } from "@/app/residence/plans/types";
 

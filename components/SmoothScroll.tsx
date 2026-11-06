@@ -103,6 +103,16 @@ export default function SmoothScroll({
     window.addEventListener("lenis:stop", handleLenisStop);
     window.addEventListener("lenis:start", handleLenisStart);
 
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMotionChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        document.documentElement.dataset.reducedMotion = "true";
+      } else {
+        delete document.documentElement.dataset.reducedMotion;
+      }
+    };
+    mql.addEventListener("change", onMotionChange);
+
     // Stop the browser's instant hash jump. Lenis then coasts to the target.
     // Capture runs before the cinematic pin handler, which stopPropagates its own chapters.
     const preventNativeHashJump = (event: MouseEvent) => {
@@ -184,6 +194,7 @@ export default function SmoothScroll({
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("lenis:stop", handleLenisStop);
       window.removeEventListener("lenis:start", handleLenisStart);
+      mql.removeEventListener("change", onMotionChange);
       window.removeEventListener("click", preventNativeHashJump, true);
       unbindTicker();
       ScrollTrigger.removeEventListener("refresh", handleRefresh);

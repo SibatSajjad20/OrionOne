@@ -17,8 +17,16 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InquiryDrawer from "@/components/InquiryDrawer";
-import OrionRotatingBadge from "@/components/residence/OrionRotatingBadge";
-import FloorPlan3DViewer from "@/components/residence/FloorPlan3DViewer";
+import dynamic from "next/dynamic";
+
+const OrionRotatingBadge = dynamic(
+  () => import("@/components/residence/OrionRotatingBadge"),
+  { ssr: false }
+);
+const FloorPlan3DViewer = dynamic(
+  () => import("@/components/residence/FloorPlan3DViewer"),
+  { ssr: false }
+);
 import oneBedroomPlanJson from "@/app/residence/plans/1-bedroom.json";
 import type { FloorPlanData } from "@/app/residence/plans/types";
 import {

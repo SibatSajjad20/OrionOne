@@ -426,17 +426,17 @@ export default function OrionOneHeroOverview({
             <div className="absolute top-0 bottom-0 left-0 w-[200%] h-full">
               <video
                 ref={leftVideoRef}
-                key="/scene_5_balcony_backup.mp4"
-                src="/scene_5_balcony_backup.mp4"
+                key="/videos/scene_5_balcony_backup.mp4"
+                src="/videos/scene_5_balcony_backup.mp4"
                 autoPlay
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 poster="/images/orion-one/hero-balcony.jpg"
                 className="w-full h-full object-cover object-center filter brightness-[0.88]"
               >
-                <source src="/scene_5_balcony_backup.mp4" type="video/mp4" />
+                <source src="/videos/scene_5_balcony_backup.mp4" type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-[#0a2222]/45" />
             </div>
@@ -450,17 +450,17 @@ export default function OrionOneHeroOverview({
             <div className="absolute top-0 bottom-0 -left-full w-[200%] h-full">
               <video
                 ref={rightVideoRef}
-                key="/scene_5_balcony_backup.mp4"
-                src="/scene_5_balcony_backup.mp4"
+                key="/videos/scene_5_balcony_backup.mp4"
+                src="/videos/scene_5_balcony_backup.mp4"
                 autoPlay
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 poster="/images/orion-one/hero-balcony.jpg"
                 className="w-full h-full object-cover object-center filter brightness-[0.88]"
               >
-                <source src="/scene_5_balcony_backup.mp4" type="video/mp4" />
+                <source src="/videos/scene_5_balcony_backup.mp4" type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-[#0a2222]/45" />
             </div>

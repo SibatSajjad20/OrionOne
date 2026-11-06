@@ -71,7 +71,7 @@ export default function RootLayout({
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html:
-              "try{if('scrollRestoration' in history){history.scrollRestoration='manual';}window.scrollTo(0,0);}catch(e){}",
+              "try{if('scrollRestoration' in history){history.scrollRestoration='manual';}window.scrollTo(0,0);if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.dataset.reducedMotion='true';}}catch(e){}",
           }}
         />
       </head>
