@@ -39,7 +39,7 @@ const PHASES: RhythmPhase[] = [
     title: "Twilight & Fountains",
     narrative:
       "Twilight settles across Sector F as golden hour transitions to evening elegance. The dancing fountains awaken with warm illumination, and shoreline terraces reflect peaceful night waters.",
-    image: "/images/lakeside/hero-lake.jpg",
+    image: "/images/lakeside/Caffe.jpg.jpeg",
     alt: "Evening Illuminated Promenade and Dancing Fountains",
   },
 ];
@@ -237,7 +237,7 @@ export default function LakesideDailyRhythm() {
           style={{ zIndex: 3 }}
         >
           <Image
-            src="/images/lakeside/hero-lake.jpg"
+            src="/images/lakeside/Caffe.jpg.jpeg"
             alt="Evening Illuminated Promenade and Dancing Fountains"
             fill
             loading="lazy"

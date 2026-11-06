@@ -24,7 +24,7 @@ const DIMENSIONS: Dimension[] = [
     headline: "Lakefront Residences",
     description:
       "A distinctive waterfront position within DHA Phase III, oriented around open horizons and serene waters.",
-    image: "/images/orion-one/lakefront-view.jpg",
+    image: "/images/location/exterior-shots-2.jpeg",
     alt: "Lakefront Residences overlooking the water at Orion One",
   },
   {
@@ -32,7 +32,7 @@ const DIMENSIONS: Dimension[] = [
     headline: "Commercial Spaces",
     description:
       "Commercial spaces positioned within a growing mixed-use environment, backed by captive resident footfall.",
-    image: "/images/location/urban-business.jpg",
+    image: "/images/location/orion-night.jpeg",
     alt: "Commercial spaces and waterfront promenade at Orion One",
   },
   {
@@ -48,7 +48,7 @@ const DIMENSIONS: Dimension[] = [
     headline: "Regional Networks",
     description:
       "Direct road networks connecting DHA Phase III with Islamabad, Rawalpindi, and the international airport.",
-    image: "/images/location/lakeview-commercial-aerial.jpg",
+    image: "/images/location/connectivity-motion-blurred.png",
     alt: "Regional road connectivity in Sector F DHA Phase III",
   },
 ];

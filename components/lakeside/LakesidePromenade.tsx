@@ -47,7 +47,7 @@ const PROMENADE_ITEMS: PromenadeItem[] = [
     title: "The Fountain Plaza & Amphitheater",
     description:
       "Open pedestrian tiered waterside steps positioned directly before the dancing water fountains, creating an expansive civic stage for evening community life.",
-    image: "/images/lakeside/fountain-plaza.jpg",
+    image: "/images/lakeside/Firefly 8k ultra-high sharp and detailed architectural photo of a la.png",
     alt: "The Fountain Plaza and Amphitheater Gathering Space",
   },
   {
@@ -55,7 +55,7 @@ const PROMENADE_ITEMS: PromenadeItem[] = [
     title: "Open-Air Movement & Yoga Decks",
     description:
       "Secluded timber decks hovering over the water, reserved for morning yoga sessions, quiet meditation, and restorative movement while dawn mist settles over the lake.",
-    image: "/images/lakeside/hero-lake.jpg",
+    image: "/images/lakeside/Firefly recreate 8k realistic details.png",
     alt: "Fresh-Air Movement Spaces by the Water",
   },
 ];

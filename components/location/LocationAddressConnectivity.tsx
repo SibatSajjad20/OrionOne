@@ -22,35 +22,28 @@ const ARTERIES: Artery[] = [
     name: "DHA Main Boulevards",
     description:
       "Multi-lane landscaped boulevards connecting effortlessly throughout DHA Phase III sectors and commercial avenues.",
-    image: "/images/location/dha-community-club.jpg",
-  },
-  {
-    id: "gt-road",
-    name: "GT Road (Grand Trunk Road)",
-    description:
-      "Direct artery linking to central Rawalpindi business districts, Saddar, and major northern commercial corridors.",
-    image: "/images/location/urban-growth.jpg",
+    image: "/images/location/dha-main-boulevard.jpeg",
   },
   {
     id: "ring-road",
     name: "Rawalpindi Ring Road",
     description:
       "Rapid bypass corridor allowing residents to circumvent urban congestion and connect seamlessly across the region.",
-    image: "/images/location/lakeview-commercial-aerial.jpg",
+    image: "/images/location/rawalpindi-ring-road.jpeg",
   },
   {
     id: "expressway",
     name: "Islamabad Expressway",
     description:
       "Direct, signal-free expressway leading straight into central Islamabad, the Blue Area, and diplomatic quarters.",
-    image: "/images/location/urban-business.jpg",
+    image: "/images/location/isb-expressway.jpeg",
   },
   {
     id: "airport",
     name: "Islamabad International Airport",
     description:
       "Smooth, continuous highway connection providing unhurried access for domestic departures and international flights.",
-    image: "/images/commercial/slide-aerial.jpg",
+    image: "/images/location/isb-airport.jpeg",
   },
 ];
 
@@ -72,7 +65,7 @@ const URBAN_PARTS: UrbanPart[] = [
     subtitle: "Schools and universities",
     description:
       "Prestigious academic campuses, reputable grammar schools, and higher education institutes within easy reach of Sector F.",
-    image: "/images/location/urban-education.jpg",
+    image: "/images/location/education-campus.jpeg",
     alt: "Educational institutions and university campuses near Sector F DHA Phase III",
   },
   {
@@ -82,7 +75,7 @@ const URBAN_PARTS: UrbanPart[] = [
     subtitle: "Healthcare facilities",
     description:
       "Multi-specialty medical complexes, specialized diagnostic laboratories, and round-the-clock emergency clinics in immediate proximity.",
-    image: "/images/location/urban-healthcare.jpg",
+    image: "/images/location/gym-healthcare.jpeg",
     alt: "Healthcare facilities and medical clinics in DHA Phase III",
   },
   {
@@ -92,7 +85,7 @@ const URBAN_PARTS: UrbanPart[] = [
     subtitle: "Retail and dining destinations",
     description:
       "Curated shopping arcades, international culinary brands, artisanal coffee terraces, and lakeside commercial hubs.",
-    image: "/images/location/urban-retail.jpg",
+    image: "/images/location/commercial-lobby-retail.jpeg",
     alt: "Retail arcade and curated lakefront dining terraces",
   },
   {
@@ -216,7 +209,7 @@ export default function LocationAddressConnectivity() {
             scrollTrigger: {
               trigger: container,
               start: "top top",
-              end: isDesktop ? "+=1150%" : "+=650%",
+              end: isDesktop ? "+=1050%" : "+=600%",
               pin: stage,
               pinSpacing: true,
               scrub: isDesktop ? 1 : 0.45,
@@ -345,19 +338,10 @@ export default function LocationAddressConnectivity() {
         if (dhaSlides[2]) {
           masterTl.to(dhaSlides[2], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide4");
         }
-        masterTl.to({}, { duration: 0.6 });
-      }
-
-      if (dhaSlides[4]) {
-        masterTl.addLabel("dhaSlide5", 12.8);
-        masterTl.to(dhaSlides[4], { yPercent: 0, duration: 1.4, ease: "power2.out" }, "dhaSlide5");
-        if (dhaSlides[3]) {
-          masterTl.to(dhaSlides[3], { scale: 0.96, opacity: 0.2, duration: 1.4, ease: "power2.out" }, "dhaSlide5");
-        }
         masterTl.to({}, { duration: 0.8 });
       }
 
-      masterTl.addLabel("urbanIntroEnter", 15.0);
+      masterTl.addLabel("urbanIntroEnter", 13.0);
 
       masterTl.to(
         urbanIntroLayer,
@@ -369,9 +353,10 @@ export default function LocationAddressConnectivity() {
         "urbanIntroEnter"
       );
 
-      if (dhaSlides[4]) {
+      const lastDhaSlide = dhaSlides[dhaSlides.length - 1];
+      if (lastDhaSlide) {
         masterTl.to(
-          dhaSlides[4],
+          lastDhaSlide,
           {
             scale: 0.94,
             opacity: 0.35,
@@ -476,21 +461,19 @@ export default function LocationAddressConnectivity() {
           ref={blindsLayerRef}
           className="absolute inset-0 z-30 w-full h-full flex flex-col lg:flex-row overflow-hidden pointer-events-auto"
         >
-          {/* Left Panel: Photo card resting seamlessly on #081a1a */}
+          {/* Left Panel: Photo taking full height and width of the left side */}
           <div
             ref={leftColRef}
-            className="w-full lg:w-1/2 h-[45%] lg:h-full bg-[#081a1a] flex items-center justify-center lg:justify-end p-4 sm:p-10 lg:pr-14 will-change-transform"
+            className="relative w-full lg:w-1/2 h-[45%] lg:h-full bg-[#081a1a] overflow-hidden will-change-transform"
           >
-            <div className="relative w-full max-w-[420px] lg:max-w-[560px] aspect-[16/10] sm:aspect-[16/11] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0d2828] border border-[#EDE5DA]/15 shadow-2xl">
-              <Image
-                src="/images/location/lakefront-shoreline.jpg"
-                alt="Lakefront Shoreline and Natural Waterfront Setting at Orion One"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center"
-              />
-            </div>
+            <Image
+              src="/images/location/lakefront-shoreline.jpg"
+              alt="Lakefront Shoreline and Natural Waterfront Setting at Orion One"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover object-center"
+            />
           </div>
 
           {/* Right Panel: Editorial narrative resting seamlessly on #081a1a */}

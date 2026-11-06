@@ -103,7 +103,7 @@ export default function LakesideHeart() {
         >
           <div className="relative aspect-[16/10] sm:aspect-[21/10] w-full overflow-hidden">
             <Image
-              src="/images/lakeside/hero-lake.jpg"
+              src="/images/lakeside/Firefly 8k realistic architectural cgi rendered image of lake-front.png"
               alt="Shoreline Lake Horizon at Orion One"
               fill
               priority

@@ -25,7 +25,7 @@ const ARCHITECTURAL_FACETS: ArchitecturalFacet[] = [
     title: "Architecture & Nature",
     description:
       "Stepped garden terraces connecting the tower directly to the landscaped lakeside promenade.",
-    image: "/images/orion-one/terrace-elevations.jpg",
+    image: "/images/orion-one/exterior-shots-2.jpg",
     alt: "Stepped garden terraces connecting architecture and nature at Orion One",
   },
   {
@@ -34,7 +34,7 @@ const ARCHITECTURAL_FACETS: ArchitecturalFacet[] = [
     title: "Lake Views",
     description:
       "Oriented toward the waterfront to capture panoramic horizons from every private terrace.",
-    image: "/images/orion-one/lakefront-view.jpg",
+    image: "/images/orion-one/lake-front.jpg",
     alt: "Cascading outdoor terraces overlooking the lake at Orion One",
   },
   {

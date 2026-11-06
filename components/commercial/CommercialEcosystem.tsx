@@ -5,11 +5,10 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import {
-  Users2,
+  Building2,
   Waves,
-  Hotel,
   Utensils,
-  Footprints,
+  Trees,
   Route,
   Navigation,
   Compass,
@@ -27,7 +26,7 @@ interface DestinationAmenity {
   title: string;
   description: string;
   highlights: string[];
-  icon: typeof Users2;
+  icon: typeof Building2;
   desktop: {
     scale: number;
     origin: string;
@@ -46,123 +45,99 @@ interface DestinationAmenity {
 
 const DESTINATION_AMENITIES: DestinationAmenity[] = [
   {
-    id: "community-club",
+    id: "main-building",
     number: "01",
-    category: "COMMUNITY & LEISURE",
-    title: "DHA III Community Club",
+    category: "LANDMARK TOWER",
+    title: "The Main Building (Orion One)",
     description:
-      "A prestigious civic and sports destination featuring athletic facilities, recreation lawns, and private social banquets along the water.",
-    highlights: ["Olympic-grade Sports", "Recreation Lawns & Amusements", "Civic Social Prestige"],
-    icon: Users2,
+      "A signature curvilinear lakefront landmark tower combining luxury residences, double-height retail arcades, executive commercial spaces, and panoramic water terraces.",
+    highlights: ["Signature Curvilinear Tower", "Cascading Garden Terraces", "Luxury Residences & Retail"],
+    icon: Building2,
     desktop: {
       scale: 2.3,
-      origin: "28% 28%",
-      cardPlacement: "right",
+      origin: "62% 46%",
+      cardPlacement: "left",
     },
     mobile: {
       scale: 1.6,
-      origin: "28% 30%",
-    },
-    pin: {
-      x: 28,
-      y: 28,
-      label: "DHA Community Club",
-    },
-  },
-  {
-    id: "dancing-fountains",
-    number: "02",
-    category: "WATERFRONT CENTERPIECE",
-    title: "Dancing Fountains",
-    description:
-      "A signature illuminated water choreography and visual centerpiece drawing continuous evening visitors, dining patrons, and leisure gatherings.",
-    highlights: ["Light & Sound Choreography", "Continuous Evening Footfall", "Iconic Tourism Anchor"],
-    icon: Waves,
-    desktop: {
-      scale: 2.5,
-      origin: "49% 58%",
-      cardPlacement: "left",
-    },
-    mobile: {
-      scale: 1.7,
-      origin: "49% 56%",
-    },
-    pin: {
-      x: 49,
-      y: 58,
-      label: "Dancing Fountains",
-    },
-  },
-  {
-    id: "hotel-commercial",
-    number: "03",
-    category: "HOSPITALITY & COMMERCE",
-    title: "Five-Star Hotel & Commercial Towers",
-    description:
-      "Skyline hospitality infrastructure and neoclassical commercial towers bringing international executive travelers, luxury shoppers, and corporate patronage.",
-    highlights: ["Five-Star Executive Suites", "Corporate Headquarters", "High-Net-Worth Footfall"],
-    icon: Hotel,
-    desktop: {
-      scale: 2.2,
-      origin: "70% 42%",
-      cardPlacement: "left",
-    },
-    mobile: {
-      scale: 1.55,
-      origin: "70% 42%",
-    },
-    pin: {
-      x: 70,
-      y: 42,
-      label: "Five-Star Hotel",
-    },
-  },
-  {
-    id: "food-court",
-    number: "04",
-    category: "CULINARY DESTINATIONS",
-    title: "Food Court & Dining Pavilions",
-    description:
-      "A thriving culinary promenade with open-air waterfront decks, diverse gourmet dining concepts, and evening social energy directly on the shoreline.",
-    highlights: ["Alfresco Waterfront Decks", "Curated Dining Clusters", "Morning to Midnight Demand"],
-    icon: Utensils,
-    desktop: {
-      scale: 2.35,
-      origin: "32% 69%",
-      cardPlacement: "right",
-    },
-    mobile: {
-      scale: 1.6,
-      origin: "32% 65%",
-    },
-    pin: {
-      x: 32,
-      y: 69,
-      label: "Waterfront Dining Pavilions",
-    },
-  },
-  {
-    id: "promenade",
-    number: "05",
-    category: "PEDESTRIAN SPINE",
-    title: "Lakefront Promenade",
-    description:
-      "A continuous scenic shoreline boardwalk connecting every surrounding amenity, garden park, and leisure cluster directly back into Orion One.",
-    highlights: ["Continuous Shoreline Boardwalk", "Direct Orion One Pedestrian Link", "Lush Waterside Parks"],
-    icon: Footprints,
-    desktop: {
-      scale: 2.1,
-      origin: "62% 68%",
-      cardPlacement: "left",
-    },
-    mobile: {
-      scale: 1.5,
-      origin: "62% 66%",
+      origin: "62% 46%",
     },
     pin: {
       x: 62,
-      y: 68,
-      label: "Lakefront Promenade",
+      y: 46,
+      label: "The Main Building",
+    },
+  },
+  {
+    id: "lake",
+    number: "02",
+    category: "WATERFRONT DESTINATION",
+    title: "The Lake",
+    description:
+      "The scenic centerpiece of the entire development, featuring choreographed dancing fountains, illuminated waterside walkways, and tranquil open water vistas.",
+    highlights: ["Dancing Fountains Centerpiece", "Scenic Shoreline Boardwalk", "All-Day Waterfront Ambiance"],
+    icon: Waves,
+    desktop: {
+      scale: 2.2,
+      origin: "35% 64%",
+      cardPlacement: "right",
+    },
+    mobile: {
+      scale: 1.6,
+      origin: "35% 64%",
+    },
+    pin: {
+      x: 35,
+      y: 64,
+      label: "The Lake",
+    },
+  },
+  {
+    id: "restaurants",
+    number: "03",
+    category: "CULINARY & LEISURE",
+    title: "The Restaurants",
+    description:
+      "A vibrant dining promenade featuring open-air overwater decks, artisanal bistros, and diverse culinary concepts with uninterrupted lake and fountain views.",
+    highlights: ["Alfresco Overwater Decks", "Artisanal Cafes & Fine Dining", "Morning to Midnight Demand"],
+    icon: Utensils,
+    desktop: {
+      scale: 2.4,
+      origin: "25% 85%",
+      cardPlacement: "right",
+    },
+    mobile: {
+      scale: 1.7,
+      origin: "25% 85%",
+    },
+    pin: {
+      x: 25,
+      y: 85,
+      label: "The Restaurants",
+    },
+  },
+  {
+    id: "park",
+    number: "04",
+    category: "NATURE & RECREATION",
+    title: "The Park",
+    description:
+      "Expansive green lawns, manicured botanical trails, and shaded leisure gardens flanking Orion One, seamlessly linking outdoor recreation with commercial vibrance.",
+    highlights: ["Manicured Waterside Lawns", "Scenic Walking & Jogging Trails", "Restorative Open Space"],
+    icon: Trees,
+    desktop: {
+      scale: 2.3,
+      origin: "82% 72%",
+      cardPlacement: "left",
+    },
+    mobile: {
+      scale: 1.6,
+      origin: "82% 72%",
+    },
+    pin: {
+      x: 82,
+      y: 72,
+      label: "The Park",
     },
   },
 ];
@@ -244,49 +219,41 @@ export default function CommercialEcosystem() {
               setActiveWaypoint(-1);
               setCurrentAmenityIdx(0);
               setIsOverviewActive(false);
-            } else if (p >= 0.10 && p < 0.21) {
+            } else if (p >= 0.10 && p < 0.24) {
               setActiveWaypoint(0);
               setCurrentAmenityIdx(0);
               setIsOverviewActive(false);
-            } else if (p >= 0.21 && p < 0.26) {
+            } else if (p >= 0.24 && p < 0.29) {
               setActiveWaypoint(-1);
               setCurrentAmenityIdx(0);
               setIsOverviewActive(false);
-            } else if (p >= 0.26 && p < 0.37) {
+            } else if (p >= 0.29 && p < 0.43) {
               setActiveWaypoint(1);
               setCurrentAmenityIdx(1);
               setIsOverviewActive(false);
-            } else if (p >= 0.37 && p < 0.42) {
+            } else if (p >= 0.43 && p < 0.48) {
               setActiveWaypoint(-1);
               setCurrentAmenityIdx(1);
               setIsOverviewActive(false);
-            } else if (p >= 0.42 && p < 0.53) {
+            } else if (p >= 0.48 && p < 0.62) {
               setActiveWaypoint(2);
               setCurrentAmenityIdx(2);
               setIsOverviewActive(false);
-            } else if (p >= 0.53 && p < 0.58) {
+            } else if (p >= 0.62 && p < 0.67) {
               setActiveWaypoint(-1);
               setCurrentAmenityIdx(2);
               setIsOverviewActive(false);
-            } else if (p >= 0.58 && p < 0.69) {
+            } else if (p >= 0.67 && p < 0.81) {
               setActiveWaypoint(3);
               setCurrentAmenityIdx(3);
               setIsOverviewActive(false);
-            } else if (p >= 0.69 && p < 0.74) {
+            } else if (p >= 0.81 && p < 0.86) {
               setActiveWaypoint(-1);
               setCurrentAmenityIdx(3);
               setIsOverviewActive(false);
-            } else if (p >= 0.74 && p < 0.85) {
-              setActiveWaypoint(4);
-              setCurrentAmenityIdx(4);
-              setIsOverviewActive(false);
-            } else if (p >= 0.85 && p < 0.90) {
-              setActiveWaypoint(-1);
-              setCurrentAmenityIdx(4);
-              setIsOverviewActive(false);
             } else {
               setActiveWaypoint(-1);
-              setCurrentAmenityIdx(4);
+              setCurrentAmenityIdx(3);
               setIsOverviewActive(true);
             }
           },
@@ -365,6 +332,7 @@ export default function CommercialEcosystem() {
         );
       }
 
+      // Waypoint 0: The Building
       const wp0 = DESTINATION_AMENITIES[0];
       const origin0 = isDesktop ? wp0.desktop.origin : wp0.mobile.origin;
       const scale0 = isDesktop ? wp0.desktop.scale : wp0.mobile.scale;
@@ -401,7 +369,7 @@ export default function CommercialEcosystem() {
             duration: 0.025,
             ease: "power2.in",
           },
-          0.20
+          0.23
         );
       }
 
@@ -413,9 +381,10 @@ export default function CommercialEcosystem() {
           duration: 0.05,
           ease: "power2.inOut",
         },
-        0.21
+        0.24
       );
 
+      // Waypoint 1: Dancing Fountains
       const wp1 = DESTINATION_AMENITIES[1];
       const origin1 = isDesktop ? wp1.desktop.origin : wp1.mobile.origin;
       const scale1 = isDesktop ? wp1.desktop.scale : wp1.mobile.scale;
@@ -428,7 +397,7 @@ export default function CommercialEcosystem() {
           duration: 0.05,
           ease: "power2.out",
         },
-        0.26
+        0.29
       );
 
       if (cards[1]) {
@@ -441,7 +410,7 @@ export default function CommercialEcosystem() {
             duration: 0.03,
             ease: "power2.out",
           },
-          0.28
+          0.31
         );
         tl.to(
           cards[1],
@@ -452,7 +421,7 @@ export default function CommercialEcosystem() {
             duration: 0.025,
             ease: "power2.in",
           },
-          0.36
+          0.42
         );
       }
 
@@ -464,9 +433,10 @@ export default function CommercialEcosystem() {
           duration: 0.05,
           ease: "power2.inOut",
         },
-        0.37
+        0.43
       );
 
+      // Waypoint 2: Waterfront Restaurants
       const wp2 = DESTINATION_AMENITIES[2];
       const origin2 = isDesktop ? wp2.desktop.origin : wp2.mobile.origin;
       const scale2 = isDesktop ? wp2.desktop.scale : wp2.mobile.scale;
@@ -479,7 +449,7 @@ export default function CommercialEcosystem() {
           duration: 0.05,
           ease: "power2.out",
         },
-        0.42
+        0.48
       );
 
       if (cards[2]) {
@@ -492,7 +462,7 @@ export default function CommercialEcosystem() {
             duration: 0.03,
             ease: "power2.out",
           },
-          0.44
+          0.50
         );
         tl.to(
           cards[2],
@@ -503,7 +473,7 @@ export default function CommercialEcosystem() {
             duration: 0.025,
             ease: "power2.in",
           },
-          0.52
+          0.61
         );
       }
 
@@ -515,9 +485,10 @@ export default function CommercialEcosystem() {
           duration: 0.05,
           ease: "power2.inOut",
         },
-        0.53
+        0.62
       );
 
+      // Waypoint 3: Lakeside Park & Gardens
       const wp3 = DESTINATION_AMENITIES[3];
       const origin3 = isDesktop ? wp3.desktop.origin : wp3.mobile.origin;
       const scale3 = isDesktop ? wp3.desktop.scale : wp3.mobile.scale;
@@ -530,7 +501,7 @@ export default function CommercialEcosystem() {
           duration: 0.05,
           ease: "power2.out",
         },
-        0.58
+        0.67
       );
 
       if (cards[3]) {
@@ -543,7 +514,7 @@ export default function CommercialEcosystem() {
             duration: 0.03,
             ease: "power2.out",
           },
-          0.60
+          0.69
         );
         tl.to(
           cards[3],
@@ -554,7 +525,7 @@ export default function CommercialEcosystem() {
             duration: 0.025,
             ease: "power2.in",
           },
-          0.68
+          0.80
         );
       }
 
@@ -566,58 +537,7 @@ export default function CommercialEcosystem() {
           duration: 0.05,
           ease: "power2.inOut",
         },
-        0.69
-      );
-
-      const wp4 = DESTINATION_AMENITIES[4];
-      const origin4 = isDesktop ? wp4.desktop.origin : wp4.mobile.origin;
-      const scale4 = isDesktop ? wp4.desktop.scale : wp4.mobile.scale;
-
-      tl.to(
-        imageMap,
-        {
-          scale: scale4,
-          transformOrigin: origin4,
-          duration: 0.05,
-          ease: "power2.out",
-        },
-        0.74
-      );
-
-      if (cards[4]) {
-        tl.to(
-          cards[4],
-          {
-            opacity: 1,
-            y: 0,
-            pointerEvents: "auto",
-            duration: 0.03,
-            ease: "power2.out",
-          },
-          0.76
-        );
-        tl.to(
-          cards[4],
-          {
-            opacity: 0,
-            y: -20,
-            pointerEvents: "none",
-            duration: 0.025,
-            ease: "power2.in",
-          },
-          0.84
-        );
-      }
-
-      tl.to(
-        imageMap,
-        {
-          scale: 1.0,
-          transformOrigin: origin4,
-          duration: 0.05,
-          ease: "power2.inOut",
-        },
-        0.85
+        0.81
       );
 
       tl.to(
@@ -628,7 +548,7 @@ export default function CommercialEcosystem() {
           duration: 0.08,
           ease: "power2.inOut",
         },
-        0.90
+        0.86
       );
 
       if (overviewBanner) {
@@ -641,7 +561,7 @@ export default function CommercialEcosystem() {
             duration: 0.04,
             ease: "power2.out",
           },
-          0.92
+          0.88
         ).to(
           overviewBanner,
           {
@@ -651,7 +571,7 @@ export default function CommercialEcosystem() {
             duration: 0.03,
             ease: "power2.in",
           },
-          0.96
+          0.94
         );
       }
 
@@ -664,7 +584,7 @@ export default function CommercialEcosystem() {
             duration: 0.03,
             ease: "power2.in",
           },
-          0.97
+          0.95
         );
       }
 
@@ -690,7 +610,7 @@ export default function CommercialEcosystem() {
     if (!st) return;
 
     // Center of hold duration for each waypoint
-    const waypointProgressMap = [0.18, 0.34, 0.50, 0.66, 0.82];
+    const waypointProgressMap = [0.17, 0.36, 0.55, 0.74];
     const targetProgress = waypointProgressMap[index] ?? 0.18;
     const targetY = st.start + (st.end - st.start) * targetProgress;
 
@@ -759,8 +679,8 @@ export default function CommercialEcosystem() {
               style={{ transformOrigin: "50% 50%" }}
             >
               <Image
-                src="/images/commercial/location-masterplan.jpg"
-                alt="Sector F DHA Phase III Aerial Masterplan"
+                src="/images/commercial/lakeview-commercial-masterplan.jpg"
+                alt="Orion One and Lakeview Commercial Aerial Masterplan"
                 fill
                 priority
                 sizes="100vw"

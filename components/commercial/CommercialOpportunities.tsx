@@ -31,7 +31,7 @@ const OPPORTUNITIES: OpportunityItem[] = [
     title: "Premium Cafés",
     description:
       "Contemporary café concepts designed for everyday visits, morning rituals, and social occasions.",
-    image: "/images/commercial/slide-deck.jpg",
+    image: "/images/commercial/caffe-close-up.jpg",
     alt: "Premium Cafés and Terrace Lounge",
   },
   {
@@ -39,7 +39,7 @@ const OPPORTUNITIES: OpportunityItem[] = [
     title: "Boutique Retail",
     description:
       "Curated brands and retail experiences that complement the architectural character of the development.",
-    image: "/images/commercial/slide-retail.jpg",
+    image: "/images/commercial/commercial-lobby.jpg",
     alt: "Boutique Retail Arcade and Galleria",
   },
   {
@@ -55,7 +55,7 @@ const OPPORTUNITIES: OpportunityItem[] = [
     title: "Lifestyle Businesses",
     description:
       "Concepts serving contemporary living, wellness, leisure, and everyday needs for residents and visitors.",
-    image: "/images/about/wellness-pool.png",
+    image: "/images/commercial/orion-night.jpg",
     alt: "Lifestyle and Wellness Spaces",
   },
 ];

@@ -29,7 +29,7 @@ const WELLNESS_FACILITIES: WellnessFacility[] = [
     title: "Lake-Facing Infinity Pool",
     description:
       "Positioned high above the promenade, the cantilevered infinity pool visually merges with the lake basin below, creating a quiet space for early laps and sunset floating.",
-    image: "/images/lakeside/wellness-infinity.jpg",
+    image: "/images/lakeside/deck4.png",
     alt: "Waterfront Infinity Pool Overlooking the Lake",
   },
   {
@@ -37,7 +37,7 @@ const WELLNESS_FACILITIES: WellnessFacility[] = [
     title: "Double-Height Fitness Center",
     description:
       "Glazed architectural facades frame open views of the water while you train, offering private cardio zones, strength conditioning, steam, and sauna suites.",
-    image: "/images/lakeside/wellness-gym.jpg",
+    image: "/images/lakeside/GYM.jpg.jpeg",
     alt: "Double-Height Panoramic Gym Overlooking the Lake",
   },
 ];

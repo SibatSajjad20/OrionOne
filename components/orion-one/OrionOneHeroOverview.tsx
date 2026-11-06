@@ -31,13 +31,13 @@ const DESTINATION_PILLARS: DestinationPillar[] = [
   {
     id: "commercial",
     title: "Commercial",
-    image: "/images/commercial.png",
+    image: "/images/orion-one/commercial-lobby.jpg",
     alt: "Curated commercial terraces and retail at Orion One",
   },
   {
     id: "wellness",
     title: "Wellness",
-    image: "/images/gym.png",
+    image: "/images/gym.jpg",
     alt: "Wellness and recreation facilities at Orion One",
   },
 ];

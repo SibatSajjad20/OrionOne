@@ -35,7 +35,7 @@ const DIRECTORY_DATA: DirectoryRow[] = [
       "Steam & Sauna",
       "Physical Recovery Facilities",
     ],
-    image: "/images/amenities/spa.jpg",
+    image: "/images/amenities/wellness-recovery.png",
     alt: "Thermal sauna and wellness spa facilities",
   },
   {
@@ -46,7 +46,7 @@ const DIRECTORY_DATA: DirectoryRow[] = [
       "Landscaped Water Garden",
       "Kids' Play Area",
     ],
-    image: "/images/amenities/infinity-pool.jpg",
+    image: "/images/amenities/lake-facing-infinity-pool.png",
     alt: "Lakefront infinity pool and recreation terraces",
   },
   {
@@ -56,7 +56,7 @@ const DIRECTORY_DATA: DirectoryRow[] = [
       "Open-Air Amphitheater & Event Lawns",
       "Mosque & Prayer Area",
     ],
-    image: "/images/amenities/mosque.jpg",
+    image: "/images/amenities/community-mosque.png",
     alt: "Dedicated prayer sanctuary and lakeside community facilities",
   },
   {
@@ -77,7 +77,7 @@ const DIRECTORY_DATA: DirectoryRow[] = [
       "Smart Home Automation",
       "24/7 CCTV & Controlled Access Infrastructure",
     ],
-    image: "/images/amenities/smart-home.jpg",
+    image: "/images/amenities/security-tech.jpeg",
     alt: "Smart home automation and intelligent building security",
   },
 ];
@@ -144,12 +144,12 @@ export default function AmenitiesIndex() {
     if (!preview) return;
 
     // Use GSAP quickTo for 60fps GPU-accelerated cursor following
-    const xTo = gsap.quickTo(preview, "x", { duration: 0.35, ease: "power3.out" });
-    const yTo = gsap.quickTo(preview, "y", { duration: 0.35, ease: "power3.out" });
+    const xTo = gsap.quickTo(preview, "x", { duration: 0.22, ease: "power2.out" });
+    const yTo = gsap.quickTo(preview, "y", { duration: 0.22, ease: "power2.out" });
 
     const handleMouseMove = (e: MouseEvent) => {
-      const previewWidth = 380;
-      const previewHeight = 240;
+      const previewWidth = 400;
+      const previewHeight = 250;
       let targetX = e.clientX + 32;
       let targetY = e.clientY - 120;
 
@@ -207,7 +207,7 @@ export default function AmenitiesIndex() {
       {/* Pure Floating Hover Image Preview Card (Desktop - No text overlay) */}
       <div
         ref={previewRef}
-        className="pointer-events-none fixed top-0 left-0 z-50 w-[360px] xl:w-[400px] aspect-[16/10] rounded-xl overflow-hidden shadow-[0_30px_70px_rgba(0,0,0,0.88)] border border-[#EDE5DA]/25 bg-[#081a1a] opacity-0 scale-90 will-change-transform hidden lg:block"
+        className="pointer-events-none fixed top-0 left-0 z-30 w-[360px] xl:w-[400px] aspect-[16/10] rounded-xl overflow-hidden shadow-[0_30px_70px_rgba(0,0,0,0.88)] border border-[#EDE5DA]/25 bg-[#081a1a] opacity-0 scale-90 will-change-transform hidden lg:block"
       >
         {DIRECTORY_DATA.map((row) => (
           <div
@@ -254,6 +254,7 @@ export default function AmenitiesIndex() {
             return (
               <div
                 key={row.category}
+                data-cursor="hover"
                 onMouseEnter={() => setActiveCategory(row.category)}
                 className={`group relative py-8 sm:py-10 lg:py-12 transition-all duration-300 cursor-pointer px-4 sm:px-6 rounded-xl ${
                   isHovered ? "bg-[#EDE5DA]/[0.03]" : "hover:bg-[#EDE5DA]/[0.015]"

@@ -17,7 +17,7 @@ const TEXT_INPUT_SELECTOR =
   'input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, [contenteditable="true"], [data-cursor="text"], [data-cursor="none"]';
 
 const HOVER_TARGET_SELECTOR =
-  'a, button, [role="button"], select, summary, label[for], [data-cursor="hover"], [data-magnetic], [title="Orion One · Click to advance"]';
+  'a, button, [role="button"], select, summary, label[for], [data-cursor="hover"], [data-magnetic], .cursor-pointer, [title="Orion One · Click to advance"]';
 
 const LIGHT_SURFACE_SELECTOR =
   '[data-cursor-theme="light"], [data-header-theme="sand"], .bg-\\[\\#EDE5DA\\], .bg-sand, .bg-white';
@@ -599,6 +599,7 @@ export default function OrionCursor() {
           "translate3d(-100px, -100px, 0) translate3d(-50%, -50%, 0) scale(1) rotate(0deg)",
         opacity: 0,
         willChange: "transform, opacity",
+        zIndex: 99999,
       }}
     >
       <svg
@@ -628,6 +629,9 @@ export default function OrionCursor() {
         <g
           ref={sandGroupRef}
           fill="#EDE5DA"
+          stroke="#0d2828"
+          strokeWidth="0.8"
+          paintOrder="stroke fill"
           fillRule="evenodd"
           clipRule="evenodd"
           style={{
