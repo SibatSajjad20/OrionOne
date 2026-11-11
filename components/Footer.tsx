@@ -60,14 +60,17 @@ export default function Footer() {
                 <Link href="/orion-one" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Orion One
                 </Link>
-                <Link href="/residence" className="hover:text-[#62AA9E] transition-colors py-0.5">
-                  Residences
-                </Link>
                 <Link href="/about" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   About Us
                 </Link>
                 <Link href="/commercial" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Commercial
+                </Link>
+                <Link href="/listing" className="hover:text-[#62AA9E] transition-colors py-0.5">
+                  Listing
+                </Link>
+                <Link href="/details" className="hover:text-[#62AA9E] transition-colors py-0.5">
+                  Details
                 </Link>
                 <Link href="/lakeside" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Lakeside Experience
@@ -77,6 +80,12 @@ export default function Footer() {
                 </Link>
                 <Link href="/amenities" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Amenities
+                </Link>
+                <Link href="/blogs" className="hover:text-[#62AA9E] transition-colors py-0.5">
+                  Blogs
+                </Link>
+                <Link href="/events" className="hover:text-[#62AA9E] transition-colors py-0.5">
+                  Events
                 </Link>
                 <Link href="/contact" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Contact Us

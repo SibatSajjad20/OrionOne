@@ -28,8 +28,18 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/residences",
-        destination: "/residence",
+        source: "/listings",
+        destination: "/listing",
+        permanent: true,
+      },
+      {
+        source: "/blog",
+        destination: "/blogs",
+        permanent: true,
+      },
+      {
+        source: "/event",
+        destination: "/events",
         permanent: true,
       },
     ];
