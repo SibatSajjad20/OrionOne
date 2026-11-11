@@ -199,10 +199,10 @@ export default function OrionOneMasterplan({ onOpenInquiry }: OrionOneMasterplan
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 w-full sm:w-auto mx-auto">
             <Link
-              href="/listing"
+              href="/residence"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-300 shadow-xl hover:shadow-[#62AA9E]/20 hover:-translate-y-0.5 cursor-pointer text-center"
             >
-              <span>Explore Listings</span>
+              <span>Explore Residences</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
 

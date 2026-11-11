@@ -68,12 +68,12 @@ export default function AmenitiesCtaBanner({ onOpenInquiry }: AmenitiesCtaBanner
 
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 w-full sm:w-auto">
           <Link
-            href="/listing"
+            href="/residence"
             data-magnetic
             data-magnetic-strength="16"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.2em] bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] px-6 sm:px-8 py-3.5 sm:py-4 rounded-full transition-all duration-500 ease-[cubic-bezier(0.75,0,0.25,1)] shadow-xl hover:shadow-[#62AA9E]/20 hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Explore Listings</span>
+            <span>Explore Residences</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
 

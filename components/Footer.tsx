@@ -60,6 +60,9 @@ export default function Footer() {
                 <Link href="/orion-one" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   Orion One
                 </Link>
+                <Link href="/residence" className="hover:text-[#62AA9E] transition-colors py-0.5">
+                  Residences
+                </Link>
                 <Link href="/about" className="hover:text-[#62AA9E] transition-colors py-0.5">
                   About Us
                 </Link>

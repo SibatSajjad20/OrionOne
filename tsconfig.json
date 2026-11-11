@@ -19,8 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/app/residence/*": ["./app/_residence/*"]
+      "@/*": ["./*"]
     }
   },
   "include": [
