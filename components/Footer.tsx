@@ -104,7 +104,7 @@ export default function Footer() {
               <div className="flex items-center gap-2.5">
                 {/* Facebook */}
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/orionone.com.pk"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
@@ -116,7 +116,7 @@ export default function Footer() {
                 </a>
                 {/* YouTube */}
                 <a
-                  href="https://youtube.com"
+                  href="https://www.youtube.com/@Oriononecompk"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
@@ -129,7 +129,7 @@ export default function Footer() {
                 </a>
                 {/* TikTok */}
                 <a
-                  href="https://tiktok.com"
+                  href="https://www.tiktok.com/@orionone.com.pk"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="TikTok"
@@ -141,7 +141,7 @@ export default function Footer() {
                 </a>
                 {/* Instagram */}
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/oriononeofficial/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"

@@ -14,7 +14,6 @@ interface HeaderProps {
 type HeaderTheme = "moss" | "sand" | "mint";
 
 export const RESIDENCE_SUITES_MENU = [
-  { name: "All Residences", href: "/residence" },
   { name: "1 Bedroom Apartments", href: "/residence/1-bedroom" },
   { name: "2 Bedroom Apartments", href: "/residence/2-bedroom" },
   { name: "3 Bedroom Apartments", href: "/residence/3-bedroom" },

@@ -5,13 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import { ChevronDown, ArrowUpRight, X } from "lucide-react";
+import { ChevronDown, ArrowUpRight } from "lucide-react";
 import OrionRotatingBadge from "./OrionRotatingBadge";
-import FloorPlan3DViewer from "./FloorPlan3DViewer";
-import oneBedroomPlanJson from "@/app/residence/plans/1-bedroom.json";
-import type { FloorPlanData } from "@/app/residence/plans/types";
-
-const ONE_BEDROOM_PLAN = oneBedroomPlanJson as unknown as FloorPlanData;
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -36,10 +31,10 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-1-bed",
     category: "1-bedroom",
     title: "One Bedroom",
-    headline: "1 Bed / 85 m²",
+    headline: "1 Bed",
     bedCount: "1",
-    areaSpec: "85 M²",
-    terraceSpec: "+ 18 M² Terrace",
+    areaSpec: "",
+    terraceSpec: "",
     level: "Levels 02 – 08 · Lake Facing",
     description:
       "Efficient layouts with refined interiors, generous natural light, and uninterrupted lake horizons.",
@@ -50,10 +45,10 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-2-bed",
     category: "2-bedroom",
     title: "Two Bedroom",
-    headline: "2 Bed / 135 m²",
+    headline: "2 Bed",
     bedCount: "2",
-    areaSpec: "135 M²",
-    terraceSpec: "+ 28 M² Terrace",
+    areaSpec: "",
+    terraceSpec: "",
     level: "Levels 03 – 12 · Panoramic View",
     description:
       "Generous living areas, expansive waterfront balconies, and spaces shaped around family comfort.",
@@ -64,10 +59,10 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-3-bed",
     category: "3-bedroom",
     title: "Three Bedroom",
-    headline: "3 Bed / 195 m²",
+    headline: "3 Bed",
     bedCount: "3",
-    areaSpec: "195 M²",
-    terraceSpec: "+ 42 M² Terrace",
+    areaSpec: "",
+    terraceSpec: "",
     level: "Levels 06 – 14 · Waterfront Corner",
     description:
       "The pinnacle of family living with grand entertaining salons and panoramic lake outlooks.",
@@ -78,10 +73,10 @@ const RESIDENCE_UNITS: ResidenceUnit[] = [
     id: "unit-private-pool",
     category: "private-pool",
     title: "Private Pool Residence",
-    headline: "Pool Suite / 240 m²",
+    headline: "Pool Suite",
     bedCount: "Multi",
-    areaSpec: "240 M²",
-    terraceSpec: "+ 65 M² Pool Terrace",
+    areaSpec: "",
+    terraceSpec: "",
     level: "Podium & Executive Penthouses",
     description:
       "A premium residential format combining a private plunge pool with the wider Orion One waterfront lifestyle.",
@@ -97,13 +92,10 @@ interface ResidenceHeroProps {
 export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
   const [selectedTypology, setSelectedTypology] = useState<string>("all");
   const [selectedBedrooms, setSelectedBedrooms] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<
-    "relevant" | "size-asc" | "size-desc" | "bedrooms"
-  >("relevant");
+  const [sortBy, setSortBy] = useState<"relevant" | "bedrooms">("relevant");
   const [isTypologyOpen, setIsTypologyOpen] = useState(false);
   const [isBedroomOpen, setIsBedroomOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [is3DModalOpen, setIs3DModalOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -137,7 +129,6 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
         setIsTypologyOpen(false);
         setIsBedroomOpen(false);
         setIsSortOpen(false);
-        setIs3DModalOpen(false);
       }
     };
 
@@ -204,12 +195,6 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
       selectedBedrooms === "all" || unit.bedCount === selectedBedrooms;
     return matchesTypology && matchesBedrooms;
   }).sort((a, b) => {
-    if (sortBy === "size-asc") {
-      return parseInt(a.areaSpec) - parseInt(b.areaSpec);
-    }
-    if (sortBy === "size-desc") {
-      return parseInt(b.areaSpec) - parseInt(a.areaSpec);
-    }
     if (sortBy === "bedrooms") {
       const aVal = a.bedCount === "Multi" ? 4 : parseInt(a.bedCount);
       const bVal = b.bedCount === "Multi" ? 4 : parseInt(b.bedCount);
@@ -453,10 +438,6 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
                   <span className="text-[#EDE5DA] font-semibold">
                     {sortBy === "relevant"
                       ? "Relevant"
-                      : sortBy === "size-asc"
-                      ? "Area: Low"
-                      : sortBy === "size-desc"
-                      ? "Area: High"
                       : "Bedrooms"}
                   </span>
                   <ChevronDown
@@ -467,24 +448,16 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
                 </button>
 
                 {isSortOpen && (
-                  <div className="absolute top-full left-0 mt-3 z-40 w-52 rounded-xl bg-[#0d2828] border border-[#EDE5DA]/20 shadow-2xl py-2 flex flex-col backdrop-blur-xl">
+                  <div className="absolute top-full left-0 mt-3 z-40 w-44 rounded-xl bg-[#0d2828] border border-[#EDE5DA]/20 shadow-2xl py-2 flex flex-col backdrop-blur-xl">
                     {[
                       { id: "relevant", label: "Relevant" },
-                      { id: "size-asc", label: "Area: Low to High" },
-                      { id: "size-desc", label: "Area: High to Low" },
                       { id: "bedrooms", label: "Bedrooms" },
                     ].map((opt) => (
                       <button
                         key={opt.id}
                         type="button"
                         onClick={() => {
-                          setSortBy(
-                            opt.id as
-                              | "relevant"
-                              | "size-asc"
-                              | "size-desc"
-                              | "bedrooms"
-                          );
+                          setSortBy(opt.id as "relevant" | "bedrooms");
                           setIsSortOpen(false);
                         }}
                         className={`text-left text-[11px] font-sans-body uppercase tracking-[0.18em] px-4 py-2.5 hover:bg-[#153D3D] transition-colors cursor-pointer ${
@@ -517,138 +490,43 @@ export default function ResidenceHero({ onOpenInquiry }: ResidenceHeroProps) {
           ref={gridRef}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch pt-2"
         >
-          {filteredUnits.map((unit) => {
-            if (unit.category === "1-bedroom") {
-              return (
-                <div
-                  key={unit.id}
-                  className="residence-card flex flex-col p-6 sm:p-7 rounded-2xl bg-[#0d2828]/60 border border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/90 transition-all duration-500 group shadow-xl"
-                >
-                  {/* Top Architectural Typology Title & Arrow Indicator */}
-                  <Link
-                    href={`/residence/${unit.category}`}
-                    className="flex items-center justify-between mb-5 sm:mb-6 cursor-pointer"
-                  >
-                    <span className="font-sans-body text-xs sm:text-sm uppercase tracking-[0.25em] text-[#EDE5DA] font-medium">
-                      {unit.title}
-                    </span>
-                    <span className="text-[#62AA9E] opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
-                      <ArrowUpRight className="w-4 h-4" />
-                    </span>
-                  </Link>
-
-                  {/* Interactive 3D Floor Plan Frame (1-Bedroom Only) */}
-                  <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] border border-[#EDE5DA]/20 shadow-inner">
-                    <FloorPlan3DViewer
-                      plan={ONE_BEDROOM_PLAN}
-                      fallbackImageSrc={unit.floorPlanSrc}
-                      fallbackAlt={`${unit.title} architectural layout at Orion One`}
-                      compact
-                      onExpand={() => setIs3DModalOpen(true)}
-                    />
-                  </div>
-
-                  {/* Headline & Specs in the Center with Padding from Top */}
-                  <Link
-                    href={`/residence/${unit.category}`}
-                    className="text-center pt-6 sm:pt-7 pb-2 mt-auto cursor-pointer"
-                  >
-                    <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-2 group-hover:text-[#62AA9E] transition-colors">
-                      {unit.headline}
-                    </h3>
-                    <p className="font-sans-body text-xs uppercase tracking-[0.25em] text-[#62AA9E] font-medium">
-                      {unit.terraceSpec}
-                    </p>
-                  </Link>
-                </div>
-              );
-            }
-
-            return (
-              <Link
-                key={unit.id}
-                href={`/residence/${unit.category}`}
-                className="residence-card flex flex-col p-6 sm:p-7 rounded-2xl bg-[#0d2828]/60 border border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/90 transition-all duration-500 group shadow-xl cursor-pointer"
-              >
-                {/* Top Architectural Typology Title & Arrow Indicator */}
-                <div className="flex items-center justify-between mb-5 sm:mb-6">
-                  <span className="font-sans-body text-xs sm:text-sm uppercase tracking-[0.25em] text-[#EDE5DA] font-medium">
-                    {unit.title}
-                  </span>
-                  <span className="text-[#62AA9E] opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
-                    <ArrowUpRight className="w-4 h-4" />
-                  </span>
-                </div>
-
-                {/* Media Frame — Architectural Floor Plan Layout */}
-                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] border border-[#EDE5DA]/20 p-5 flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.01] shadow-inner">
-                  <Image
-                    src={unit.floorPlanSrc}
-                    alt={`${unit.title} architectural layout at Orion One`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
-                    className="object-contain p-2 filter contrast-[1.05]"
-                  />
-                </div>
-
-                {/* Headline & Specs in the Center with Padding from Top */}
-                <div className="text-center pt-6 sm:pt-7 pb-2 mt-auto">
-                  <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-2 group-hover:text-[#62AA9E] transition-colors">
-                    {unit.headline}
-                  </h3>
-                  <p className="font-sans-body text-xs uppercase tracking-[0.25em] text-[#62AA9E] font-medium">
-                    {unit.terraceSpec}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Expanded 3D Floor Plan Lightbox for 1-Bedroom on Residence Page */}
-      {is3DModalOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-[90] bg-[#081a1a]/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
-          onClick={() => setIs3DModalOpen(false)}
-        >
-          <div
-            data-lenis-prevent="true"
-            className="relative w-full max-w-6xl max-h-[90vh] bg-[#0d2828] border border-[#EDE5DA]/20 rounded-2xl p-4 sm:p-8 flex flex-col shadow-2xl text-[#EDE5DA]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between pb-4 border-b border-[#EDE5DA]/15">
-              <div>
-                <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#62AA9E] font-bold">
-                  1 BEDROOM · Interactive 3D Floor Plan
+          {filteredUnits.map((unit) => (
+            <Link
+              key={unit.id}
+              href={`/residence/${unit.category}`}
+              className="residence-card flex flex-col p-6 sm:p-7 rounded-2xl bg-[#0d2828]/60 border border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/90 transition-all duration-500 group shadow-xl cursor-pointer"
+            >
+              {/* Top Architectural Typology Title & Arrow Indicator */}
+              <div className="flex items-center justify-between mb-5 sm:mb-6">
+                <span className="font-sans-body text-xs sm:text-sm uppercase tracking-[0.25em] text-[#EDE5DA] font-medium">
+                  {unit.title}
                 </span>
-                <h3 className="font-serif-heading text-xl sm:text-2xl text-[#EDE5DA]">
-                  1 Bed / 85 m² (+ 18 m² Terrace)
-                </h3>
+                <span className="text-[#62AA9E] opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
+                  <ArrowUpRight className="w-4 h-4" />
+                </span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIs3DModalOpen(false)}
-                className="inline-flex items-center justify-center p-2.5 rounded-full border border-[#EDE5DA]/20 hover:bg-[#EDE5DA]/10 hover:text-white transition-colors cursor-pointer"
-                aria-label="Close 3D layout"
-              >
-                <X className="w-5 h-5 text-[#EDE5DA]" />
-              </button>
-            </div>
+              {/* Media Frame — Architectural Floor Plan Layout */}
+              <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] border border-[#EDE5DA]/20 p-5 flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.01] shadow-inner">
+                <Image
+                  src={unit.floorPlanSrc}
+                  alt={`${unit.title} architectural layout at Orion One`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                  className="object-contain p-2 filter contrast-[1.05]"
+                />
+              </div>
 
-            <div className="relative w-full h-[65vh] sm:h-[72vh] mt-4 rounded-xl bg-[#EDE5DA] overflow-hidden">
-              <FloorPlan3DViewer
-                plan={ONE_BEDROOM_PLAN}
-                fallbackImageSrc="/images/residence/1-bedroom.webp"
-                fallbackAlt="One Bedroom architectural layout at Orion One"
-              />
-            </div>
-          </div>
+              {/* Headline in the Center with Padding from Top */}
+              <div className="text-center pt-6 sm:pt-7 pb-2 mt-auto">
+                <h3 className="font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight group-hover:text-[#62AA9E] transition-colors uppercase">
+                  {unit.headline}
+                </h3>
+              </div>
+            </Link>
+          ))}
         </div>
-      )}
+      </div>
     </section>
   );
 }

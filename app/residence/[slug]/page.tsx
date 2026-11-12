@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${suite.title} (${suite.unitCode}) | Orion One — DHA Phase III, Islamabad`,
-    description: `${suite.heroSub} ${suite.tagline} Featuring ${suite.specs.interiorArea} interior living, ${suite.specs.terrace} terrace, and ${suite.specs.orientation}.`,
+    description: `${suite.heroSub} ${suite.tagline} Featuring luxury lakefront living, refined finishes, and ${suite.specs.orientation}.`,
     openGraph: {
       title: `${suite.title} | Orion One Residences`,
       description: suite.tagline,

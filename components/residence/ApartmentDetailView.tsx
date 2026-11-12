@@ -23,18 +23,10 @@ const OrionRotatingBadge = dynamic(
   () => import("@/components/residence/OrionRotatingBadge"),
   { ssr: false }
 );
-const FloorPlan3DViewer = dynamic(
-  () => import("@/components/residence/FloorPlan3DViewer"),
-  { ssr: false }
-);
-import oneBedroomPlanJson from "@/app/residence/plans/1-bedroom.json";
-import type { FloorPlanData } from "@/app/residence/plans/types";
 import {
   ResidenceSuiteData,
   getSimilarSuites,
 } from "@/app/residence/data";
-
-const ONE_BEDROOM_PLAN = oneBedroomPlanJson as unknown as FloorPlanData;
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -178,9 +170,11 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
               <h1 className="type-display font-serif-heading font-luxia-display text-4xl sm:text-7xl md:text-8xl lg:text-[7rem] text-[#EDE5DA] tracking-tight leading-none select-none">
                 {suite.unitCode}
               </h1>
-              <p className="font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#62AA9E] font-semibold mt-3">
-                {suite.levelMeta} · COMPLETION: {suite.completion}
-              </p>
+              {suite.levelMeta && (
+                <p className="font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#62AA9E] font-semibold mt-3">
+                  {suite.levelMeta}
+                </p>
+              )}
             </div>
 
             {/* Top-Right: Editorial Navigation Links */}
@@ -212,83 +206,43 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pt-12 sm:pt-16 items-start">
             {/* Left Column (7 Cols): Architectural Floor Plan Frame */}
             <div className="lg:col-span-7 flex flex-col">
-              {suite.slug === "1-bedroom" ? (
-                <div className="relative w-full aspect-[16/11] rounded-2xl bg-[#EDE5DA] border border-[#EDE5DA]/20 shadow-2xl overflow-hidden">
-                  <FloorPlan3DViewer
-                    plan={ONE_BEDROOM_PLAN}
-                    fallbackImageSrc={suite.floorPlanSrc}
-                    fallbackAlt={`${suite.title} architectural floor plan layout`}
-                    onExpand={() => setIsLightboxOpen(true)}
-                  />
-                </div>
-              ) : (
-                <div
-                  onClick={() => setIsLightboxOpen(true)}
-                  className="group relative w-full aspect-[16/11] rounded-2xl bg-[#EDE5DA] border border-[#EDE5DA]/20 p-3 sm:p-4 flex items-center justify-center cursor-zoom-in shadow-2xl transition-all duration-300 overflow-hidden"
-                >
-                  <Image
-                    src={suite.floorPlanSrc}
-                    alt={`${suite.title} architectural floor plan layout`}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                    className="object-contain p-1 sm:p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
+              <div
+                onClick={() => setIsLightboxOpen(true)}
+                className="group relative w-full aspect-[16/11] rounded-2xl bg-[#EDE5DA] border border-[#EDE5DA]/20 p-3 sm:p-4 flex items-center justify-center cursor-zoom-in shadow-2xl transition-all duration-300 overflow-hidden"
+              >
+                <Image
+                  src={suite.floorPlanSrc}
+                  alt={`${suite.title} architectural floor plan layout`}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  className="object-contain p-1 sm:p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
+                />
 
-                  {/* Subtle Enlarge Hint */}
-                  <div className="absolute bottom-4 right-4 bg-[#081a1a]/85 border border-[#EDE5DA]/20 text-[#EDE5DA] text-[10px] font-sans-body uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
-                    <Maximize2 className="w-3 h-3 text-[#62AA9E]" />
-                    <span>Enlarge Layout</span>
-                  </div>
+                {/* Subtle Enlarge Hint */}
+                <div className="absolute bottom-4 right-4 bg-[#081a1a]/85 border border-[#EDE5DA]/20 text-[#EDE5DA] text-[10px] font-sans-body uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
+                  <Maximize2 className="w-3 h-3 text-[#62AA9E]" />
+                  <span>Enlarge Layout</span>
                 </div>
-              )}
+              </div>
 
               {/* Floor Plan Sub-Label & Status */}
               <div className="flex items-center justify-between pt-4 px-2 text-[10px] sm:text-xs font-sans-body text-[#EDE5DA]/60 uppercase tracking-[0.2em]">
-                <span>Architectural Layout · Scale 1:100</span>
+                <span>Architectural Layout</span>
                 <span className="text-[#62AA9E] font-medium">{suite.specs.orientation}</span>
               </div>
             </div>
 
             {/* Right Column (5 Cols): Numbers, Tabs, Inclusions & Actions */}
             <div className="lg:col-span-5 flex flex-col">
-              {/* Numeric Architectural Specs Stack */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-y-6 gap-x-8 pb-8 border-b border-[#EDE5DA]/15">
-                <div>
-                  <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                    Bedrooms
-                  </span>
-                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                    {suite.specs.bedrooms}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                    Interior Area
-                  </span>
-                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                    {suite.specs.interiorArea}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                    Terrace
-                  </span>
-                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                    {suite.specs.terrace}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                    Total Area
-                  </span>
-                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                    {suite.specs.totalArea}
-                  </span>
-                </div>
+              {/* Architectural Typology Specification */}
+              <div className="pb-8 border-b border-[#EDE5DA]/15">
+                <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-2">
+                  Typology
+                </span>
+                <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
+                  {suite.unitCode}
+                </span>
               </div>
 
               {/* Interactive Tabs Header: INFO | BENEFITS | INCLUSIONS | SPACES */}
@@ -465,7 +419,7 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                 {/* Compass & Building Orientation Graphic */}
                 <div className="ml-auto hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#EDE5DA]/60">
                   <Compass className="w-4 h-4 text-[#62AA9E]" />
-                  <span>N · Sector F</span>
+                  <span>Lakefront Facing</span>
                 </div>
               </div>
             </div>
@@ -564,13 +518,6 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                 href={`/residence/${other.slug}`}
                 className="similar-card group flex flex-col p-6 sm:p-8 rounded-2xl bg-[#0d2828]/60 border border-[#EDE5DA]/10 hover:border-[#62AA9E]/50 hover:bg-[#0d2828]/90 transition-all duration-500 shadow-xl"
               >
-                {/* Upper Level Meta */}
-                <div className="text-center mb-4 pb-3 border-b border-[#EDE5DA]/10">
-                  <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#EDE5DA]/60 font-semibold">
-                    {other.levelMeta} · COMPLETION: {other.completion}
-                  </span>
-                </div>
-
                 {/* Floor Plan Image Frame */}
                 <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#EDE5DA] border border-[#EDE5DA]/20 p-5 flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.01] shadow-inner">
                   <Image
@@ -582,17 +529,14 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
                   />
                 </div>
 
-                {/* Lower Unit Designation & Specs */}
+                {/* Lower Unit Designation & Headline */}
                 <div className="text-center pt-6 pb-2">
                   <span className="font-sans-body text-[10px] uppercase tracking-[0.25em] text-[#EDE5DA]/60 block mb-1">
-                    {other.unitCode} · {other.shortTitle}
+                    {other.title}
                   </span>
-                  <h3 className="type-section font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight mb-1 group-hover:text-[#62AA9E] transition-colors">
+                  <h3 className="type-section font-serif-heading text-2xl sm:text-3xl text-[#EDE5DA] tracking-tight group-hover:text-[#62AA9E] transition-colors uppercase">
                     {other.headline}
                   </h3>
-                  <p className="font-sans-body text-xs uppercase tracking-[0.22em] text-[#62AA9E] font-medium">
-                    + {other.specs.terrace} Terrace
-                  </p>
                 </div>
               </Link>
             ))}
@@ -736,21 +680,13 @@ export default function ApartmentDetailView({ suite }: ApartmentDetailViewProps)
             </div>
 
             <div className="relative w-full h-[65vh] sm:h-[70vh] my-4 rounded-xl bg-[#EDE5DA] p-3 sm:p-4 flex items-center justify-center overflow-hidden">
-              {suite.slug === "1-bedroom" ? (
-                <FloorPlan3DViewer
-                  plan={ONE_BEDROOM_PLAN}
-                  fallbackImageSrc={suite.floorPlanSrc}
-                  fallbackAlt={`${suite.title} full layout`}
-                />
-              ) : (
-                <Image
-                  src={suite.floorPlanSrc}
-                  alt={`${suite.title} full layout`}
-                  fill
-                  sizes="90vw"
-                  className="object-contain filter contrast-[1.05]"
-                />
-              )}
+              <Image
+                src={suite.floorPlanSrc}
+                alt={`${suite.title} full layout`}
+                fill
+                sizes="90vw"
+                className="object-contain filter contrast-[1.05]"
+              />
             </div>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-3 border-t border-[#EDE5DA]/10 text-xs font-sans-body text-[#EDE5DA]/70 uppercase tracking-[0.2em]">

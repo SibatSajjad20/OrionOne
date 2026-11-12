@@ -18,16 +18,6 @@ import {
   TOWER_LEVELS,
   getSuiteBySlug,
 } from "@/app/residence/data";
-import dynamic from "next/dynamic";
-
-const FloorPlan3DViewer = dynamic(
-  () => import("./FloorPlan3DViewer"),
-  { ssr: false }
-);
-import oneBedroomPlanJson from "@/app/residence/plans/1-bedroom.json";
-import type { FloorPlanData } from "@/app/residence/plans/types";
-
-const ONE_BEDROOM_PLAN = oneBedroomPlanJson as unknown as FloorPlanData;
 
 interface FloorApartmentModalProps {
   levelData: TowerLevelData;
@@ -242,9 +232,7 @@ export default function FloorApartmentModal({
                       : "text-[#EDE5DA]/60 hover:text-[#EDE5DA]"
                   }`}
                 >
-                  <span>
-                    {s.shortTitle} ({s.specs.totalArea})
-                  </span>
+                  <span>{s.shortTitle}</span>
                   {active && (
                     <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#62AA9E]" />
                   )}
@@ -260,38 +248,27 @@ export default function FloorApartmentModal({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pt-12 sm:pt-16 pb-20 border-b border-[#EDE5DA]/15 items-start">
           {/* Left Column (7 Cols): Pure Architectural Floor Plan Frame */}
           <div className="lg:col-span-7 flex flex-col">
-            {isResidential && suite.slug === "1-bedroom" ? (
-              <div className="relative w-full aspect-[16/11] rounded-2xl border border-[#EDE5DA]/20 bg-[#EDE5DA] shadow-2xl overflow-hidden">
-                <FloorPlan3DViewer
-                  plan={ONE_BEDROOM_PLAN}
-                  fallbackImageSrc={planSrc}
-                  fallbackAlt={`${levelData.name} architectural layout`}
-                  onExpand={() => setIsPlanLightboxOpen(true)}
-                />
-              </div>
-            ) : (
-              <div
-                onClick={() => setIsPlanLightboxOpen(true)}
-                className={`group relative w-full aspect-[16/11] rounded-2xl border border-[#EDE5DA]/20 flex items-center justify-center cursor-zoom-in shadow-2xl overflow-hidden ${
+            <div
+              onClick={() => setIsPlanLightboxOpen(true)}
+              className={`group relative w-full aspect-[16/11] rounded-2xl border border-[#EDE5DA]/20 flex items-center justify-center cursor-zoom-in shadow-2xl overflow-hidden ${
+                levelData.category === "amenities"
+                  ? "bg-[#0d2828]"
+                  : "bg-[#EDE5DA] p-4 sm:p-6"
+              }`}
+            >
+              <Image
+                src={planSrc}
+                alt={`${levelData.name} architectural layout`}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 58vw"
+                className={
                   levelData.category === "amenities"
-                    ? "bg-[#0d2828]"
-                    : "bg-[#EDE5DA] p-4 sm:p-6"
-                }`}
-              >
-                <Image
-                  src={planSrc}
-                  alt={`${levelData.name} architectural layout`}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 58vw"
-                  className={
-                    levelData.category === "amenities"
-                      ? "object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                      : "object-contain p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
-                  }
-                />
-              </div>
-            )}
+                    ? "object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    : "object-contain p-2 filter contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.02]"
+                }
+              />
+            </div>
 
             <div className="flex items-center justify-between pt-4 px-1 text-[10px] sm:text-xs font-sans-body text-[#C9BFB1] uppercase tracking-[0.2em]">
               <span>
@@ -313,42 +290,13 @@ export default function FloorApartmentModal({
           <div className="lg:col-span-5 flex flex-col">
             {isResidential ? (
               <>
-                <div className="grid grid-cols-2 gap-y-6 gap-x-8 pb-8 border-b border-[#EDE5DA]/15">
-                  <div>
-                    <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                      Bedrooms
-                    </span>
-                    <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                      {suite.specs.bedrooms}
-                    </span>
-                  </div>
-
-                  <div>
-                    <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                      Interior Area
-                    </span>
-                    <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                      {suite.specs.interiorArea}
-                    </span>
-                  </div>
-
-                  <div>
-                    <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                      Terrace
-                    </span>
-                    <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                      {suite.specs.terrace}
-                    </span>
-                  </div>
-
-                  <div>
-                    <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-1">
-                      Total Area
-                    </span>
-                    <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
-                      {suite.specs.totalArea}
-                    </span>
-                  </div>
+                <div className="pb-8 border-b border-[#EDE5DA]/15">
+                  <span className="block font-sans-body text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#62AA9E] font-semibold mb-2">
+                    Typology
+                  </span>
+                  <span className="font-serif-heading font-luxia-display text-4xl sm:text-5xl text-[#EDE5DA] leading-none">
+                    {suite.unitCode}
+                  </span>
                 </div>
 
                 {/* Minimal Tabs: INFO | INCLUSIONS | SPACES */}
@@ -532,21 +480,13 @@ export default function FloorApartmentModal({
             </div>
 
             <div className="relative w-full h-[65vh] sm:h-[70vh] my-4 rounded-xl bg-[#EDE5DA] p-3 sm:p-4 flex items-center justify-center overflow-hidden">
-              {isResidential && suite.slug === "1-bedroom" ? (
-                <FloorPlan3DViewer
-                  plan={ONE_BEDROOM_PLAN}
-                  fallbackImageSrc={planSrc}
-                  fallbackAlt={`${levelData.name} full layout`}
-                />
-              ) : (
-                <Image
-                  src={planSrc}
-                  alt={`${levelData.name} full layout`}
-                  fill
-                  sizes="90vw"
-                  className="object-contain filter contrast-[1.05]"
-                />
-              )}
+              <Image
+                src={planSrc}
+                alt={`${levelData.name} full layout`}
+                fill
+                sizes="90vw"
+                className="object-contain filter contrast-[1.05]"
+              />
             </div>
           </div>
         </div>
