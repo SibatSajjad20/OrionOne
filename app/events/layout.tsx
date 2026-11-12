@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "SP Builders Exhibitions",
     "Waterfront Community Events",
   ],
+  alternates: {
+    canonical: "/events",
+  },
 };
 
 export default function EventsLayout({

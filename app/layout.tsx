@@ -7,6 +7,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import OrionCursor from "@/components/OrionCursor";
 import MagneticEffects from "@/components/MagneticEffects";
 import AgentationToolbar from "@/components/AgentationToolbar";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -40,7 +41,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://orionone.pk"),
+  metadataBase: new URL("https://orionone.com.pk"),
   title: "Orion One | Where the Lake Meets Living — DHA Phase III Islamabad",
   description:
     "Orion One is a landmark lakefront destination in DHA Phase III, Islamabad — luxury residences, commercial terraces, and lakeside lifestyle by SP Builders.",
@@ -52,6 +53,44 @@ export const metadata: Metadata = {
     "Prestige Lakefront Living",
     "Commercial Terraces Islamabad",
   ],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title: "Orion One | Where the Lake Meets Living — DHA Phase III Islamabad",
+    description:
+      "Orion One is a landmark lakefront destination in DHA Phase III, Islamabad — luxury residences, commercial terraces, and lakeside lifestyle by SP Builders.",
+    url: "https://orionone.com.pk",
+    siteName: "Orion One",
+    images: [
+      {
+        url: "/images/hero-lakefront.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Orion One — Lakefront Luxury Residences & Commercial Terraces",
+      },
+    ],
+    locale: "en_PK",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Orion One | Where the Lake Meets Living — DHA Phase III Islamabad",
+    description:
+      "Orion One is a landmark lakefront destination in DHA Phase III, Islamabad — luxury residences, commercial terraces, and lakeside lifestyle by SP Builders.",
+    images: ["/images/hero-lakefront.jpg"],
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -77,6 +116,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head suppressHydrationWarning>
+        <JsonLd />
         <script
           id="scroll-restoration"
           suppressHydrationWarning

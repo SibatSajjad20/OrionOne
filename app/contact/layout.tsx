@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     "Prestige Lakefront Living",
     "District 101 Rawalpindi",
   ],
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function ContactLayout({

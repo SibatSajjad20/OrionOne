@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     "Lakeview Living Sector F",
     "Where the Lake Meets Living",
   ],
+  alternates: {
+    canonical: "/lakeside",
+  },
 };
 
 export default function LakesideLayout({

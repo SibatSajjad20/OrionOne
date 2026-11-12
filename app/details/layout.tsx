@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "DHA Phase III Specifications",
     "SP Builders Details",
   ],
+  alternates: {
+    canonical: "/details",
+  },
 };
 
 export default function DetailsLayout({

@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Islamabad Real Estate",
     "SP Builders Listings",
   ],
+  alternates: {
+    canonical: "/listing",
+  },
 };
 
 export default function ListingLayout({

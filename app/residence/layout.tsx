@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     "SP Builders Residences",
     "Waterfront Living Islamabad",
   ],
+  alternates: {
+    canonical: "/residence",
+  },
   openGraph: {
     title: "Residences | Orion One — Lakefront Living",
     description:

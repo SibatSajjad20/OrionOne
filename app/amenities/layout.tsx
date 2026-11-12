@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     "Fitness Center Orion One",
     "SP Builders",
   ],
+  alternates: {
+    canonical: "/amenities",
+  },
 };
 
 export default function AmenitiesLayout({

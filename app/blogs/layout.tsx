@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Islamabad Real Estate Insights",
     "Lakefront Living Journal",
   ],
+  alternates: {
+    canonical: "/blogs",
+  },
 };
 
 export default function BlogsLayout({

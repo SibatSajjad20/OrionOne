@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     "Dancing Fountains DHA 3",
     "SP Builders Location",
   ],
+  alternates: {
+    canonical: "/location",
+  },
 };
 
 export default function LocationLayout({

@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     "Architectural Excellence Islamabad",
     "Lakeview Commercial Sector F",
   ],
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 export default function AboutLayout({

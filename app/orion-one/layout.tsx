@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     "SP Builders",
     "Lakeview Commercial",
   ],
+  alternates: {
+    canonical: "/orion-one",
+  },
 };
 
 export default function OrionOneLayout({
