@@ -17,7 +17,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       | "never";
   }> = [
     { url: `${baseUrl}/`, priority: 1.0, changeFrequency: "weekly" },
-    { url: `${baseUrl}/residences`, priority: 0.9, changeFrequency: "weekly" },
     { url: `${baseUrl}/residence`, priority: 0.9, changeFrequency: "weekly" },
     {
       url: `${baseUrl}/residence/1-bedroom`,
@@ -42,11 +41,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/commercial`, priority: 0.9, changeFrequency: "weekly" },
     { url: `${baseUrl}/amenities`, priority: 0.8, changeFrequency: "monthly" },
     { url: `${baseUrl}/lakeside`, priority: 0.8, changeFrequency: "monthly" },
-    {
-      url: `${baseUrl}/lakeside-experience`,
-      priority: 0.8,
-      changeFrequency: "monthly",
-    },
     { url: `${baseUrl}/location`, priority: 0.8, changeFrequency: "monthly" },
     { url: `${baseUrl}/about`, priority: 0.8, changeFrequency: "monthly" },
     { url: `${baseUrl}/contact`, priority: 0.8, changeFrequency: "monthly" },
