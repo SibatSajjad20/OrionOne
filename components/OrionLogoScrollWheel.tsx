@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/all";
 export interface OrionLogoTargetRefs {
   scene1?: React.RefObject<HTMLElement | null>;
   scene2?: React.RefObject<HTMLElement | null>;
+  sceneUnveiling?: React.RefObject<HTMLElement | null>;
   scene3?: React.RefObject<HTMLElement | null>;
   col1?: React.RefObject<HTMLElement | null>;
   col2?: React.RefObject<HTMLElement | null>;
@@ -87,6 +88,7 @@ export default function OrionLogoScrollWheel({
   const cachedCoordsRef = useRef<{
     scene1: AnchorCoord;
     scene2: AnchorCoord;
+    sceneUnveiling: AnchorCoord;
     scene3: AnchorCoord;
     col1: AnchorCoord;
     col2: AnchorCoord;
@@ -96,6 +98,7 @@ export default function OrionLogoScrollWheel({
   }>({
     scene1: { x: 0, y: 0, size: 58 },
     scene2: { x: 0, y: 0, size: 54 },
+    sceneUnveiling: { x: 0, y: 0, size: 54 },
     scene3: { x: 0, y: 0, size: 48 },
     col1: { x: 0, y: 0, size: 42 },
     col2: { x: 0, y: 0, size: 42 },
@@ -122,7 +125,7 @@ export default function OrionLogoScrollWheel({
       }
     ).lenis;
 
-    const milestones = [0.0, 0.16, 0.30, 0.44, 0.54, 0.64, 0.77, 0.94];
+    const milestones = [0.0, 0.15, 0.27, 0.40, 0.54, 0.65, 0.81, 0.94];
     const curProg = st ? st.progress : (progressRef?.current ?? 0);
     const nextTargetProg = milestones.find((m) => m > curProg + 0.03) ?? 1.0;
 
@@ -141,7 +144,7 @@ export default function OrionLogoScrollWheel({
     }
   }, [onWheelClick, progressRef]);
 
-  // Measure and cache CTA target coordinate
+  // Measure and cache target coordinates
   const updateAllAnchorCoords = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -150,6 +153,20 @@ export default function OrionLogoScrollWheel({
     const height = Math.max(container.clientHeight, 1);
     const isMobile = width < 768;
 
+    // Unveiling Anchor
+    const unvRef = targetRefsHolder.current?.sceneUnveiling;
+    if (unvRef && unvRef.current) {
+      const rect = unvRef.current.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        cachedCoordsRef.current.sceneUnveiling = {
+          x: rect.left - containerRect.left + rect.width * 0.5,
+          y: rect.top - containerRect.top + rect.height * 0.5,
+          size: Math.max(rect.width, rect.height),
+        };
+      }
+    }
+
+    // CTA Target
     const tRef = targetRefHolder.current;
     if (tRef && tRef.current) {
       const rect = tRef.current.getBoundingClientRect();
@@ -169,7 +186,7 @@ export default function OrionLogoScrollWheel({
     };
   }, []);
 
-  // Return fixed right-side companion position (and docks to CTA only at closing frame)
+  // Return companion position: glides to left above heading during Launch Unveiling, docks to CTA at closing
   const getJourneyPos = (prog: number, width: number, height: number): AnchorCoord => {
     const isMobile = width < 768;
     const isTablet = width >= 768 && width < 1024;
@@ -181,9 +198,20 @@ export default function OrionLogoScrollWheel({
       size: wheelPixelSize,
     };
 
-    if (prog >= 0.86) {
+    // Unveiling video chapter: glide cleanly to left anchor above headline so video player on right is 100% unobstructed
+    if (prog >= 0.19 && prog <= 0.35) {
+      const unvCoord = cachedCoordsRef.current.sceneUnveiling;
+      if (unvCoord && unvCoord.x > 0) {
+        const inT = smoothstep((prog - 0.19) / (0.22 - 0.19));
+        const outT = smoothstep((prog - 0.32) / (0.35 - 0.32));
+        const blend = inT * (1 - outT);
+        return lerpCoord(fixedCoord, unvCoord, blend);
+      }
+    }
+
+    if (prog >= 0.88) {
       const ctaCoord = cachedCoordsRef.current.scene6;
-      const ctaT = smoothstep((prog - 0.86) / (0.93 - 0.86));
+      const ctaT = smoothstep((prog - 0.88) / (0.95 - 0.88));
       return lerpCoord(fixedCoord, ctaCoord, ctaT);
     }
     return fixedCoord;

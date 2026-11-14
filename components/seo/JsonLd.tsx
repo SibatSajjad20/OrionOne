@@ -104,7 +104,9 @@ export default function JsonLd() {
 
   return (
     <script
+      id="orion-jsonld-schema"
       type="application/ld+json"
+      suppressHydrationWarning
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
   );

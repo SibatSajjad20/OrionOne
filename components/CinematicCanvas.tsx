@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback, useMemo, memo } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play, Pause, Volume2, VolumeX, Maximize2, X } from "lucide-react";
 import LoadingScreen from "./LoadingScreen";
 
 const OrionLogoScrollWheel = dynamic(
@@ -207,6 +207,13 @@ interface CinematicCanvasProps {
   onOpenInquiry?: () => void;
 }
 
+function formatVideoTime(seconds: number): string {
+  if (isNaN(seconds) || seconds < 0) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? "0" : ""}${s}`;
+}
+
 function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -214,6 +221,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   // Story Chapter Overlay Refs
   const ch2Ref = useRef<HTMLDivElement>(null); // 01. Architecture / A New Horizon
   const ch3Ref = useRef<HTMLDivElement>(null); // 02. Waterfront
+  const unveilingRef = useRef<HTMLDivElement>(null); // 02.5 Official Unveiling / Launch Event
   const ch4Ref = useRef<HTMLDivElement>(null); // 03. Destination & Pillars
   const ch5Ref = useRef<HTMLDivElement>(null); // 04. District Masterplan
   const ch6Ref = useRef<HTMLDivElement>(null); // 05. Investment Proposition
@@ -221,6 +229,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const closingLogoTargetRef = useRef<HTMLDivElement>(null); // 3D Orion Logo Docking Anchor (Scene 6 / CTA)
   const scene1LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 1 beside heading
   const scene2LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 2 Waterfront left heading
+  const sceneUnveilingLogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 2.5 Unveiling
   const scene3LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 3 District Masterplan top
   const col1LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 4 Column 1 top
   const col2LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 4 Column 2 top
@@ -228,10 +237,23 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
   const scene5LogoAnchorRef = useRef<HTMLDivElement>(null); // Scene 5 Destination top
   const scrollProgressRef = useRef<number>(0);
 
+  // Video Player state & refs for Launch Event Chapter
+  const unveilingVideoRef = useRef<HTMLVideoElement>(null);
+  const cinemaModalVideoRef = useRef<HTMLVideoElement>(null);
+  const hasStartedVideoRef = useRef(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [isCinemaModalOpen, setIsCinemaModalOpen] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [videoCurrentTime, setVideoCurrentTime] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(68);
+  const [isHoveringVideo, setIsHoveringVideo] = useState(false);
+
   const targetRefs = useMemo(
     () => ({
       scene1: scene1LogoAnchorRef,
       scene2: scene2LogoAnchorRef,
+      sceneUnveiling: sceneUnveilingLogoAnchorRef,
       scene3: scene3LogoAnchorRef,
       col1: col1LogoAnchorRef,
       col2: col2LogoAnchorRef,
@@ -374,6 +396,80 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       ScrollTrigger.refresh();
     };
   }, []);
+
+  // Launch Film Video Player Handlers & Scrubbing
+  const togglePlay = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const v = unveilingVideoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+    } else {
+      v.pause();
+      setIsVideoPlaying(false);
+    }
+  }, []);
+
+  const toggleMute = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const v = unveilingVideoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setIsVideoMuted(v.muted);
+  }, []);
+
+  const handleTimeUpdate = useCallback(() => {
+    const v = unveilingVideoRef.current;
+    if (!v) return;
+    setVideoCurrentTime(v.currentTime);
+    if (v.duration && !isNaN(v.duration) && v.duration > 0) {
+      setVideoDuration(v.duration);
+      setVideoProgress((v.currentTime / v.duration) * 100);
+    }
+  }, []);
+
+  const handleScrub = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const v = unveilingVideoRef.current;
+    if (!v || !v.duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    v.currentTime = pct * v.duration;
+    setVideoProgress(pct * 100);
+  }, []);
+
+  const openCinemaModal = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const v = unveilingVideoRef.current;
+    if (v) {
+      v.pause();
+      setIsVideoPlaying(false);
+    }
+    const lenis = (window as unknown as { lenis?: { stop: () => void } }).lenis;
+    if (lenis) lenis.stop();
+    setIsCinemaModalOpen(true);
+  }, []);
+
+  const closeCinemaModal = useCallback(() => {
+    const modalVideo = cinemaModalVideoRef.current;
+    if (modalVideo) {
+      modalVideo.pause();
+    }
+    const lenis = (window as unknown as { lenis?: { start: () => void } }).lenis;
+    if (lenis) lenis.start();
+    setIsCinemaModalOpen(false);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isCinemaModalOpen) {
+        closeCinemaModal();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isCinemaModalOpen, closeCinemaModal]);
 
   // Dual-frame object-fit cover rendering engine (Hardware-accelerated, single-pass optical blend)
   const renderToCanvas = useCallback(
@@ -831,55 +927,55 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     let smoothedProg = scrollProgressRef.current;
 
     const computeFramesForProgress = (progress: number) => {
-      if (progress <= 0.109) {
+      if (progress <= 0.100) {
         // Scene 1: Architecture (scene-1-frames 0..191, full 24fps)
-        const norm = Math.max(0, Math.min(1, progress / 0.109));
+        const norm = Math.max(0, Math.min(1, progress / 0.100));
         targetMainFrameRef.current = Math.round(norm * 191);
         targetBlendFrameRef.current = -1;
         targetBlendAlphaRef.current = 0;
-      } else if (progress < 0.236) {
-        // Scene 2: Waterfront pre-transition (scene-2-frames 192..383, full 24fps)
-        const norm = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
+      } else if (progress < 0.200) {
+        // Scene 2: Waterfront (scene-2-frames 192..383, full 24fps)
+        const norm = Math.max(0, Math.min(1, (progress - 0.100) / (0.200 - 0.100)));
         targetMainFrameRef.current = 192 + Math.round(norm * (383 - 192));
         targetBlendFrameRef.current = -1;
         targetBlendAlphaRef.current = 0;
-      } else if (progress <= 0.268) {
-        // Seamless Optical Crossfade from Scene 2 Waterfront (192..383) into Scene 5 Masterplan (384..455)
-        // Both scenes remain in fluid camera motion during the cross-dissolve: NO static frozen frame!
-        const normWF = Math.max(0, Math.min(1, (progress - 0.109) / (0.268 - 0.109)));
-        const frameWF = 192 + Math.round(normWF * (383 - 192));
-
-        const normMP = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
+      } else if (progress <= 0.335) {
+        // Scene 2.5: Official Launch Unveiling ("Where Prestige Meets the Water's Edge")
+        // Holds canvas steadily on frame 383 (sunset lakefront view)
+        targetMainFrameRef.current = 383;
+        targetBlendFrameRef.current = -1;
+        targetBlendAlphaRef.current = 0;
+      } else if (progress <= 0.365) {
+        // Seamless Optical Crossfade from Waterfront frame 383 into Scene 3 Masterplan (384..455)
+        const normMP = Math.max(0, Math.min(1, (progress - 0.335) / (0.465 - 0.335)));
         const frameMP = 384 + Math.round(normMP * (455 - 384));
 
-        const t = (progress - 0.236) / (0.268 - 0.236);
+        const t = (progress - 0.335) / (0.365 - 0.335);
         const smoothT = t * t * (3 - 2 * t); // Smooth Hermite S-curve ease
 
-        targetMainFrameRef.current = Math.min(383, Math.max(192, frameWF));
+        targetMainFrameRef.current = 383;
         targetBlendFrameRef.current = Math.min(455, Math.max(384, frameMP));
         targetBlendAlphaRef.current = smoothT;
-      } else if (progress <= 0.405) {
-        // Scene 5: Masterplan (frames 384..455)
-        // Continues smooth camera glide right through 0.405 as Section 6 (Investment) dissolves in
-        const norm = Math.max(0, Math.min(1, (progress - 0.236) / (0.405 - 0.236)));
+      } else if (progress <= 0.465) {
+        // Scene 3: Masterplan (frames 384..455)
+        const norm = Math.max(0, Math.min(1, (progress - 0.335) / (0.465 - 0.335)));
         targetMainFrameRef.current = 384 + Math.round(norm * (455 - 384));
         targetBlendFrameRef.current = -1;
         targetBlendAlphaRef.current = 0;
-      } else if (progress <= 0.705) {
-        // Section 6 (Investment) active: holds frame 456 ready for Scene 4 (Destination)
+      } else if (progress <= 0.745) {
+        // Section 4 (Investment) active: holds frame 456 ready for Scene 5 (Destination)
         targetMainFrameRef.current = 456;
         targetBlendFrameRef.current = -1;
         targetBlendAlphaRef.current = 0;
-      } else if (progress <= 0.845) {
-        // Scene 4: Destination & Pillars (frames 456..489 - Infinity Pool)
-        // In gentle motion as Investment section dissolves out
-        const norm = Math.max(0, Math.min(1, (progress - 0.705) / (0.845 - 0.705)));
+      } else if (progress <= 0.875) {
+        // Scene 5: Destination & Pillars (frames 456..489 - Infinity Pool)
+        const norm = Math.max(0, Math.min(1, (progress - 0.745) / (0.875 - 0.745)));
         targetMainFrameRef.current = 456 + Math.round(norm * (489 - 456));
         targetBlendFrameRef.current = -1;
         targetBlendAlphaRef.current = 0;
       } else {
-        // Scene 7: Closing (frames 490..553)
-        const norm = Math.max(0, Math.min(1, (progress - 0.845) / (1.0 - 0.845)));
+        // Scene 6: Closing (frames 490..553)
+        const norm = Math.max(0, Math.min(1, (progress - 0.875) / (1.0 - 0.875)));
         targetMainFrameRef.current = 490 + Math.round(norm * (553 - 490));
         targetBlendFrameRef.current = -1;
         targetBlendAlphaRef.current = 0;
@@ -977,6 +1073,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
 
     let lastOp2 = -1;
     let lastOp3 = -1;
+    let lastOpUnveiling = -1;
     let lastOp4 = -1;
     let lastOp5 = -1;
     let lastOp6 = -1;
@@ -987,7 +1084,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         id: "cinematic-pin",
         trigger: container,
         start: "top top",
-        end: "+=1700%",
+        end: "+=1850%",
         pin: true,
         pinSpacing: true,
         scrub: true, // Synchronous lock with Lenis smooth scroll ticker (eliminates 600ms lag delay)
@@ -997,13 +1094,12 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           const progress = self.progress;
           scrollProgressRef.current = progress;
 
-          // 1. Update scrollProgressRef (renderTick interpolates and computes exact 24fps frame targets)
-          // Also keep Section 6 active states synchronized for render loop gating
-          isSection6ActiveRef.current = progress >= 0.37 && progress <= 0.74;
-          isSection6FullyOpaqueRef.current = progress >= 0.405 && progress <= 0.705;
+          // Keep Section 6 active states synchronized for render loop gating
+          isSection6ActiveRef.current = progress >= 0.44 && progress <= 0.77;
+          isSection6FullyOpaqueRef.current = progress >= 0.485 && progress <= 0.730;
 
           // 2. DOM Opacities with Delta Throttling to prevent layout thrashing
-          const op2 = progress <= 0.078 ? 1 : Math.max(0, 1 - (progress - 0.078) / (0.109 - 0.078));
+          const op2 = progress <= 0.070 ? 1 : Math.max(0, 1 - (progress - 0.070) / (0.100 - 0.070));
           if (ch2Ref.current && Math.abs(op2 - lastOp2) > 0.005) {
             lastOp2 = op2;
             if (progress > 0) {
@@ -1019,37 +1115,69 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
             }
           }
 
-          const op3 = calcOpacity(progress, 0.109, 0.126, 0.236, 0.255);
+          const op3 = calcOpacity(progress, 0.100, 0.118, 0.190, 0.208);
           if (ch3Ref.current && Math.abs(op3 - lastOp3) > 0.005) {
             lastOp3 = op3;
             gsap.set(ch3Ref.current, {
               opacity: op3,
               y: (1 - op3) * 20,
               pointerEvents: op3 > 0.5 ? "auto" : "none",
+              visibility: op3 > 0.01 ? "visible" : "hidden",
             });
           }
 
-          const op5 = calcOpacity(progress, 0.258, 0.275, 0.360, 0.380);
+          const opUnveiling = calcOpacity(progress, 0.208, 0.228, 0.318, 0.338);
+          if (unveilingRef.current && Math.abs(opUnveiling - lastOpUnveiling) > 0.005) {
+            lastOpUnveiling = opUnveiling;
+            const isInteractive = opUnveiling > 0.3;
+            gsap.set(unveilingRef.current, {
+              opacity: opUnveiling,
+              y: (1 - opUnveiling) * 20,
+              pointerEvents: isInteractive ? "auto" : "none",
+              visibility: opUnveiling > 0.01 ? "visible" : "hidden",
+              zIndex: isInteractive ? 40 : 10,
+            });
+          }
+
+          // Unveiling Video scroll autoplay / pause gating
+          if (opUnveiling > 0.1) {
+            const v = unveilingVideoRef.current;
+            if (v && v.paused && !hasStartedVideoRef.current && !isCinemaModalOpen) {
+              hasStartedVideoRef.current = true;
+              v.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+            }
+          } else if (opUnveiling === 0) {
+            const v = unveilingVideoRef.current;
+            if (v && !v.paused) {
+              v.pause();
+              setIsVideoPlaying(false);
+              hasStartedVideoRef.current = false;
+            }
+          }
+
+          const op5 = calcOpacity(progress, 0.342, 0.365, 0.445, 0.465);
           if (ch5Ref.current && Math.abs(op5 - lastOp5) > 0.005) {
             lastOp5 = op5;
             gsap.set(ch5Ref.current, {
               opacity: op5,
               pointerEvents: op5 > 0.5 ? "auto" : "none",
+              visibility: op5 > 0.01 ? "visible" : "hidden",
             });
           }
 
-          const op6 = calcOpacity(progress, 0.380, 0.405, 0.705, 0.730);
+          const op6 = calcOpacity(progress, 0.465, 0.485, 0.730, 0.750);
           if (ch6Ref.current && Math.abs(op6 - lastOp6) > 0.005) {
             lastOp6 = op6;
             gsap.set(ch6Ref.current, {
               opacity: op6,
               y: (1 - op6) * 20,
               pointerEvents: op6 > 0.5 ? "auto" : "none",
+              visibility: op6 > 0.01 ? "visible" : "hidden",
             });
           }
 
           // 3. Investment Column Scrubbing Math
-          const investProg = Math.max(0, Math.min(1, (progress - 0.408) / (0.700 - 0.408)));
+          const investProg = Math.max(0, Math.min(1, (progress - 0.488) / (0.725 - 0.488)));
           const p1 = Math.max(0, Math.min(1, investProg / 0.33));
           const p2 = Math.max(0, Math.min(1, (investProg - 0.33) / 0.33));
           const p3 = Math.max(0, Math.min(1, (investProg - 0.66) / 0.34));
@@ -1104,25 +1232,27 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
           if (col2CardRef.current) col2CardRef.current.style.transform = `translate3d(0, ${y2}px, 0)`;
           if (col3CardRef.current) col3CardRef.current.style.transform = `translate3d(0, ${y3}px, 0)`;
 
-          // 4. Destination & Brand Pillars (Handover starts right at 0.708 as columns dissolve, no dead delay)
-          const op4 = calcOpacity(progress, 0.708, 0.730, 0.825, 0.848);
+          // 4. Destination & Brand Pillars
+          const op4 = calcOpacity(progress, 0.748, 0.768, 0.855, 0.875);
           if (ch4Ref.current && Math.abs(op4 - lastOp4) > 0.005) {
             lastOp4 = op4;
             gsap.set(ch4Ref.current, {
               opacity: op4,
               y: (1 - op4) * 20,
               pointerEvents: op4 > 0.5 ? "auto" : "none",
+              visibility: op4 > 0.01 ? "visible" : "hidden",
             });
           }
 
           // 5. Closing Horizon & CTA
-          const op7 = calcOpacity(progress, 0.848, 0.875, 0.99, 1.0);
+          const op7 = calcOpacity(progress, 0.875, 0.898, 0.99, 1.0);
           if (ch7Ref.current && Math.abs(op7 - lastOp7) > 0.005) {
             lastOp7 = op7;
             gsap.set(ch7Ref.current, {
               opacity: op7,
               y: (1 - op7) * 15,
               pointerEvents: op7 > 0.5 ? "auto" : "none",
+              visibility: op7 > 0.01 ? "visible" : "hidden",
             });
           }
         },
@@ -1132,10 +1262,11 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
     // Chapter anchor smooth navigation mapping
     const CHAPTER_PROGRESS: Record<string, number> = {
       "#architecture": 0.0,
-      "#waterfront": 0.16,
-      "#masterplan": 0.30,
-      "#investment": 0.44,
-      "#destination": 0.77,
+      "#waterfront": 0.15,
+      "#unveiling": 0.27,
+      "#masterplan": 0.40,
+      "#investment": 0.54,
+      "#destination": 0.81,
       "#closing": 0.94,
     };
 
@@ -1271,6 +1402,183 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       </div>
 
       {/* --------------------------------------------------------------------- */}
+      {/* 02.5 OFFICIAL UNVEILING / LAUNCH EVENT FILM                           */}
+      {/* --------------------------------------------------------------------- */}
+      <div
+        ref={unveilingRef}
+        id="unveiling"
+        className="absolute inset-0 flex items-center justify-center px-4 sm:px-8 lg:px-12 xl:px-16 z-30 opacity-0 pointer-events-none"
+      >
+        {/* Soft atmospheric gradient scrim ensuring contrast against sunset water */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#0d2828]/60 via-40% to-[#081a1a]/70 pointer-events-none -z-10" />
+
+        <div className="relative max-w-[1720px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center py-8 sm:py-12">
+          {/* Left Column: Narrative Headline & Unveiling Story */}
+          <div className="lg:col-span-4 xl:col-span-4 text-left flex flex-col justify-center order-2 lg:order-1 pr-0 lg:pr-4">
+            {/* 3D Orion Logo Anchor (Logo smoothly rests here during the unveiling) */}
+            <div
+              ref={sceneUnveilingLogoAnchorRef}
+              className="w-12 h-12 sm:w-14 sm:h-14 mb-4 pointer-events-none flex items-center justify-center opacity-0"
+              aria-hidden="true"
+            />
+
+            <h2 className="type-section font-luxia-display text-[30px] sm:text-4xl lg:text-[42px] xl:text-5xl text-[#EDE5DA] leading-[1.08] tracking-[-0.01em]">
+              <span className="block">Where Prestige</span>
+              <span className="type-display-accent block font-luxia-display text-[#62AA9E] mt-1">
+                Meets the Water’s Edge.
+              </span>
+            </h2>
+
+            <p className="font-sans-body text-sm sm:text-base font-light text-[#EDE5DA]/85 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] mt-4 sm:mt-6 max-w-md">
+              Orion One is officially unveiled in DHA Phase 3. A triumph of refined architecture and serene lakefront living, it marks the dawn of an enduring legacy.
+            </p>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-6 sm:mt-8 z-30">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openCinemaModal(e);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#62AA9E] hover:bg-[#7ec1b6] text-[#0d2828] font-sans-body font-semibold text-xs tracking-[0.18em] uppercase transition-all duration-300 shadow-xl cursor-pointer pointer-events-auto"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                <span>Watch Film</span>
+              </button>
+
+              <a
+                href="#masterplan"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const st = ScrollTrigger.getById("cinematic-pin");
+                  if (!st) return;
+                  const targetY = st.start + 0.40 * (st.end - st.start);
+                  const lenis = (window as unknown as { lenis?: { scrollTo: (target: number) => void } }).lenis;
+                  if (lenis) {
+                    lenis.scrollTo(targetY);
+                  } else {
+                    window.scrollTo({ top: targetY, behavior: "smooth" });
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0d2828]/80 hover:bg-[#0d2828] border border-[#EDE5DA]/20 hover:border-[#62AA9E] text-[#EDE5DA] font-sans-body font-medium text-xs tracking-[0.18em] uppercase transition-all duration-300 cursor-pointer pointer-events-auto"
+              >
+                <span>Explore Plan</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+          {/* Right Column: Grand Cinematic Video Theater Card */}
+          <div className="lg:col-span-8 xl:col-span-8 w-full flex flex-col justify-center order-1 lg:order-2">
+            <div
+              className="relative w-full aspect-video lg:aspect-[16/9.5] xl:aspect-[16/9] min-h-[260px] sm:min-h-[380px] lg:min-h-[480px] xl:min-h-[560px] max-h-[75vh] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EDE5DA]/20 bg-[#081a1a]/90 shadow-[0_30px_90px_rgba(0,0,0,0.8)] group cursor-pointer"
+              onClick={togglePlay}
+              onMouseEnter={() => setIsHoveringVideo(true)}
+              onMouseLeave={() => setIsHoveringVideo(false)}
+            >
+              {/* HTML5 Video element */}
+              <video
+                ref={unveilingVideoRef}
+                playsInline
+                muted={isVideoMuted}
+                loop
+                preload="none"
+                poster="/event-video-poster.webp"
+                onTimeUpdate={handleTimeUpdate}
+                onEnded={() => setIsVideoPlaying(false)}
+                className="w-full h-full object-cover select-none"
+              >
+                <source src="/event-video-crf26.mp4" type="video/mp4" media="(min-width: 768px)" />
+                <source src="/event-video-720p.mp4" type="video/mp4" media="(max-width: 767px)" />
+                <source src="/Event video.mp4" type="video/mp4" />
+              </video>
+
+              {/* Gentle inner gradient for contrast */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
+
+              {/* Center Play / Pause Button */}
+              {(!isVideoPlaying || isHoveringVideo) && (
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  aria-label={isVideoPlaying ? "Pause launch film" : "Play launch film"}
+                  className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#153D3D]/90 hover:bg-[#62AA9E] text-[#EDE5DA] hover:text-[#0d2828] border border-[#62AA9E]/50 backdrop-blur-md flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-2xl z-30 cursor-pointer pointer-events-auto"
+                >
+                  {isVideoPlaying ? (
+                    <Pause className="w-6 h-6 sm:w-8 sm:h-8 fill-current" />
+                  ) : (
+                    <Play className="w-6 h-6 sm:w-8 sm:h-8 fill-current translate-x-0.5" />
+                  )}
+                </button>
+              )}
+
+              {/* Bottom Custom Controls Bar */}
+              <div
+                className="absolute bottom-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col gap-2.5 z-30 pointer-events-auto transition-opacity duration-300"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Scrub Bar */}
+                <div
+                  className="w-full h-1.5 sm:h-2 rounded-full bg-white/20 hover:bg-white/30 cursor-pointer overflow-hidden relative transition-all"
+                  onClick={handleScrub}
+                >
+                  <div
+                    className="h-full bg-gradient-to-r from-[#62AA9E] to-[#EDE5DA] rounded-full transition-all duration-100"
+                    style={{ width: `${videoProgress}%` }}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-xs sm:text-sm text-[#EDE5DA]/90 font-sans-body pt-1">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      className="hover:text-[#62AA9E] p-1 transition-colors cursor-pointer"
+                      aria-label={isVideoPlaying ? "Pause" : "Play"}
+                    >
+                      {isVideoPlaying ? <Pause className="w-4 h-4 sm:w-5 sm:h-5" /> : <Play className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      className="hover:text-[#62AA9E] p-1 transition-colors cursor-pointer flex items-center gap-1.5"
+                      aria-label={isVideoMuted ? "Unmute audio" : "Mute audio"}
+                    >
+                      {isVideoMuted ? (
+                        <>
+                          <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-[#EDE5DA]/70" />
+                          <span className="text-[11px] sm:text-xs uppercase tracking-wider hidden sm:inline">Unmute</span>
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#62AA9E]" />
+                          <span className="text-[11px] sm:text-xs uppercase tracking-wider hidden sm:inline text-[#62AA9E]">Sound On</span>
+                        </>
+                      )}
+                    </button>
+                    <span className="text-[11px] sm:text-xs tracking-wider text-[#EDE5DA]/70 font-mono">
+                      {formatVideoTime(videoCurrentTime)} / {formatVideoTime(videoDuration || 68)}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={openCinemaModal}
+                    className="flex items-center gap-1.5 text-[11px] sm:text-xs uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/10 hover:bg-[#62AA9E] hover:text-[#0d2828] transition-all cursor-pointer shadow-md"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Cinema Mode</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* --------------------------------------------------------------------- */}
       {/* 03. DISTRICT & MASTERPLAN (Frame 05 from 01 - Home Page.pdf)          */}
       {/* --------------------------------------------------------------------- */}
       <div
@@ -1279,7 +1587,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         className="absolute inset-0 z-30 opacity-0 pointer-events-none"
       >
         {/* Section Header */}
-        <div className="absolute top-20 sm:top-28 left-6 sm:left-12 lg:left-16 right-6 sm:right-auto max-w-sm sm:max-w-lg z-30 pointer-events-auto">
+        <div className="absolute top-20 sm:top-28 left-6 sm:left-12 lg:left-16 right-6 sm:right-auto max-w-sm sm:max-w-lg z-30">
           <div
             ref={scene3LogoAnchorRef}
             className="w-10 h-10 sm:w-12 sm:h-12 mb-1.5 pointer-events-none flex items-center justify-center"
@@ -1499,7 +1807,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         {/* Soft atmospheric vignette guaranteeing text legibility against infinity pool canvas */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#081a1a]/95 via-[#0d2828]/55 to-[#0d2828]/20 pointer-events-none -z-10" />
 
-        <div className="relative max-w-6xl mx-auto w-full pointer-events-auto">
+        <div className="relative max-w-6xl mx-auto w-full">
           {/* Section Header */}
           <div className="text-center space-y-2 sm:space-y-3 mb-6 sm:mb-10 lg:mb-12">
             {/* Scene 5 Anchor: Top of Destination label */}
@@ -1542,7 +1850,7 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
       <div
         ref={ch7Ref}
         id="closing"
-        className="absolute inset-0 flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-4 sm:px-6 z-20 opacity-0"
+        className="absolute inset-0 flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-4 sm:px-6 z-20 opacity-0 pointer-events-none"
       >
         {/* 3D Orion Logo Docking Anchor */}
         <div
@@ -1588,6 +1896,54 @@ function CinematicCanvasComponent({ onOpenInquiry }: CinematicCanvasProps) {
         targetRefs={targetRefs}
         isLoaded={isLoaded}
       />
+
+      {/* --------------------------------------------------------------------- */}
+      {/* FULLSCREEN CINEMA MODAL (Unveiling Launch Film)                       */}
+      {/* --------------------------------------------------------------------- */}
+      {isCinemaModalOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-4 sm:p-8 pointer-events-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Orion One Official Launch Film"
+          onClick={closeCinemaModal}
+        >
+          <button
+            type="button"
+            onClick={closeCinemaModal}
+            className="absolute top-6 right-6 sm:top-8 sm:right-8 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-[#EDE5DA] flex items-center justify-center transition-colors cursor-pointer z-50"
+            aria-label="Close cinema mode"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div 
+            className="w-full max-w-5xl aspect-video relative rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(98,170,158,0.25)] border border-[#EDE5DA]/20 bg-black pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <video
+              ref={cinemaModalVideoRef}
+              autoPlay
+              controls
+              playsInline
+              poster="/event-video-poster.webp"
+              className="w-full h-full object-contain"
+            >
+              <source src="/event-video-crf26.mp4" type="video/mp4" />
+              <source src="/Event video.mp4" type="video/mp4" />
+            </video>
+          </div>
+
+          <div className="mt-4 text-center max-w-xl pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-luxia-display text-lg sm:text-2xl text-[#EDE5DA]">
+              Where Prestige Meets the Water’s Edge
+            </h3>
+            <p className="font-sans-body text-xs sm:text-sm text-[#EDE5DA]/70 font-light mt-1">
+              Orion One is officially unveiled in DHA Phase 3. A triumph of refined architecture and serene lakefront living, it marks the dawn of an enduring legacy.
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
